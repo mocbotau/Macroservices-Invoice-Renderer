@@ -1,6 +1,6 @@
 name: Node.js CI
 
-on: ['push', 'pull_request']
+on: ["push", "pull_request"]
 
 jobs:
   test-backend:
@@ -21,4 +21,5 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
+      - run: npm run lint
       - run: npm test
