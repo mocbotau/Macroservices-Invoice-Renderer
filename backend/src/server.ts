@@ -1,8 +1,11 @@
-import express from "express";
-import config from "./config.json";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-const app = express();
+import app from "./app";
 
-app.listen(config.PORT, config.HOST, () => {
-    console.log(`Invoice Rendering API started on ${config.HOST}:${config.PORT}`);
+const port = parseInt(process.env.PORT, 10) || 3000;
+const host = process.env.HOST || "localhost";
+
+app.listen(port, host, () => {
+  console.log(`Invoice Rendering API started on http://${host}:${port}`);
 });
