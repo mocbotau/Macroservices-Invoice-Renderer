@@ -1,6 +1,13 @@
 import { ValidationError, XMLParser, XMLValidator } from "fast-xml-parser";
 
-export function ublToJSON(ublStr: string) {
+
+/**
+ * Given a UBL formatted XML string, converts the tag/attribute into JSON key-value pairs.
+ * @param {string} ublStr 
+ * @throws {Error} when XML input is invalid
+ * @returns {Record<string, string | number | object>}
+ */
+export function ublToJSON(ublStr: string): Record<string, string | number | object> {
   let errObject: ValidationError;
   if ((errObject = (XMLValidator.validate(ublStr) as ValidationError))?.err) {
     throw Error(errObject.err.msg);
