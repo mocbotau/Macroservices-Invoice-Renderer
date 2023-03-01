@@ -2,7 +2,12 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@tests/*": ["./tests/*"]
+    }
   },
-  "include": ["src/**/*.ts", "tests/http/v1/healthcheck.test.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
 }

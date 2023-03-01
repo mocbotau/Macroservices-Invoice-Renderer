@@ -4,7 +4,7 @@ import express from "express";
 const router = express.Router();
 
 router.get("/", (req: Request, res: Response) => {
-  res.json({});
+  res.json({ "status": "Running!" });
 });
 
 export default router;

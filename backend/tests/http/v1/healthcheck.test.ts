@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../../../src/app";
+import app from "@src/app";
 
 describe("Healthcheck route", () => {
   test("It should provide a 200 OK status", async () => {
