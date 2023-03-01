@@ -1,9 +1,9 @@
 import express from "express";
 
-import exampleRoute from "./routes/example";
+import v1Router from "./routes/v1";
 
 const app = express();
 
-app.get("/example", exampleRoute);
+app.use("/v1", v1Router);
 
 export default app;
