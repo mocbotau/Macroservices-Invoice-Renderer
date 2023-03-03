@@ -1,17 +1,9 @@
-import express, { Request, Response } from "express";
-import renderInvoiceToPDF from "@src/react/invoice";
+import express from "express";
+
+import pdfRoute from "./pdf";
 
 const router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
-  // TODO: check for output type
-  // TODO: parse UBL document
-  // TODO: supply arguments to renderInvoiceToPDF
-  const result = await renderInvoiceToPDF();
-
-  res.setHeader("Content-Type", "application/pdf");
-
-  result.pipe(res);
-});
+router.post("/", pdfRoute);
 
 export default router;
