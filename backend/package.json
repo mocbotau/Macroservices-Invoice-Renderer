@@ -4,8 +4,8 @@
   "description": "UBL XML Invoice Rendering API",
   "main": "src/server.ts",
   "scripts": {
-    "start": "ts-node src/server.ts",
-    "dev": "nodemon -w ./src src/server.ts -x ts-node",
+    "start": "ts-node -r tsconfig-paths/register src/server.ts",
+    "dev": "nodemon -w ./src src/server.ts -x 'ts-node -r tsconfig-paths/register'",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
@@ -22,8 +22,10 @@
   },
   "homepage": "https://github.com/MasterOfCubesAU/Macroservices-Invoice-Renderer#readme",
   "dependencies": {
+    "@react-pdf/renderer": "^3.1.6",
     "express": "^4.18.2",
     "fast-xml-parser": "^4.1.3",
+    "react": "^18.2.0",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
@@ -40,6 +42,7 @@
     "superagent": "^8.0.9",
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
+    "tsconfig-paths": "^3.14.2",
     "typescript": "^4.9.5"
   }
 }
