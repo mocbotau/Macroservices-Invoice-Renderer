@@ -10,9 +10,9 @@ describe("Parsing UBL XML to JSON", () => {
                 </Invoice>`;
 
     expect(ublToJSON(ublString)).toMatchObject({
-      "cbc:UBLVersionID": 2.1,
-      "cbc:ID": "EBWASP1002",
-      "cbc:IssueDate": "2022-02-07",
+      "UBLVersionID": 2.1,
+      "ID": "EBWASP1002",
+      "IssueDate": "2022-02-07",
     });
   });
   test("Given an invalid UBL XML string, throw an error", async () => {

@@ -12,5 +12,25 @@ export function ublToJSON(ublStr: string): JSONValue {
   if ((errObject = XMLValidator.validate(ublStr) as ValidationError)?.err) {
     throw Error(errObject.err.msg);
   }
-  return new XMLParser().parse(ublStr).Invoice;
+  
+  const parseOptions = {
+    ignoreAttributes: false,
+    textNodeName: "#text"
+  };
+  const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
+
+  return removeUBLPrefix(parsed);
+}
+
+function removeUBLPrefix(ublObject: JSONValue){
+  if (["string", "number", "boolean"].includes(typeof ublObject)) {
+    return ublObject;
+  }
+
+  const result: JSONValue = {};
+  for (const element of Object.keys(ublObject)) {
+    result[element.replace(/^c.c:/, "")] = removeUBLPrefix(ublObject[element]);
+  }
+
+  return result;
 }
