@@ -9,10 +9,10 @@ export const Party = (props: { party: JSONValue }) => {
   const postalAddress = party["PostalAddress"];
 
   return (
-    <View style={styles.section}>
+    <View>
       <Text style={styles.bold}>{party["PartyName"]["Name"]}</Text>
       {party["PartyIdentification"] && (
-        <Text>ABN {party["PartyIdentification"]["ID"]["_text"]}</Text>
+        <Text>ABN {party["PartyIdentification"][0]["ID"]["_text"]}</Text>
       )}
       <Text>{postalAddress["StreetName"]}</Text>
       <Text>{postalAddress["AdditionalStreetName"]}</Text>

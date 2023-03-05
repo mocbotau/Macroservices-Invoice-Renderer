@@ -15,16 +15,18 @@
     "$listID": "ISO4217"
   },
   "BuyerReference": "EBWASP1002",
-  "AdditionalDocumentReference": { "ID": "ebwasp1002" },
+  "AdditionalDocumentReference": [{ "ID": { "_text": "ebwasp1002" } }],
   "AccountingSupplierParty": {
     "Party": {
-      "PartyIdentification": {
-        "ID": {
-          "_text": 80647710156,
-          "$schemeAgencyID": "ZZZ",
-          "$schemeID": "0151"
+      "PartyIdentification": [
+        {
+          "ID": {
+            "_text": 80647710156,
+            "$schemeAgencyID": "ZZZ",
+            "$schemeID": "0151"
+          }
         }
-      },
+      ],
       "PartyName": { "Name": "Ebusiness Software Services Pty Ltd" },
       "PostalAddress": {
         "StreetName": "100 Business St",
@@ -67,32 +69,40 @@
       "PartyLegalEntity": { "RegistrationName": "Awolako Enterprises Pty Ltd" }
     }
   },
-  "PaymentMeans": {
-    "PaymentMeansCode": {
-      "_text": 1,
-      "$listAgencyID": "6",
-      "$listID": "UNCL4461"
-    },
-    "PaymentID": "EBWASP1002"
-  },
+  "PaymentMeans": [
+    {
+      "PaymentMeansCode": {
+        "_text": 1,
+        "$listAgencyID": "6",
+        "$listID": "UNCL4461"
+      },
+      "PaymentID": "EBWASP1002"
+    }
+  ],
   "PaymentTerms": { "Note": "As agreed" },
   "TaxTotal": {
     "TaxAmount": { "_text": 10, "$currencyID": "AUD" },
-    "TaxSubtotal": {
-      "TaxableAmount": { "_text": 100, "$currencyID": "AUD" },
-      "TaxAmount": { "_text": 10, "$currencyID": "AUD" },
-      "TaxCategory": {
-        "ID": { "_text": "S", "$schemeAgencyID": "6", "$schemeID": "UNCL5305" },
-        "Percent": 10,
-        "TaxScheme": {
+    "TaxSubtotal": [
+      {
+        "TaxableAmount": { "_text": 100, "$currencyID": "AUD" },
+        "TaxAmount": { "_text": 10, "$currencyID": "AUD" },
+        "TaxCategory": {
           "ID": {
-            "_text": "GST",
+            "_text": "S",
             "$schemeAgencyID": "6",
-            "$schemeID": "UN/ECE 5153"
+            "$schemeID": "UNCL5305"
+          },
+          "Percent": 10,
+          "TaxScheme": {
+            "ID": {
+              "_text": "GST",
+              "$schemeAgencyID": "6",
+              "$schemeID": "UN/ECE 5153"
+            }
           }
         }
       }
-    }
+    ]
   },
   "LegalMonetaryTotal": {
     "LineExtensionAmount": { "_text": 100, "$currencyID": "AUD" },
@@ -101,37 +111,43 @@
     "PayableRoundingAmount": { "_text": 0, "$currencyID": "AUD" },
     "PayableAmount": { "_text": 110, "$currencyID": "AUD" }
   },
-  "InvoiceLine": {
-    "ID": 1,
-    "InvoicedQuantity": {
-      "_text": 500,
-      "$unitCode": "C62",
-      "$unitCodeListID": "UNECERec20"
-    },
-    "LineExtensionAmount": { "_text": 100, "$currencyID": "AUD" },
-    "Item": {
-      "Name": "pencils",
-      "ClassifiedTaxCategory": {
-        "ID": { "_text": "S", "$schemeAgencyID": "6", "$schemeID": "UNCL5305" },
-        "Percent": 10,
-        "TaxScheme": {
-          "ID": {
-            "_text": "GST",
-            "$schemeAgencyID": "6",
-            "$schemeID": "UN/ECE 5153"
-          }
-        }
-      }
-    },
-    "Price": {
-      "PriceAmount": { "_text": 0.2, "$currencyID": "AUD" },
-      "BaseQuantity": {
-        "_text": 1,
+  "InvoiceLine": [
+    {
+      "ID": 1,
+      "InvoicedQuantity": {
+        "_text": 500,
         "$unitCode": "C62",
         "$unitCodeListID": "UNECERec20"
+      },
+      "LineExtensionAmount": { "_text": 100, "$currencyID": "AUD" },
+      "Item": {
+        "Name": "pencils",
+        "ClassifiedTaxCategory": {
+          "ID": {
+            "_text": "S",
+            "$schemeAgencyID": "6",
+            "$schemeID": "UNCL5305"
+          },
+          "Percent": 10,
+          "TaxScheme": {
+            "ID": {
+              "_text": "GST",
+              "$schemeAgencyID": "6",
+              "$schemeID": "UN/ECE 5153"
+            }
+          }
+        }
+      },
+      "Price": {
+        "PriceAmount": { "_text": 0.2, "$currencyID": "AUD" },
+        "BaseQuantity": {
+          "_text": 1,
+          "$unitCode": "C62",
+          "$unitCodeListID": "UNECERec20"
+        }
       }
     }
-  },
+  ],
   "$xmlns": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
   "$xmlns:cac": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
   "$xmlns:cbc": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
