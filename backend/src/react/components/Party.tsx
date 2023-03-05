@@ -12,11 +12,18 @@ export const Party = (props: { party: JSONValue }) => {
     <View style={styles.section}>
       <Text style={styles.bold}>{party["PartyName"]["Name"]}</Text>
       {party["PartyIdentification"] && (
-        <Text>ABN {party["PartyIdentification"]["_text"]}</Text>
+        <Text>ABN {party["PartyIdentification"]["ID"]["_text"]}</Text>
       )}
+      <Text>{postalAddress["StreetName"]}</Text>
+      <Text>{postalAddress["AdditionalStreetName"]}</Text>
       <Text>
-        {postalAddress["StreetName"]}, {postalAddress["CityName"]}{" "}
-        {postalAddress["PostalZone"]}
+        {[
+          postalAddress["CityName"],
+          postalAddress["CountrySubentity"],
+          postalAddress["PostalZone"],
+        ]
+          .filter((x) => x !== undefined)
+          .join(" ")}
       </Text>
       <Text>{postalAddress["Country"]["IdentificationCode"]["_text"]}</Text>
     </View>

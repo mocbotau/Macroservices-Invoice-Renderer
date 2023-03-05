@@ -8,19 +8,22 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import { Party } from "@src/react/components/Party";
+import { Header } from "@src/react/components/Header";
 import testObject from "@tests/resources/example1.json";
 
-describe("Party component", () => {
-  test("It should contain a text field", () => {
-    render(<Party party={testObject["AccountingSupplierParty"]["Party"]} />);
+describe("Header component", () => {
+  test("It should contain both party names", async () => {
+    render(
+      <Header
+        supplierParty={testObject["AccountingSupplierParty"]}
+        customerParty={testObject["AccountingCustomerParty"]}
+      />
+    );
 
     const textFields = [
       "Ebusiness Software Services Pty Ltd",
-      "ABN 80647710156",
-      "100 Business St",
-      "Dulwich Hill 2203",
-      "AU",
+      "Awolako Enterprises Pty Ltd",
+      "Invoice",
     ];
     textFields.forEach((text) => expect(screen.getByText(text)).toBeTruthy());
   });

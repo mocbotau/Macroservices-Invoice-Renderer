@@ -1,0 +1,139 @@
+{
+  "UBLVersionID": 2.1,
+  "CustomizationID": "urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0",
+  "ProfileID": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+  "ID": "EBWASP1002",
+  "IssueDate": "2022-02-07",
+  "InvoiceTypeCode": {
+    "_text": 380,
+    "$listAgencyID": "6",
+    "$listID": "UNCL1001"
+  },
+  "DocumentCurrencyCode": {
+    "_text": "AUD",
+    "$listAgencyID": "6",
+    "$listID": "ISO4217"
+  },
+  "BuyerReference": "EBWASP1002",
+  "AdditionalDocumentReference": { "ID": "ebwasp1002" },
+  "AccountingSupplierParty": {
+    "Party": {
+      "PartyIdentification": {
+        "ID": {
+          "_text": 80647710156,
+          "$schemeAgencyID": "ZZZ",
+          "$schemeID": "0151"
+        }
+      },
+      "PartyName": { "Name": "Ebusiness Software Services Pty Ltd" },
+      "PostalAddress": {
+        "StreetName": "100 Business St",
+        "CityName": "Dulwich Hill",
+        "PostalZone": 2203,
+        "Country": {
+          "IdentificationCode": {
+            "_text": "AU",
+            "$listAgencyID": "6",
+            "$listID": "ISO3166-1:Alpha2"
+          }
+        }
+      },
+      "PartyLegalEntity": {
+        "RegistrationName": "Ebusiness Software Services Pty Ltd",
+        "CompanyID": {
+          "_text": 80647710156,
+          "$schemeAgencyID": "ZZZ",
+          "$schemeID": "0151"
+        }
+      }
+    }
+  },
+  "AccountingCustomerParty": {
+    "Party": {
+      "PartyName": { "Name": "Awolako Enterprises Pty Ltd" },
+      "PostalAddress": {
+        "StreetName": "Suite 123 Level 45",
+        "AdditionalStreetName": "999 The Crescent",
+        "CityName": "Homebush West",
+        "PostalZone": 2140,
+        "Country": {
+          "IdentificationCode": {
+            "_text": "AU",
+            "$listAgencyID": "6",
+            "$listID": "ISO3166-1:Alpha2"
+          }
+        }
+      },
+      "PartyLegalEntity": { "RegistrationName": "Awolako Enterprises Pty Ltd" }
+    }
+  },
+  "PaymentMeans": {
+    "PaymentMeansCode": {
+      "_text": 1,
+      "$listAgencyID": "6",
+      "$listID": "UNCL4461"
+    },
+    "PaymentID": "EBWASP1002"
+  },
+  "PaymentTerms": { "Note": "As agreed" },
+  "TaxTotal": {
+    "TaxAmount": { "_text": 10, "$currencyID": "AUD" },
+    "TaxSubtotal": {
+      "TaxableAmount": { "_text": 100, "$currencyID": "AUD" },
+      "TaxAmount": { "_text": 10, "$currencyID": "AUD" },
+      "TaxCategory": {
+        "ID": { "_text": "S", "$schemeAgencyID": "6", "$schemeID": "UNCL5305" },
+        "Percent": 10,
+        "TaxScheme": {
+          "ID": {
+            "_text": "GST",
+            "$schemeAgencyID": "6",
+            "$schemeID": "UN/ECE 5153"
+          }
+        }
+      }
+    }
+  },
+  "LegalMonetaryTotal": {
+    "LineExtensionAmount": { "_text": 100, "$currencyID": "AUD" },
+    "TaxExclusiveAmount": { "_text": 100, "$currencyID": "AUD" },
+    "TaxInclusiveAmount": { "_text": 110, "$currencyID": "AUD" },
+    "PayableRoundingAmount": { "_text": 0, "$currencyID": "AUD" },
+    "PayableAmount": { "_text": 110, "$currencyID": "AUD" }
+  },
+  "InvoiceLine": {
+    "ID": 1,
+    "InvoicedQuantity": {
+      "_text": 500,
+      "$unitCode": "C62",
+      "$unitCodeListID": "UNECERec20"
+    },
+    "LineExtensionAmount": { "_text": 100, "$currencyID": "AUD" },
+    "Item": {
+      "Name": "pencils",
+      "ClassifiedTaxCategory": {
+        "ID": { "_text": "S", "$schemeAgencyID": "6", "$schemeID": "UNCL5305" },
+        "Percent": 10,
+        "TaxScheme": {
+          "ID": {
+            "_text": "GST",
+            "$schemeAgencyID": "6",
+            "$schemeID": "UN/ECE 5153"
+          }
+        }
+      }
+    },
+    "Price": {
+      "PriceAmount": { "_text": 0.2, "$currencyID": "AUD" },
+      "BaseQuantity": {
+        "_text": 1,
+        "$unitCode": "C62",
+        "$unitCodeListID": "UNECERec20"
+      }
+    }
+  },
+  "$xmlns": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
+  "$xmlns:cac": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
+  "$xmlns:cbc": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
+  "$xmlns:cec": "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+}
