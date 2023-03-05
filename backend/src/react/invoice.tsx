@@ -1,16 +1,11 @@
 import React from "react";
-import ReactPDF, {
-  Page,
-  Text,
-  View,
-  Document,
-} from "@react-pdf/renderer";
+import ReactPDF, { Page, Text, View, Document } from "@react-pdf/renderer";
 
 import { Party } from "./components/Party";
 import { styles } from "./styles";
 import { JSONValue } from "@src/interfaces";
 
-const Invoice = (props: {ubl: JSONValue}) => {
+const Invoice = (props: { ubl: JSONValue }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -20,8 +15,8 @@ const Invoice = (props: {ubl: JSONValue}) => {
       </Page>
     </Document>
   );
-}
+};
 
 export default async function renderInvoiceToPDF(ubl: JSONValue) {
-  return await ReactPDF.renderToStream(<Invoice ubl={ubl}/>);
+  return await ReactPDF.renderToStream(<Invoice ubl={ubl} />);
 }

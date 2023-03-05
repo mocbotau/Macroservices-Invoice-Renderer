@@ -12,18 +12,18 @@ export function ublToJSON(ublStr: string): JSONValue {
   if ((errObject = XMLValidator.validate(ublStr) as ValidationError)?.err) {
     throw Error(errObject.err.msg);
   }
-  
+
   const parseOptions = {
     ignoreAttributes: false,
     textNodeName: "_text",
-    attributeNamePrefix: "$"
+    attributeNamePrefix: "$",
   };
   const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
 
   return removeUBLPrefix(parsed);
 }
 
-function removeUBLPrefix(ublObject: JSONValue){
+function removeUBLPrefix(ublObject: JSONValue) {
   if (["string", "number", "boolean"].includes(typeof ublObject)) {
     return ublObject;
   }

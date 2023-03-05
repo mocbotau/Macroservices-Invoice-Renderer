@@ -1,6 +1,4 @@
-import {
-  StyleSheet
-} from '@react-pdf/renderer';
+import { StyleSheet } from "@react-pdf/renderer";
 
 export const styles = StyleSheet.create({
   page: {
@@ -14,6 +12,6 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
   },
   bold: {
-    fontWeight: 2
-  }
+    fontWeight: 2,
+  },
 });
