@@ -15,7 +15,8 @@ export function ublToJSON(ublStr: string): JSONValue {
   
   const parseOptions = {
     ignoreAttributes: false,
-    textNodeName: "#text"
+    textNodeName: "_text",
+    attributeNamePrefix: "$"
   };
   const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
 

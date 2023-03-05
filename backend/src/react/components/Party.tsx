@@ -15,8 +15,8 @@ export const Party = (props: {party: JSONValue}) => {
     <View style={styles.section}>
       <Text style={styles.bold}>{party["PartyName"]["Name"]}</Text>
       {party["PartyIdentification"] && <Text>ABN {party["PartyIdentification"]}</Text>}
-      <Text>{postalAddress["StreetName"]}, {postalAddress["CityName"]} {postalAddress["cbc:PostalZone"]}</Text>
-      <Text>{postalAddress["Country"]["IdentificationCode"]["#text"]}</Text>
+      <Text>{postalAddress["StreetName"]}, {postalAddress["CityName"]} {postalAddress["PostalZone"]}</Text>
+      <Text>{postalAddress["Country"]["IdentificationCode"]["_text"]}</Text>
     </View>
   );
 }

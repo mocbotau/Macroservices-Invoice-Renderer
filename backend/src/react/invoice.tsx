@@ -13,7 +13,7 @@ import { JSONValue } from "@src/interfaces";
 const Invoice = (props: {ubl: JSONValue}) => {
   return (
     <Document>
-      <Page size="A4" styles={styles.page}>
+      <Page size="A4" style={styles.page}>
         <View style={styles.section}>
           <Party party={props.ubl["AccountingCustomerParty"]["Party"]} />
         </View>

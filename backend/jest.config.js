@@ -6,4 +6,5 @@ module.exports = {
     "@src/(.*)": "<rootDir>/src/$1",
     "@tests/(.*)": "<rootDir>/tests/$1",
   },
+  setupFiles: [`<rootDir>/tests/components/jest-setup.ts`],
 };
