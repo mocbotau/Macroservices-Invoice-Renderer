@@ -9,6 +9,8 @@ import ReactPDF, {
 import { RenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
 
+const MAX_STYLES = 5;
+
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
@@ -39,7 +41,11 @@ export default async function renderInvoiceToPDF(args: RenderArgs) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
   } else if (!args.language || !["en", "cn"].includes(args.language)) {
     throw new InvalidLanguage();
-  } else if (args.style === undefined || args.style < 0 || args.style > 4) {
+  } else if (
+    args.style === undefined ||
+    args.style < 0 ||
+    args.style >= MAX_STYLES
+  ) {
     // assuming style numbers from 0-4
     throw new InvalidStyle();
   }
