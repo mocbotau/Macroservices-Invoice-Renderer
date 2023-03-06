@@ -33,11 +33,8 @@ const Invoice = () => (
   </Document>
 );
 
-export default async function renderInvoiceToPDF(args: RenderArgs) {
-  if (!args) {
-    throw new InvalidUBL({ message: "No UBL file was provided." });
-  }
-  if (!args.ubl) {
+export default async function generateInvoice(args: RenderArgs) {
+  if (!args || !args.ubl) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
   } else if (!args.language || !["en", "cn"].includes(args.language)) {
     throw new InvalidLanguage();

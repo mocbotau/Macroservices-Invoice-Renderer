@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import "express-async-errors";
 
-import renderInvoiceToPDF from "@src/react/invoice";
+import generateInvoice from "@src/react/invoice";
 
 export default async (req: Request, res: Response) => {
   // TODO: parse UBL document
-  const result = await renderInvoiceToPDF(req.body);
+  const result = await generateInvoice(req.body);
 
   res.setHeader("Content-Type", "application/pdf");
 
