@@ -3,25 +3,14 @@ name: Node.js CI
 on: ["pull_request"]
 
 jobs:
-  test-backend:
+  test-coverage-backend:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./backend
-
-    strategy:
-      matrix:
-        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci --include=dev
-      - run: npm test
+          working-directory: backend
 
   lint-backend:
     runs-on: ubuntu-latest

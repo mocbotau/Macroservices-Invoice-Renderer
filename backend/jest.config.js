@@ -6,4 +6,10 @@ module.exports = {
     "@src/(.*)": "<rootDir>/src/$1",
     "@tests/(.*)": "<rootDir>/tests/$1",
   },
+  collectCoverage: true,
+  coverageThreshold: {
+    global: {
+      lines: 85,
+    },
+  },
 };
