@@ -5,6 +5,7 @@ import { styles } from "../styles";
 import { JSONValue } from "@src/interfaces";
 
 import { Party } from "./Party";
+import { Break } from "./Break";
 
 export const Header = (props: {
   supplierParty: JSONValue;
@@ -12,14 +13,16 @@ export const Header = (props: {
 }) => {
   return (
     <View>
-      <Text style={[styles.h1, styles.bold]}>Invoice</Text>
+      <Text style={[styles.title, styles.bold]}>Invoice</Text>
       <View style={styles.horizontalFlex}>
         <View style={styles.flexbox}>
-          <Text style={styles.h2}>From:</Text>
+          <Text style={styles.h1}>To</Text>
+          <Break height={8} />
           <Party party={props.customerParty["Party"]} />
         </View>
         <View style={styles.flexbox}>
-          <Text style={styles.h2}>To:</Text>
+          <Text style={styles.h1}>From</Text>
+          <Break height={8} />
           <Party party={props.supplierParty["Party"]} />
         </View>
       </View>

@@ -55,7 +55,28 @@ export function ublToJSON(ublStr: string): JSONValue {
   return postProcessUBL(parsed, "Invoice");
 }
 
-function postProcessUBL(ublObject: JSONValue, jpath: string = "") {
+export function formatCurrency(currencyObject: JSONValue) {
+  let result = "";
+
+  if (currencyObject["_text"] < 0) result = "-";
+
+  // Put this in a JSON map sometime
+  const currencyMap = {
+    "AUD": "$",
+  };
+
+  if (Object.keys(currencyMap).includes(currencyObject["$currencyID"])) {
+    result += currencyMap[currencyObject["$currencyID"]];
+  }
+
+  result += `${Math.abs(currencyObject["_text"]).toFixed(2)} ${
+    currencyObject["$currencyID"]
+  }`;
+
+  return result;
+}
+
+function postProcessUBL(ublObject: JSONValue, jpath = "") {
   const alwaysTextNode: string[] = [
     "Invoice.AdditionalDocumentReference.ID",
     "Invoice.AccountingSupplierParty.Party.PartyIdentification.ID",

@@ -3,15 +3,21 @@ import { Text, View } from "@react-pdf/renderer";
 
 import { styles } from "../styles";
 import { JSONValue } from "@src/interfaces";
+import { Break } from "./Break";
 
 export const Metadata = (props: {
   id: JSONValue;
   issueDate: JSONValue;
   paymentTerms: JSONValue;
+  note: JSONValue;
 }) => {
+  const note = [
+    props.note,
+    props.paymentTerms ? props.paymentTerms["Note"] : undefined,
+  ].filter((x) => x);
   return (
     <View>
-      <View style={styles.horizontalFlex}>
+      <View style={[styles.horizontalFlex, { flexWrap: "wrap" }]}>
         <View style={styles.flexbox}>
           <Text style={styles.bold}>Invoice ID</Text>
           <Text>{props.id.toString()}</Text>
@@ -21,10 +27,11 @@ export const Metadata = (props: {
           <Text>{props.issueDate.toString()}</Text>
         </View>
       </View>
-      {props.paymentTerms && (
+      <Break />
+      {note.length && (
         <View>
-          <Text style={styles.bold}>Payment note</Text>
-          <Text>{props.paymentTerms["Note"]}</Text>
+          <Text style={styles.bold}>Invoice note</Text>
+          <Text>{note.join("\n")}</Text>
         </View>
       )}
     </View>

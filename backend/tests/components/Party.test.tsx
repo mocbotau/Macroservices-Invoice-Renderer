@@ -12,15 +12,15 @@ import { Party } from "@src/react/components/Party";
 import testObject from "@tests/resources/example1.json";
 
 describe("Party component", () => {
-  test("It should contain a text field", () => {
+  test("It should contain relevant text fields", () => {
     render(<Party party={testObject["AccountingSupplierParty"]["Party"]} />);
 
     const textFields = [
       "Ebusiness Software Services Pty Ltd",
-      "ABN 80647710156",
+      "ABN: 80647710156",
       "100 Business St",
       "Dulwich Hill 2203",
-      "AU",
+      "Australia",
     ];
     textFields.forEach((text) => expect(screen.getByText(text)).toBeTruthy());
   });

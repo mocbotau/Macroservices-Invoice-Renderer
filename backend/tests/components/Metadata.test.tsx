@@ -18,6 +18,7 @@ describe("Metadata component", () => {
         id={testObject["ID"]}
         issueDate={testObject["IssueDate"]}
         paymentTerms={testObject["PaymentTerms"]}
+        note={testObject["Note"]}
       />
     );
 
