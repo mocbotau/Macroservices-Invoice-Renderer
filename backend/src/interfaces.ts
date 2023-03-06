@@ -1,3 +1,13 @@
+export type InputErrorArgs = {
+  message?: string;
+};
+
+export type RenderArgs = {
+  language: string;
+  style: number;
+  ubl: string;
+};
+
 export type JSONValue =
   | string
   | number

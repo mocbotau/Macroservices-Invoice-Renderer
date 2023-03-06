@@ -1,3 +1,4 @@
+import { InvalidUBL } from "@src/error";
 import { ublToJSON } from "@src/util";
 
 describe("Parsing UBL XML to JSON", () => {
@@ -22,6 +23,6 @@ describe("Parsing UBL XML to JSON", () => {
 
     expect(() => {
       ublToJSON(ublString);
-    }).toThrow(Error);
+    }).toThrow(InvalidUBL);
   });
 });

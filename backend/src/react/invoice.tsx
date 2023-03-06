@@ -6,6 +6,8 @@ import ReactPDF, {
   Document,
   StyleSheet,
 } from "@react-pdf/renderer";
+import { RenderArgs } from "@src/interfaces";
+import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
 
 const styles = StyleSheet.create({
   page: {
@@ -29,7 +31,17 @@ const Invoice = () => (
   </Document>
 );
 
-export default async function renderInvoiceToPDF() {
-  // TODO: make function take arguments to render invoice with
+export default async function renderInvoiceToPDF(args: RenderArgs) {
+  if (!args) {
+    throw new InvalidUBL({ message: "No UBL file was provided." });
+  }
+  if (!args.ubl) {
+    throw new InvalidUBL({ message: "No UBL file was provided." });
+  } else if (!args.language || !["en", "cn"].includes(args.language)) {
+    throw new InvalidLanguage();
+  } else if (args.style === undefined || args.style < 0 || args.style > 4) {
+    // assuming style numbers from 0-4
+    throw new InvalidStyle();
+  }
   return await ReactPDF.renderToStream(<Invoice />);
 }
