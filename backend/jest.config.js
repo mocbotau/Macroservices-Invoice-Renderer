@@ -7,4 +7,9 @@ module.exports = {
     "@tests/(.*)": "<rootDir>/tests/$1",
   },
   collectCoverage: true,
+  coverageThreshold: {
+    global: {
+      lines: 85,
+    },
+  },
 };
