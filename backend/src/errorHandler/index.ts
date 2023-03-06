@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import logger from "@src/logger";
 import {
   InputError,
@@ -7,11 +7,14 @@ import {
   InvalidUBL,
 } from "@src/error";
 
+/* eslint-disable */
 export const errorHandler = (
   err: InvalidUBL | InvalidLanguage | InvalidStyle | Error,
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
+  /* eslint-enable */
   if (err instanceof InputError) {
     logger.debug(err);
     KnownErrorResponder(err, req, res);
