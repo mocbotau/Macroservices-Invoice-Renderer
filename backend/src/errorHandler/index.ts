@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import logger from "@src/logger";
 import {
   InputError,
@@ -10,8 +10,7 @@ import {
 export const errorHandler = (
   err: InvalidUBL | InvalidLanguage | InvalidStyle | Error,
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
   if (err instanceof InputError) {
     logger.debug(err);
