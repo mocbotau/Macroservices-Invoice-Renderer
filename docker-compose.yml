@@ -4,3 +4,4 @@ services:
     build: ./backend
     ports:
       - "80:80"
+    restart: always
