@@ -1,5 +1,15 @@
 import React from "react";
-import ReactPDF, { Page, Text, View, Document } from "@react-pdf/renderer";
+import ReactPDF, {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+} from "@react-pdf/renderer";
+import { RenderArgs } from "@src/interfaces";
+import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
+
+const MAX_STYLES = 5;
 
 import { Party } from "./components/Party";
 import { styles } from "./styles";
@@ -10,6 +20,7 @@ import { Break } from "./components/Break";
 import { InvoiceTable } from "./components/InvoiceTable";
 import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
+import { ublToJSON } from "@src/util";
 
 const Invoice = (props: { ubl: JSONValue }) => {
   const ubl = props.ubl;
@@ -41,6 +52,18 @@ const Invoice = (props: { ubl: JSONValue }) => {
   );
 };
 
-export default async function renderInvoiceToPDF(ubl: JSONValue) {
-  return await ReactPDF.renderToStream(<Invoice ubl={ubl} />);
+export default async function generateInvoice(args: RenderArgs) {
+  if (!args || !args.ubl) {
+    throw new InvalidUBL({ message: "No UBL file was provided." });
+  } else if (!args.language || !["en", "cn"].includes(args.language)) {
+    throw new InvalidLanguage();
+  } else if (
+    args.style === undefined ||
+    args.style < 0 ||
+    args.style >= MAX_STYLES
+  ) {
+    // assuming style numbers from 0-4
+    throw new InvalidStyle();
+  }
+  return await ReactPDF.renderToStream(<Invoice ubl={ublToJSON(args.ubl)}/>);
 }

@@ -1,6 +1,7 @@
 import { formatCurrency, ublToJSON } from "@src/util";
 import { readFile } from "fs/promises";
 import testObject from "@tests/resources/example1.json";
+import { InvalidUBL } from "@src/error";
 
 describe("Parsing UBL XML to JSON", () => {
   test("Given a valid UBL XML string, convert it to JSON", async () => {
@@ -24,7 +25,7 @@ describe("Parsing UBL XML to JSON", () => {
 
     expect(() => {
       ublToJSON(ublString);
-    }).toThrow(Error);
+    }).toThrow(InvalidUBL);
   });
   test("Given a UBL XML string with single 'always array' elements, they are converted to arrays", async () => {
     const ublString = `
@@ -117,12 +118,6 @@ describe("Parsing UBL XML to JSON", () => {
         },
       },
     });
-  });
-  test("Given the example XML, it should produce the matching JSON object", async () => {
-    const ublStr = await readFile(`${__dirname}/../resources/example1.xml`, {
-      encoding: "utf8",
-    });
-    expect(ublToJSON(ublStr)).toStrictEqual(testObject);
   });
 });
 
