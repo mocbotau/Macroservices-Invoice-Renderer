@@ -119,6 +119,12 @@ describe("Parsing UBL XML to JSON", () => {
       },
     });
   });
+  test("Given the example XML, it should produce the matching JSON object", async () => {
+    const ublStr = await readFile(`${__dirname}/../resources/example1.xml`, {
+      encoding: "utf8",
+    });
+    expect(ublToJSON(ublStr)).toStrictEqual(testObject);
+  });
 });
 
 describe("Formatting currency amounts", () => {
