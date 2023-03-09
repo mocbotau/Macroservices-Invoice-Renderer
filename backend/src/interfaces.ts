@@ -1,4 +1,4 @@
-export type InputErrorArgs = {
+export type AppErrorArgs = {
   message?: string;
 };
 

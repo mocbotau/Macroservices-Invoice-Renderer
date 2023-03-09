@@ -1,16 +1,19 @@
-import { InputErrorArgs } from "@src/interfaces";
+import { AppErrorArgs } from "@src/interfaces";
 
 // Custom error class for known error cases
-export class InputError extends Error {
+export class AppError extends Error {
   public readonly statusCode: number;
 
-  constructor(args?: InputErrorArgs) {
+  constructor(args?: AppErrorArgs) {
     super();
     this.name = this.constructor.name;
 
     Object.setPrototypeOf(this, new.target.prototype);
 
-    if (this instanceof InvalidUBL) {
+    if (this instanceof UnauthorisedError) {
+      this.message = "The provided API key is invalid.";
+      this.statusCode = 401;
+    } else if (this instanceof InvalidUBL) {
       this.message = args.message || "The provided UBL is invalid.";
       this.statusCode = 422;
     } else if (this instanceof InvalidStyle) {
@@ -23,6 +26,7 @@ export class InputError extends Error {
   }
 }
 
-export class InvalidUBL extends InputError {}
-export class InvalidStyle extends InputError {}
-export class InvalidLanguage extends InputError {}
+export class InvalidUBL extends AppError {}
+export class InvalidStyle extends AppError {}
+export class InvalidLanguage extends AppError {}
+export class UnauthorisedError extends AppError {}
