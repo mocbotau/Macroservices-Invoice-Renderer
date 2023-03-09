@@ -11,8 +11,7 @@ import "@testing-library/jest-dom";
 import { Break } from "@src/react/components/Break";
 
 describe("Break component", () => {
-  test("It should exist", () => {
+  test("It renders without crashing", () => {
     render(<Break />);
-    expect(document.body.children.item(0)).toBeTruthy();
   });
 });

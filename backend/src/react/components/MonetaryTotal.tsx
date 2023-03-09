@@ -26,8 +26,8 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
   return (
     <View style={[styles.tableWrapper_borderless, styles.totalTable]}>
       {renderOrder
-        .filter((item) => Object.keys(totals).includes(item[0]))
-        .map((item) => (
+        .filter((item) => item[0] in (totals as Object))
+        .map((item, i) => (
           <View
             style={[
               styles.row_borderless,
@@ -35,7 +35,7 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
                 ? { borderTop: 2, borderColor: "black", marginTop: 8 }
                 : {},
             ]}
-            key={`total-${item[0]}`}
+            key={i}
           >
             <Text
               style={[

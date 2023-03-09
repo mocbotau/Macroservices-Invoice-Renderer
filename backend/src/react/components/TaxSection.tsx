@@ -33,7 +33,7 @@ export const TaxSection = (props: { taxTotal: JSONValue }) => {
           </Text>
         </View>
         {(taxTotal["TaxSubtotal"] as JSONValue[]).map((item, i) => (
-          <View style={[styles.row]} key={`taxitem-${i}`}>
+          <View style={[styles.row]} key={i}>
             <Text style={[styles.col, { borderLeftWidth: 0, width: "40%" }]}>
               {/* Some people think it's funny to not follow the spec. */}
               {item["TaxCategory"]["TaxScheme"]["ID"]["_text"] ||

@@ -3,7 +3,7 @@ import { Text, View } from "@react-pdf/renderer";
 
 import { styles } from "../styles";
 import { JSONValue } from "@src/interfaces";
-import { abnID, countryMap } from "@src/constants";
+import { ABN_ID, COUNTRY_MAP } from "@src/constants";
 import { Break } from "./Break";
 
 export const Party = (props: { party: JSONValue }) => {
@@ -27,7 +27,7 @@ export const Party = (props: { party: JSONValue }) => {
   // Some people like including the ABN again here, which is annoying
   if (party["PartyIdentification"]) {
     party["PartyIdentification"] = party["PartyIdentification"].filter(
-      (id) => id["$schemeID"] !== abnID
+      (id) => id["$schemeID"] !== ABN_ID
     );
   }
 
@@ -66,7 +66,7 @@ export const Party = (props: { party: JSONValue }) => {
           .filter((x) => x !== undefined)
           .join(" ")}
       </Text>
-      <Text>{countryMap[countryCode]}</Text>
+      <Text>{COUNTRY_MAP[countryCode]}</Text>
       {postalAddress["AddressLine"] && (
         <Text>{postalAddress["AddressLine"]["Line"]}</Text>
       )}
@@ -75,7 +75,7 @@ export const Party = (props: { party: JSONValue }) => {
         <View>
           <Break height={8} />
           {party["PartyIdentification"].map((id, i) => (
-            <Text key={`party-${i}`}>{id["ID"]["_text"]}</Text>
+            <Text key={i}>{id["ID"]["_text"]}</Text>
           ))}
         </View>
       )}

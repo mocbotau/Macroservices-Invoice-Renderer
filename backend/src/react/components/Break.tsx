@@ -1,9 +1,7 @@
 import React from "react";
 import { View } from "@react-pdf/renderer";
 
-import { JSONValue } from "@src/interfaces";
-
-const defaultHeight = 16;
+const DEFAULT_HEIGHT = 16;
 
 export const Break = (props: { height?: number; solid?: boolean }) => {
   return (
@@ -12,8 +10,8 @@ export const Break = (props: { height?: number; solid?: boolean }) => {
         style={{
           width: "100%",
           height: props.solid
-            ? (props.height || defaultHeight) / 2
-            : props.height || defaultHeight,
+            ? (props.height || DEFAULT_HEIGHT) / 2
+            : props.height || DEFAULT_HEIGHT,
           borderBottom: props.solid ? 2 : 0,
         }}
       />
@@ -21,7 +19,7 @@ export const Break = (props: { height?: number; solid?: boolean }) => {
         <View
           style={{
             width: "100%",
-            height: (props.height || defaultHeight) / 2,
+            height: (props.height || DEFAULT_HEIGHT) / 2,
           }}
         />
       )}

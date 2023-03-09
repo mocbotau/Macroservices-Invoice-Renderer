@@ -44,12 +44,12 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
   });
 
   const totalWeight = Object.keys(usedWeights).reduce(
-    (p, n) => p + usedWeights[n],
+    (p: number, n: string) => p + usedWeights[n],
     0
   );
   const widths = Object.keys(usedWeights)
     .filter((item) => usedWeights[item])
-    .reduce((p, item) => {
+    .reduce((p: { [x: string]: {width: string} }, item: string) => {
       p[item] = { width: `${(usedWeights[item] / totalWeight) * 100}%` };
       return p;
     }, {});
@@ -62,11 +62,11 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
           {renderOrder
             .filter(
               (item) =>
-                Object.keys(usedWeights).includes(item) && usedWeights[item]
+                usedWeights[item]
             )
             .map((item, i) => (
               <View
-                key={`invoiceTableHeader-${i}`}
+                key={i}
                 style={[
                   styles.col,
                   widths[item],
@@ -79,7 +79,7 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
         </View>
         {invoiceLines.map((line, i) => (
           <InvoiceTableRow
-            key={`invoiceLine-${i}`}
+            key={i}
             invoiceLine={line}
             widths={widths}
           />

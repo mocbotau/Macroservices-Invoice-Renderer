@@ -1,5 +1,5 @@
-export const abnID = "0151";
+export const ABN_ID = "0151";
 
-export const countryMap = {
+export const COUNTRY_MAP = {
   "AU": "Australia",
 };

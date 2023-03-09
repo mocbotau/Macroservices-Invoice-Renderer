@@ -90,7 +90,7 @@ export const InvoiceTableRow = (props: {
       )}
       {widths["AllowanceCharge"] && (
         // Not rendering this for now
-        <View style={[styles.col, widths["AllowanceCharge"]]}>{}</View>
+        <View style={[styles.col, widths["AllowanceCharge"]]}></View>
       )}
       {widths["LineExtensionAmount"] && (
         <View style={[styles.col, widths["LineExtensionAmount"]]}>
