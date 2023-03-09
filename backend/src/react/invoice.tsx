@@ -65,5 +65,5 @@ export default async function generateInvoice(args: RenderArgs) {
     // assuming style numbers from 0-4
     throw new InvalidStyle();
   }
-  return await ReactPDF.renderToStream(<Invoice ubl={ublToJSON(args.ubl)}/>);
+  return await ReactPDF.renderToStream(<Invoice ubl={ublToJSON(args.ubl)} />);
 }

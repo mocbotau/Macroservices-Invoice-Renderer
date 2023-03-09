@@ -98,7 +98,7 @@ function postProcessUBL(ublObject: JSONValue, jpath = "") {
   }
 
   const result: JSONValue = Array.isArray(ublObject) ? [] : {};
-  for (const element in (ublObject as Object)) {
+  for (const element in ublObject as Object) {
     result[element] = postProcessUBL(
       ublObject[element],
       Array.isArray(ublObject) ? jpath : `${jpath}.${element}`

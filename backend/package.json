@@ -9,7 +9,8 @@
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
-    "check-prettier": "prettier -c src tests"
+    "check-prettier": "prettier -c src tests",
+    "prettify": "prettier -w src tests"
   },
   "repository": {
     "type": "git",
