@@ -4,6 +4,6 @@ import pdfRoute from "./pdf";
 
 const router = express.Router();
 
-router.post("/", pdfRoute);
+router.use("/pdf", pdfRoute);
 
 export default router;
