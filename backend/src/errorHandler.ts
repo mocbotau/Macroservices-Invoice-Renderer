@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import logger from "@src/logger";
 import {
-  InputError,
+  AppError,
   InvalidLanguage,
   InvalidStyle,
   InvalidUBL,
@@ -14,7 +14,7 @@ export const errorHandler = (
   // eslint-disable-next-line
   next: NextFunction
 ) => {
-  if (err instanceof InputError) {
+  if (err instanceof AppError) {
     logger.debug(err);
     res.status(err.statusCode).json({ message: err.message });
   } else {
