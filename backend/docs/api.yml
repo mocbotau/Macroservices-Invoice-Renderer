@@ -9,7 +9,6 @@ info:
   version: 1.0.0
 servers:
   - url: http://192.9.175.202/v1/
-  - url: http://localhost:3000/v1/
 tags:
   - name: Render
     description: Invoice Rendering
