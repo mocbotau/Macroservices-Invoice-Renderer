@@ -11,8 +11,11 @@ export class AppError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
 
     if (this instanceof UnauthorisedError) {
-      this.message = "The provided API key is invalid.";
+      this.message = "No API key was provided.";
       this.statusCode = 401;
+    } else if (this instanceof InvalidKeyError) {
+      this.message = "The provided API key is invalid.";
+      this.statusCode = 403;
     } else if (this instanceof InvalidUBL) {
       this.message = args.message || "The provided UBL is invalid.";
       this.statusCode = 422;
@@ -30,3 +33,4 @@ export class InvalidUBL extends AppError {}
 export class InvalidStyle extends AppError {}
 export class InvalidLanguage extends AppError {}
 export class UnauthorisedError extends AppError {}
+export class InvalidKeyError extends AppError {}
