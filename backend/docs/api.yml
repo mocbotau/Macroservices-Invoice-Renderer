@@ -1,0 +1,159 @@
+openapi: 3.0.0
+info:
+  title: Macroservices Invoice Renderer
+  description: |-
+    This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
+
+    Some useful links:
+    - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/se2021-23t1-einvoicing-api-f14a-macroservices-rendering-api) repository
+  version: 1.0.0
+servers:
+  - url: http://192.9.175.202/v1/
+tags:
+  - name: Render
+    description: Invoice Rendering
+  - name: Healthcheck
+    description: Server Status
+paths:
+  /healthcheck:
+    get:
+      tags:
+        - Healthcheck
+      summary: Returns a short response on success to check that the server is running.
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthcheckResponse"
+  /invoice/render/pdf:
+    post:
+      tags:
+        - Render
+      summary: Render a UBL XML file into a PDF file.
+      description: Given a UBL XML file, renders into a human readable visualisation in PDF form.
+      security:
+        - APIKey: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestBody"
+      responses:
+        "200":
+          description: OK. Returns a PDF.
+          content:
+            application/pdf:
+              schema:
+                $ref: "#/components/schemas/RenderPDFResponse"
+        "400":
+          $ref: "#/components/responses/InvalidInputs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/InvalidUBL"
+  /invoice/render/html:
+    post:
+      tags:
+        - Render
+      summary: Render a UBL XML file and returns HTML.
+      description: Given a UBL XML file, renders into a human readable visualisation in HTML form.
+      security:
+        - APIKey: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestBody"
+      responses:
+        "200":
+          description: OK. Returns HTML.
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/RenderHTMLResponse"
+
+        "400":
+          $ref: "#/components/responses/InvalidInputs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/InvalidUBL"
+  /invoice/render/json:
+    post:
+      tags:
+        - Render
+      summary: Render a UBL XML file and returns JSON.
+      description: Given a UBL XML file, renders into a human readable visualisation in JSON form.
+      security:
+        - APIKey: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestBody"
+      responses:
+        "200":
+          description: OK. Returns JSON.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenderJSONResponse"
+        "400":
+          $ref: "#/components/responses/InvalidInputs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/InvalidUBL"
+
+components:
+  responses:
+    Unauthorized:
+      description: "No API key was provided."
+    Forbidden:
+      description: "An invalid API key was provided."
+    InvalidUBL:
+      description: "An invalid UBL file was provided."
+    InvalidInputs:
+      description: "An invalid style number or language was provided."
+  securitySchemes:
+    APIKey:
+      type: apiKey
+      in: header
+      name: api-key
+  schemas:
+    RequestBody:
+      type: object
+      properties:
+        ubl:
+          type: string
+          description: "The UBL XML file data formatted as a single string. All quotation marks should be single quotes, and there should be no line breaks."
+          example: "<Invoice></Invoice>"
+        style:
+          type: integer
+        language:
+          type: string
+          enum:
+            - "en"
+            - "cn"
+    HealthcheckResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    RenderPDFResponse:
+      type: string
+      format: binary
+    RenderJSONResponse:
+      type: object
+      additionalProperties: true
+    RenderHTMLResponse:
+      type: string
+      example: "<html>Invoice</html>"
