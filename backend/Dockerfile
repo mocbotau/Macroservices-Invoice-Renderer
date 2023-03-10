@@ -8,7 +8,6 @@ COPY package.json package-lock.json ./
 
 RUN npm ci --omit=dev
 
-COPY .env.prod ./.env
 COPY . .
 
 CMD ["npm", "start"]
