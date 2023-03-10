@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "@react-pdf/renderer";
-
-const DEFAULT_HEIGHT = 16;
+import { DEFAULT_HEIGHT } from "@src/constants";
 
 export const Break = (props: { height?: number; solid?: boolean }) => {
   return (

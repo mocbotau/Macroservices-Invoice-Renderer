@@ -9,8 +9,6 @@ import ReactPDF, {
 import { RenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
 
-const MAX_STYLES = 5;
-
 import { Party } from "./components/Party";
 import { styles } from "./styles";
 import { JSONValue } from "@src/interfaces";
@@ -21,6 +19,7 @@ import { InvoiceTable } from "./components/InvoiceTable";
 import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
+import { MAX_STYLES } from "@src/constants";
 
 const Invoice = (props: { ubl: JSONValue }) => {
   const ubl = props.ubl;
