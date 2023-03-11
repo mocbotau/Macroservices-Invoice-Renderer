@@ -1,9 +1,11 @@
 import React from "react";
-import { Text, View } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
 import { InvoiceTableRow } from "./InvoiceTableRow";
 import { styles } from "../styles";
+
+import View from "./base/View";
+import Text from "./base/Text";
 
 const baseItems = {
   "ID": [2, "Item ID"],

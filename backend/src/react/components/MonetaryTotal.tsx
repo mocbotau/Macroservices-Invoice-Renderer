@@ -1,9 +1,11 @@
 import React from "react";
-import { View, Text } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
 import { styles } from "../styles";
 import { formatCurrency } from "@src/util";
+
+import View from "./base/View";
+import Text from "./base/Text";
 
 const renderOrder = [
   ["LineExtensionAmount", "Subtotal (items)"],
