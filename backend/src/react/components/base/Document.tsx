@@ -3,13 +3,13 @@ import RPDF from "@react-pdf/renderer";
 
 import { renderingContext, RenderingContexts } from "./renderingContext";
 
-const Document = ({ children }) => {
+const Document = (props) => {
   const renderType = useContext(renderingContext);
 
   if (renderType === RenderingContexts.Pdf) {
-    return <RPDF.Document>{children}</RPDF.Document>;
+    return <RPDF.Document>{props.children}</RPDF.Document>;
   } else {
-    return <html style={{ "display": "flex" }}>{children}</html>;
+    return <html style={{ "display": "flex" }}>{props.children}</html>;
   }
 };
 
