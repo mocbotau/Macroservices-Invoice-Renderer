@@ -1,21 +1,11 @@
+import "../jest-setup";
+
 import request from "supertest";
 import path from "path";
 import app from "@src/app";
 import { readFile } from "fs/promises";
-import { createHash } from "crypto";
 import { ublToJSON } from "@src/util";
-
-const TEST_API_KEY = "SENG2021-F14AMACROSERVICES";
-
-function renderInvoiceRequestTest() {
-  return request(app)
-    .post("/v1/invoice/render/json")
-    .set({ "api-key": TEST_API_KEY });
-}
-
-beforeEach(() => {
-  process.env.API_KEY = createHash("sha256").update(TEST_API_KEY).digest("hex");
-});
+import { renderInvoiceRequestTest } from "./util";
 
 describe("Invoice route", () => {
   test("No API key provided", async () => {
@@ -34,12 +24,12 @@ describe("Invoice route", () => {
   });
 
   test("No input body provided", async () => {
-    const resp = await renderInvoiceRequestTest();
+    const resp = await renderInvoiceRequestTest("json");
     expect(resp.statusCode).toBe(422);
   });
 
   test("Invalid UBL provided", async () => {
-    const resp = await renderInvoiceRequestTest().send({
+    const resp = await renderInvoiceRequestTest("json").send({
       ubl: "123",
     });
     expect(resp.statusCode).toBe(422);
@@ -53,7 +43,7 @@ describe("Invoice route", () => {
       }
     );
 
-    const resp = await renderInvoiceRequestTest().send({
+    const resp = await renderInvoiceRequestTest("json").send({
       ubl,
     });
 

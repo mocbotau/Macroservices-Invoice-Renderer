@@ -1,3 +1,5 @@
+import "../jest-setup";
+
 import request from "supertest";
 import path from "path";
 import app from "@src/app";
