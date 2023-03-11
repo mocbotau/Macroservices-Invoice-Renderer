@@ -1,86 +1,31 @@
 import { StyleSheet, Font } from "@react-pdf/renderer";
+import "@react-pdf/font";
 
 import { INNER_WIDTH, PAGE_MARGIN, PAGE_WIDTH } from "@src/constants";
 
 Font.register({
-  family: "Noto Sans SC",
-  src: "fonts/NotoSansSC-Regular.otf",
+  family: "arial-regular",
+  src: "fonts/Arial-Unicode.ttf",
 });
 
 Font.register({
-  family: "Noto Sans SC Bold",
-  src: "fonts/NotoSansSC-Bold.otf",
+  family: "arial-bold",
+  src: "fonts/Arial-Unicode-Bold.ttf",
 });
 
 Font.register({
-  family: "Noto Sans SC Light",
-  src: "fonts/NotoSansSC-Light.otf",
-});
-
-Font.register({
-  family: "Noto Sans KR",
-  src: "fonts/NotoSansKR-Regular.otf",
-});
-
-Font.register({
-  family: "Noto Sans KR Bold",
-  src: "fonts/NotoSansKR-Bold.otf",
-});
-
-Font.register({
-  family: "Noto Sans KR Light",
-  src: "fonts/NotoSansKR-Light.otf",
-});
-
-Font.register({
-  family: "Noto Sans JP",
-  src: "fonts/NotoSansJP-Regular.otf",
-});
-
-Font.register({
-  family: "Noto Sans JP Bold",
-  src: "fonts/NotoSansJP-Bold.otf",
-});
-
-Font.register({
-  family: "Noto Sans JP Light",
-  src: "fonts/NotoSansJP-Light.otf",
+  family: "arial",
+  src: "fonts/Arial-Unicode-Italic.ttf",
 });
 
 export const styles = StyleSheet.create({
   page: {
     margin: PAGE_MARGIN,
     fontSize: 14,
+    fontFamily: "arial-regular",
   },
   section: {
     padding: 8,
-  },
-  other_bold: {
-    fontFamily: "Noto Sans SC Bold",
-  },
-  other_light: {
-    fontFamily: "Noto Sans SC Light",
-  },
-  other_regular: {
-    fontFamily: "Noto Sans SC",
-  },
-  ko_bold: {
-    fontFamily: "Noto Sans KR Bold",
-  },
-  ko_light: {
-    fontFamily: "Noto Sans KR Light",
-  },
-  ko_regular: {
-    fontFamily: "Noto Sans KR",
-  },
-  ja_bold: {
-    fontFamily: "Noto Sans JP Bold",
-  },
-  ja_light: {
-    fontFamily: "Noto Sans JP Light",
-  },
-  ja_regular: {
-    fontFamily: "Noto Sans JP",
   },
   title: {
     fontSize: 48,
@@ -88,6 +33,12 @@ export const styles = StyleSheet.create({
   h1: {
     fontSize: 24,
     marginTop: 12,
+  },
+  bold: {
+    fontFamily: "arial-bold",
+  },
+  oblique: {
+    fontFamily: "arial-oblique",
   },
   big: {
     fontSize: 18,

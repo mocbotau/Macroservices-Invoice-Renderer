@@ -4,7 +4,7 @@ import { JSONValue } from "@src/interfaces";
 import { styles } from "../styles";
 import { formatCurrency } from "@src/util";
 import { useTranslation } from "react-i18next";
-import { regularLanguage } from "../utils";
+import { i18n } from "i18next";
 
 import View from "./base/View";
 import Text from "./base/Text";
@@ -20,13 +20,16 @@ const renderOrder = [
   ["PayableAmount", "Payable amount"],
 ];
 
-export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
+export const MonetaryTotal = (props: {
+  legalMonetaryTotal: JSONValue;
+  i18next: i18n;
+}) => {
   const totals = props.legalMonetaryTotal;
 
   if (!totals["AllowanceTotalAmount"] && !totals["ChargeTotalAmount"]) {
     delete totals["LineExtensionAmount"];
   }
-  const { t: translateHook, i18n } = useTranslation();
+  const { t: translateHook } = useTranslation();
 
   return (
     <View style={[styles.tableWrapper_borderless, styles.totalTable]}>
@@ -47,7 +50,6 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
                 styles.col_borderless,
                 { width: "60%", padding: 2 },
                 item[0] === "PayableAmount" ? styles.big : {},
-                regularLanguage(i18n.language),
               ]}
             >
               {translateHook(item[1])}:
@@ -57,7 +59,6 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
                 styles.col_borderless,
                 { width: "40%", textAlign: "right", padding: 2 },
                 item[0] === "PayableAmount" ? styles.big : {},
-                regularLanguage(i18n.language),
               ]}
             >
               {formatCurrency(totals[item[0]])}

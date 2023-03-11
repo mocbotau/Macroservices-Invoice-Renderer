@@ -4,10 +4,10 @@ import { JSONValue } from "@src/interfaces";
 import { InvoiceTableRow } from "./InvoiceTableRow";
 import { styles } from "../styles";
 import { useTranslation } from "react-i18next";
-import { boldLanguage, regularLanguage } from "../utils";
 
 import View from "./base/View";
 import Text from "./base/Text";
+import { i18n } from "i18next";
 
 const baseItems = {
   "ID": [2, "Item ID"],
@@ -37,11 +37,14 @@ const renderOrder = [
   "LineExtensionAmount",
 ];
 
-export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
+export const InvoiceTable = (props: {
+  invoiceLines: JSONValue[];
+  i18next: i18n;
+}) => {
   const invoiceLines = props.invoiceLines;
   const usedWeights = {};
 
-  const { t: translateHook, i18n } = useTranslation();
+  const { t: translateHook } = useTranslation();
 
   invoiceLines.forEach((line) => {
     Object.keys(line).forEach((item) => {
@@ -62,9 +65,7 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
 
   return (
     <View>
-      <Text style={[styles.h1, regularLanguage(i18n.language)]}>
-        {translateHook("invoice_items")}
-      </Text>
+      <Text style={[styles.h1]}>{translateHook("invoice_items")}</Text>
       <View style={styles.tableWrapper}>
         <View style={[styles.row, { borderTopWidth: 0 }]}>
           {renderOrder
@@ -78,14 +79,19 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
                   i === 0 ? { borderLeftWidth: 0 } : {},
                 ]}
               >
-                <Text style={boldLanguage(i18n.language)}>
+                <Text style={styles.bold}>
                   {translateHook(baseItems[item][1])}
                 </Text>
               </View>
             ))}
         </View>
         {invoiceLines.map((line, i) => (
-          <InvoiceTableRow key={i} invoiceLine={line} widths={widths} />
+          <InvoiceTableRow
+            key={i}
+            invoiceLine={line}
+            widths={widths}
+            i18next={props.i18next}
+          />
         ))}
       </View>
     </View>

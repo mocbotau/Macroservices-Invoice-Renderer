@@ -3,8 +3,7 @@ import HttpBackend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
 import { SUPPORTED_LANGUAGES } from "./constants";
 
-const apiKey = "59F9vPV3KBAD7sew2PBV4g";
-const loadPath = `https://api.i18nexus.com/project_resources/translations/{{lng}}/{{ns}}.json?api_key=${apiKey}`;
+const loadPath = `https://api.i18nexus.com/project_resources/translations/{{lng}}/{{ns}}.json?api_key=${process.env.I18N_NEXUS_API_KEY}`;
 
 i18next
   .use(HttpBackend)
@@ -21,3 +20,5 @@ i18next
       loadPath: loadPath,
     },
   });
+
+export default i18next;

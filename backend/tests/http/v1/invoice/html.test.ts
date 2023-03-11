@@ -37,7 +37,7 @@ describe("Invoice route", () => {
   test("Invalid style provided", async () => {
     const resp = await renderInvoiceRequestTest("html").send({
       ubl: "123",
-      language: "cn",
+      language: "zh",
       style: -1,
     });
     expect(resp.statusCode).toBe(400);
@@ -51,7 +51,7 @@ describe("Invoice route", () => {
           encoding: "utf8",
         }
       ),
-      language: "cn",
+      language: "zh",
       style: 3,
     });
 

@@ -8,6 +8,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { InvoiceTableRow } from "@src/react/components/InvoiceTableRow";
+import i18next from "@tests/components/i18nTest";
 
 import testObject from "@tests/resources/example1.json";
 
@@ -25,6 +26,7 @@ describe("Invoice table row component", () => {
       <InvoiceTableRow
         invoiceLine={testObject.InvoiceLine[0]}
         widths={widths}
+        i18next={i18next}
       />
     );
 

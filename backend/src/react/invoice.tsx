@@ -14,8 +14,7 @@ import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
 import { MAX_STYLES, SUPPORTED_LANGUAGES } from "@src/constants";
-import "@src/i18n.ts";
-import i18next from "i18next";
+import i18next from "@src/i18n";
 
 import {
   renderingContext,
@@ -39,6 +38,7 @@ const Invoice = (props: {
             <Header
               supplierParty={ubl["AccountingSupplierParty"]}
               customerParty={ubl["AccountingCustomerParty"]}
+              i18next={i18next}
             />
             <Break height={32} solid />
             <Metadata
@@ -46,13 +46,17 @@ const Invoice = (props: {
               issueDate={ubl["IssueDate"]}
               paymentTerms={ubl["PaymentTerms"]}
               note={ubl["Note"]}
+              i18next={i18next}
             />
             <Break height={32} solid />
-            <InvoiceTable invoiceLines={ubl["InvoiceLine"]} />
+            <InvoiceTable invoiceLines={ubl["InvoiceLine"]} i18next={i18next} />
             <Break height={8} />
-            <TaxSection taxTotal={ubl["TaxTotal"]} />
+            <TaxSection taxTotal={ubl["TaxTotal"]} i18next={i18next} />
             <Break height={8} />
-            <MonetaryTotal legalMonetaryTotal={ubl["LegalMonetaryTotal"]} />
+            <MonetaryTotal
+              legalMonetaryTotal={ubl["LegalMonetaryTotal"]}
+              i18next={i18next}
+            />
           </View>
         </Page>
       </Document>

@@ -3,8 +3,7 @@ import React from "react";
 import { JSONValue } from "@src/interfaces";
 import { styles } from "../styles";
 import { formatCurrency } from "@src/util";
-import { useTranslation } from "react-i18next";
-import { lightLanguage } from "../utils";
+import { i18n } from "i18next";
 
 import View from "./base/View";
 import Text from "./base/Text";
@@ -13,12 +12,11 @@ export const InvoiceTableRow = (props: {
   key?: number;
   invoiceLine: JSONValue;
   widths: { [x: string]: { width: string } };
+  i18next: i18n;
 }) => {
   const defaultGST = 10;
   const widths = props.widths;
   const invoiceLine = props.invoiceLine;
-
-  const { i18n } = useTranslation();
 
   return (
     <View style={styles.row}>
@@ -43,7 +41,7 @@ export const InvoiceTableRow = (props: {
               : " *"}
           </Text>
           {invoiceLine["Item"]["Description"] && (
-            <Text style={[lightLanguage(i18n.language), { fontSize: 12 }]}>
+            <Text style={[styles.oblique, { fontSize: 12 }]}>
               {invoiceLine["Item"]["Description"]}
             </Text>
           )}
@@ -100,7 +98,7 @@ export const InvoiceTableRow = (props: {
       )}
       {widths["LineExtensionAmount"] && (
         <View style={[styles.col, widths["LineExtensionAmount"]]}>
-          <Text style={{ textAlign: "right" }}>
+          <Text style={[{ textAlign: "right" }]}>
             {formatCurrency(invoiceLine["LineExtensionAmount"])}
           </Text>
         </View>

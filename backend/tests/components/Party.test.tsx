@@ -22,6 +22,7 @@ describe("Party component", () => {
       "Dulwich Hill 2203",
       "Australia",
     ];
+
     textFields.forEach((text) => expect(screen.getByText(text)).toBeTruthy());
   });
 });

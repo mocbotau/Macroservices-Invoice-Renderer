@@ -28,7 +28,8 @@ const formatConsole = winston.format.combine(
   winston.format.colorize(),
   winston.format.printf(
     (info) => `${info.timestamp} ${info.level}: ${info.message}`
-  )
+  ),
+  winston.format.errors({ stack: true })
 );
 
 const formatLogs = winston.format.combine(
@@ -36,7 +37,8 @@ const formatLogs = winston.format.combine(
   // remove ansi colours from morgan
   winston.format.printf(
     (info) => `${info.timestamp} ${info.level}: ${stripAnsi(info.message)}`
-  )
+  ),
+  winston.format.errors({ stack: true })
 );
 
 // Logs separate files, errors and stack traces only in error.log
