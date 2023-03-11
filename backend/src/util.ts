@@ -53,24 +53,7 @@ export function ublToJSON(ublStr: string): JSONValue {
       attributeName.replace(/^c.c:/, ""),
   };
   const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
-  const result = postProcessUBL(parsed, "Invoice");
-  const missingComponents: string[] = [];
-
-  REQUIRED_FIELDS.forEach((key: string) => {
-    if (!result[key]) {
-      missingComponents.push(key);
-    }
-  });
-
-  if (missingComponents.length !== 0) {
-    throw new InvalidUBL({
-      message: `The provided UBL is missing some mandatory components: ${missingComponents
-        .join(", ")
-        .replace(/,\s*$/, "")}`,
-    });
-  }
-
-  return result;
+  return postProcessUBL(parsed, "Invoice");
 }
 
 export function formatCurrency(currencyObject: JSONValue) {
