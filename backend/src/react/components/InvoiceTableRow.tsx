@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { JSONValue } from "@src/interfaces";
-import { styles } from "../styles";
+import { Detail, extraStyles, styleContext } from "../styles";
 import { formatCurrency } from "@src/util";
 import { i18n } from "i18next";
 
 import View from "./base/View";
 import Text from "./base/Text";
+import { Show } from "./Show";
 
 export const InvoiceTableRow = (props: {
   key?: number;
@@ -14,25 +15,27 @@ export const InvoiceTableRow = (props: {
   widths: { [x: string]: { width: string } };
   i18next: i18n;
 }) => {
+  const userStyle = extraStyles[useContext(styleContext)];
+
   const defaultGST = 10;
   const widths = props.widths;
   const invoiceLine = props.invoiceLine;
 
   return (
-    <View style={styles.row}>
+    <View style={userStyle["row"]}>
       {widths["ID"] && (
-        <View style={[styles.col, widths["ID"], { borderLeftWidth: 0 }]}>
+        <View style={[userStyle["col"], widths["ID"]]}>
           <Text>{invoiceLine["ID"]}</Text>
         </View>
       )}
       {widths["AccountingCost"] && (
-        <View style={[styles.col, widths["AccountingCost"]]}>
+        <View style={[userStyle["col"], widths["AccountingCost"]]}>
           <Text>{invoiceLine["AccountingCost"]}</Text>
         </View>
       )}
       {widths["Item"] && (
         // Omitting lots of properties
-        <View style={[styles.col, widths["Item"]]}>
+        <View style={[userStyle["col"], widths["Item"]]}>
           <Text>
             {invoiceLine["Item"]["Name"]}
             {invoiceLine["Item"]["ClassifiedTaxCategory"]["Percent"] ===
@@ -40,19 +43,21 @@ export const InvoiceTableRow = (props: {
               ? ""
               : " *"}
           </Text>
-          {invoiceLine["Item"]["Description"] && (
-            <Text style={[styles.oblique, { fontSize: 12 }]}>
-              {invoiceLine["Item"]["Description"]}
-            </Text>
-          )}
+          <Show min={Detail.DETAILED}>
+            {invoiceLine["Item"]["Description"] && (
+              <Text style={userStyle["oblique"]}>
+                {invoiceLine["Item"]["Description"]}
+              </Text>
+            )}
+          </Show>
         </View>
       )}
       {widths["InvoicePeriod"] && (
         // Not rendering this for now
-        <View style={[styles.col, widths["InvoicePeriod"]]}></View>
+        <View style={[userStyle["col"], widths["InvoicePeriod"]]}></View>
       )}
       {widths["OrderLineReference"] && (
-        <View style={[styles.col, widths["OrderLineReference"]]}>
+        <View style={[userStyle["col"], widths["OrderLineReference"]]}>
           <Text>
             {invoiceLine["OrderLineReference"]
               ? invoiceLine["OrderLineReference"]["LineID"]
@@ -61,7 +66,7 @@ export const InvoiceTableRow = (props: {
         </View>
       )}
       {widths["DocumentReference"] && (
-        <View style={[styles.col, widths["DocumentReference"]]}>
+        <View style={[userStyle["col"], widths["DocumentReference"]]}>
           <Text>
             {invoiceLine["DocumentReference"]
               ? `${invoiceLine["DocumentReference"]["ID"]["_text"]}`
@@ -70,13 +75,13 @@ export const InvoiceTableRow = (props: {
         </View>
       )}
       {widths["Note"] && (
-        <View style={[styles.col, widths["Note"]]}>
+        <View style={[userStyle["col"], widths["Note"]]}>
           <Text>{invoiceLine["Note"]}</Text>
         </View>
       )}
       {widths["Price"] && (
         // Omitting units and discount
-        <View style={[styles.col, widths["Price"]]}>
+        <View style={[userStyle["col"], widths["Price"]]}>
           <Text>{formatCurrency(invoiceLine["Price"]["PriceAmount"])}</Text>
           {invoiceLine["Price"]["BaseQuantity"] &&
           invoiceLine["Price"]["BaseQuantity"]["_text"] !== 1 ? (
@@ -88,17 +93,17 @@ export const InvoiceTableRow = (props: {
       )}
       {widths["InvoicedQuantity"] && (
         // Omitting units
-        <View style={[styles.col, widths["InvoicedQuantity"]]}>
+        <View style={[userStyle["col"], widths["InvoicedQuantity"]]}>
           <Text>{invoiceLine["InvoicedQuantity"]["_text"]}</Text>
         </View>
       )}
       {widths["AllowanceCharge"] && (
         // Not rendering this for now
-        <View style={[styles.col, widths["AllowanceCharge"]]}></View>
+        <View style={[userStyle["col"], widths["AllowanceCharge"]]}></View>
       )}
       {widths["LineExtensionAmount"] && (
-        <View style={[styles.col, widths["LineExtensionAmount"]]}>
-          <Text style={[{ textAlign: "right" }]}>
+        <View style={[userStyle["col"], widths["LineExtensionAmount"]]}>
+          <Text style={{ textAlign: "right" }}>
             {formatCurrency(invoiceLine["LineExtensionAmount"])}
           </Text>
         </View>

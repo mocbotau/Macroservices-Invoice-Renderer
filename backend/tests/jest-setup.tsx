@@ -11,7 +11,6 @@ jest.mock("@react-pdf/renderer", () => ({
       res.send("pretend this is a pdf");
     },
   }),
-  StyleSheet: { create: () => ({}) },
   Text: ({ children }) => <p>{children}</p>,
   View: ({ children }) => <div>{children}</div>,
   Font: { register: () => null },

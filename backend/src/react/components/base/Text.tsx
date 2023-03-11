@@ -16,6 +16,13 @@ const Text = (props) => {
     if (!styles) {
       styles = {};
     }
+    for (const dir of ["", "Top", "Bottom", "Left", "Right"]) {
+      if (styles[`border${dir}Width`] && styles.borderColor) {
+        styles[`border${dir}`] = `${styles[`border${dir}Width`]}px solid ${
+          styles.borderColor
+        }`;
+      }
+    }
     if (styles.fontFamily === "Helvetica-Bold") {
       delete styles["fontFamily"];
       styles.fontWeight = "bold";
@@ -27,7 +34,9 @@ const Text = (props) => {
     if (!styles.margin) {
       styles.margin = 0;
     }
-
+    if (styles.textAlign === "right") {
+      styles.justifyContent = "flex-end";
+    }
     return <p style={styles}>{props.children}</p>;
   }
 };

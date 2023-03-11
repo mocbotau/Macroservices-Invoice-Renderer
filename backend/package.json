@@ -5,7 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "NODE_ENV=production ts-node -r tsconfig-paths/register src/server.ts",
-    "dev": "NODE_ENV=development nodemon -w ./src src/server.ts -x 'ts-node -r tsconfig-paths/register'",
+    "dev": "NODE_ENV=development nodemon -e ts,tsx -w ./src src/server.ts -x 'ts-node -r tsconfig-paths/register'",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",

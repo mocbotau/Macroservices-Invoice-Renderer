@@ -1,46 +1,147 @@
-import React from "react";
+import React, { useContext } from "react";
 
-import { styles } from "../styles";
-import { JSONValue } from "@src/interfaces";
+import { Detail, extraStyles, styleContext } from "../styles";
+import { JSONValue, PeriodType } from "@src/interfaces";
 import { Break } from "./Break";
 import { useTranslation } from "react-i18next";
 
 import View from "./base/View";
 import Text from "./base/Text";
 import { i18n } from "i18next";
+import { Show } from "./Show";
+import { COUNTRY_MAP } from "@src/constants";
 
 export const Metadata = (props: {
   id: JSONValue;
+  invoicePeriod: PeriodType;
   issueDate: JSONValue;
+  dueDate: JSONValue;
+  accountingCost: JSONValue;
   paymentTerms: JSONValue;
   note: JSONValue;
   i18next: i18n;
+  delivery: JSONValue;
 }) => {
+  const userStyle = extraStyles[useContext(styleContext)];
   const note = [
     props.note,
     props.paymentTerms ? props.paymentTerms["Note"] : undefined,
   ].filter((x) => x);
 
-  const { t: translateHook, i18n } = useTranslation();
+  let deliveryAddress: JSONValue, countryCode: string;
+  const { t: translateHook } = useTranslation();
+
+  if (props.delivery && props.delivery["DeliveryLocation"]) {
+    deliveryAddress = props.delivery["DeliveryLocation"]["Address"];
+    countryCode =
+      deliveryAddress["Country"]["IdentificationCode"]["_text"] ||
+      deliveryAddress["Country"]["IdentificationCode"];
+  }
+
+  let period = "";
+  if (props.invoicePeriod) {
+    if (props.invoicePeriod["StartDate"] && props.invoicePeriod["EndDate"]) {
+      period = `${props.invoicePeriod["StartDate"]} - ${props.invoicePeriod["EndDate"]}`;
+    } else if (props.invoicePeriod["StartDate"]) {
+      period = translateHook("period_start_date", {
+        start_date: props.invoicePeriod["StartDate"],
+      });
+    } else if (props.invoicePeriod["EndDate"]) {
+      period = translateHook("period_end_date", {
+        end_date: props.invoicePeriod["EndDate"],
+      });
+    } else {
+      period = translateHook("unknown_period");
+    }
+  }
 
   return (
     <View>
-      <View style={[styles.horizontalFlex, { flexWrap: "wrap" }]}>
-        <View style={styles.flexbox}>
-          <Text style={styles.bold}>{translateHook("invoice_id")}</Text>
+      <View style={[userStyle["horizontalFlex"], { flexWrap: "wrap" }]}>
+        <View style={userStyle["flexbox"]}>
+          <Text style={userStyle["bold"]}>{translateHook("invoice_id")}</Text>
           <Text>{props.id.toString()}</Text>
         </View>
-        <View style={styles.flexbox}>
-          <Text style={styles.bold}>{translateHook("issue_date")}</Text>
+        {props.invoicePeriod && (
+          <Show min={Detail.DEFAULT} style={userStyle["flexbox"]}>
+            <Text style={userStyle["bold"]}>
+              {translateHook("invoice_period")}
+            </Text>
+            <Text>{period}</Text>
+          </Show>
+        )}
+        <View style={userStyle["flexbox"]}>
+          <Text style={userStyle["bold"]}>{translateHook("issue_date")}</Text>
           <Text>{props.issueDate.toString()}</Text>
         </View>
+        {props.dueDate && (
+          <View style={userStyle["flexbox"]}>
+            <Text style={userStyle["bold"]}>{translateHook("due_date")} </Text>
+            <Text>{props.dueDate.toString()}</Text>
+          </View>
+        )}
+        {props.delivery && (
+          <Show min={Detail.DEFAULT} style={userStyle["flexbox"]}>
+            <Text style={userStyle["bold"]}>
+              {translateHook("delivery_details")}{" "}
+            </Text>
+            {props.delivery["ActualDeliveryDate"] && (
+              <Text>
+                {translateHook("delivered_on", {
+                  delivery_date: props.delivery["ActualDeliveryDate"],
+                })}
+              </Text>
+            )}
+            {props.delivery["DeliveryParty"] && (
+              <Text>
+                {translateHook("delivered_to", {
+                  delivery_party:
+                    props.delivery["DeliveryParty"]["PartyName"]["Name"],
+                })}
+              </Text>
+            )}
+            {(props.delivery["ActualDeliveryDate"] ||
+              props.delivery["DeliveryParty"]) && <Break height={8} />}
+            {deliveryAddress && (
+              <View>
+                {deliveryAddress["StreetName"] && (
+                  <Text>{deliveryAddress["StreetName"]}</Text>
+                )}
+                {deliveryAddress["AdditionalStreetName"] && (
+                  <Text>{deliveryAddress["AdditionalStreetName"]}</Text>
+                )}
+                <Text>
+                  {[
+                    deliveryAddress["CityName"],
+                    deliveryAddress["CountrySubentity"],
+                    deliveryAddress["PostalZone"],
+                  ]
+                    .filter((x) => x !== undefined)
+                    .join(" ")}
+                </Text>
+                <Text>{COUNTRY_MAP[countryCode] || countryCode}</Text>
+                {deliveryAddress["AddressLine"] && (
+                  <Text>{deliveryAddress["AddressLine"]["Line"]}</Text>
+                )}
+              </View>
+            )}
+          </Show>
+        )}
+        {props.accountingCost && (
+          <View style={userStyle["flexbox"]}>
+            <Text style={userStyle["bold"]}>
+              {translateHook("invoice_category")}
+            </Text>
+            <Text>{props.accountingCost.toString()}</Text>
+          </View>
+        )}
       </View>
-      <Break />
       {note.length && (
-        <View>
-          <Text style={styles.bold}>{translateHook("invoice_note")}</Text>
+        <Show min={Detail.DEFAULT}>
+          <Break />
+          <Text style={userStyle["bold"]}>{translateHook("invoice_note")}</Text>
           <Text>{note.join("\n")}</Text>
-        </View>
+        </Show>
       )}
     </View>
   );
