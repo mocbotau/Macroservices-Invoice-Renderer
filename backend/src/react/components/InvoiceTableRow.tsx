@@ -1,5 +1,4 @@
 import React from "react";
-import { Text, View } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
 import { styles } from "../styles";
@@ -7,7 +6,11 @@ import { formatCurrency } from "@src/util";
 import { useTranslation } from "react-i18next";
 import { lightLanguage } from "../utils";
 
+import View from "./base/View";
+import Text from "./base/Text";
+
 export const InvoiceTableRow = (props: {
+  key?: number;
   invoiceLine: JSONValue;
   widths: { [x: string]: { width: string } };
 }) => {

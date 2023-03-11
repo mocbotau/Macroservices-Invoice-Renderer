@@ -7,6 +7,7 @@ import "./jest-setup";
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { Font } from "@react-pdf/renderer";
 
 import testObject from "@tests/resources/example1.json";
 import { TaxSection } from "@src/react/components/TaxSection";

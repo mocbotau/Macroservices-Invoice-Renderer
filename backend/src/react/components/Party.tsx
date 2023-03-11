@@ -1,11 +1,13 @@
 import React from "react";
-import { Text, View } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
 import { ABN_ID, COUNTRY_MAP } from "@src/constants";
 import { Break } from "./Break";
 import { boldLanguage } from "../utils";
 import { useTranslation } from "react-i18next";
+
+import View from "./base/View";
+import Text from "./base/Text";
 
 export const Party = (props: { party: JSONValue }) => {
   const party = props.party;
