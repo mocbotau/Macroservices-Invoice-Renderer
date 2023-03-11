@@ -8,6 +8,7 @@ import View from "./base/View";
 import Text from "./base/Text";
 
 export const InvoiceTableRow = (props: {
+  key?: number;
   invoiceLine: JSONValue;
   widths: { [x: string]: { width: string } };
 }) => {
