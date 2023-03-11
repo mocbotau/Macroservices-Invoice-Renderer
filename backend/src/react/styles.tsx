@@ -1,11 +1,12 @@
 import { StyleSheet } from "@react-pdf/renderer";
 
-export const pageWidth = 8.27 * 72; // A4 = 8.97 in x 72 dpi
-export const pageMargin = 24;
+export const PAGE_WIDTH = 8.27 * 72; // A4 = 8.97 in x 72 dpi
+export const PAGE_MARGIN = 24;
+export const INNER_WIDTH = PAGE_WIDTH - 2 * PAGE_MARGIN;
 
 export const styles = StyleSheet.create({
   page: {
-    margin: pageMargin,
+    margin: PAGE_MARGIN,
     fontFamily: "Helvetica",
     fontSize: 14,
   },
@@ -38,7 +39,7 @@ export const styles = StyleSheet.create({
   tableWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-    width: pageWidth - 2 * pageMargin,
+    width: INNER_WIDTH,
     marginTop: 8,
     borderWidth: 2,
     borderColor: "black",
@@ -46,7 +47,7 @@ export const styles = StyleSheet.create({
   tableWrapper_borderless: {
     flexDirection: "row",
     flexWrap: "wrap",
-    width: pageWidth - 2 * pageMargin,
+    width: INNER_WIDTH,
     marginTop: 8,
   },
   row: {
@@ -76,7 +77,7 @@ export const styles = StyleSheet.create({
     display: "flex",
   },
   totalTable: {
-    width: pageWidth / 2 - pageMargin,
-    marginLeft: pageWidth - pageWidth / 2 - pageMargin,
+    width: PAGE_WIDTH / 2 - PAGE_MARGIN,
+    marginLeft: PAGE_WIDTH - PAGE_WIDTH / 2 - PAGE_MARGIN,
   },
 });

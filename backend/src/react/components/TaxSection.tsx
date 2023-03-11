@@ -1,9 +1,11 @@
 import React from "react";
-import { Text, View } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
-import { styles, pageWidth, pageMargin } from "../styles";
+import { styles, PAGE_WIDTH, PAGE_MARGIN } from "../styles";
 import { formatCurrency } from "@src/util";
+
+import View from "./base/View";
+import Text from "./base/Text";
 
 export const TaxSection = (props: { taxTotal: JSONValue }) => {
   const taxTotal = props.taxTotal;

@@ -1,10 +1,11 @@
 import React from "react";
-import { Text, View } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
 import { styles } from "../styles";
-import { Break } from "./Break";
 import { formatCurrency } from "@src/util";
+
+import View from "./base/View";
+import Text from "./base/Text";
 
 export const InvoiceTableRow = (props: {
   invoiceLine: JSONValue;

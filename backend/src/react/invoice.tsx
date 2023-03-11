@@ -1,13 +1,8 @@
 import React from "react";
-import ReactPDF, {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-} from "@react-pdf/renderer";
+import ReactPDF from "@react-pdf/renderer";
 import { RenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
+import ReactDOM from "react-dom/server";
 
 import { Party } from "./components/Party";
 import { styles } from "./styles";
@@ -21,37 +16,53 @@ import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
 import { MAX_STYLES } from "@src/constants";
 
-const Invoice = (props: { ubl: JSONValue }) => {
+import {
+  renderingContext,
+  RenderingContexts,
+} from "./components/base/renderingContext";
+import Document from "./components/base/Document";
+import Page from "./components/base/Page";
+import View from "./components/base/View";
+
+const Invoice = (props: {
+  ubl: JSONValue;
+  renderingContext: RenderingContexts;
+}) => {
   const ubl = props.ubl;
 
   return (
-    <Document>
-      <Page size="A4">
-        <View style={styles.page}>
-          <Header
-            supplierParty={ubl["AccountingSupplierParty"]}
-            customerParty={ubl["AccountingCustomerParty"]}
-          />
-          <Break height={32} solid />
-          <Metadata
-            id={ubl["ID"]}
-            issueDate={ubl["IssueDate"]}
-            paymentTerms={ubl["PaymentTerms"]}
-            note={ubl["Note"]}
-          />
-          <Break height={32} solid />
-          <InvoiceTable invoiceLines={ubl["InvoiceLine"]} />
-          <Break height={8} />
-          <TaxSection taxTotal={ubl["TaxTotal"]} />
-          <Break height={8} />
-          <MonetaryTotal legalMonetaryTotal={ubl["LegalMonetaryTotal"]} />
-        </View>
-      </Page>
-    </Document>
+    <renderingContext.Provider value={props.renderingContext}>
+      <Document>
+        <Page size="A4">
+          <View style={styles.page}>
+            <Header
+              supplierParty={ubl["AccountingSupplierParty"]}
+              customerParty={ubl["AccountingCustomerParty"]}
+            />
+            <Break height={32} solid />
+            <Metadata
+              id={ubl["ID"]}
+              issueDate={ubl["IssueDate"]}
+              paymentTerms={ubl["PaymentTerms"]}
+              note={ubl["Note"]}
+            />
+            <Break height={32} solid />
+            <InvoiceTable invoiceLines={ubl["InvoiceLine"]} />
+            <Break height={8} />
+            <TaxSection taxTotal={ubl["TaxTotal"]} />
+            <Break height={8} />
+            <MonetaryTotal legalMonetaryTotal={ubl["LegalMonetaryTotal"]} />
+          </View>
+        </Page>
+      </Document>
+    </renderingContext.Provider>
   );
 };
 
-export default async function generateInvoice(args: RenderArgs) {
+function createInvoiceComponent(
+  args: RenderArgs,
+  renderingContext: RenderingContexts
+) {
   if (!args || !args.ubl) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
   } else if (!args.language || !["en", "cn"].includes(args.language)) {
@@ -64,5 +75,28 @@ export default async function generateInvoice(args: RenderArgs) {
     // assuming style numbers from 0-4
     throw new InvalidStyle();
   }
-  return await ReactPDF.renderToStream(<Invoice ubl={ublToJSON(args.ubl)} />);
+
+  return (
+    <Invoice ubl={ublToJSON(args.ubl)} renderingContext={renderingContext} />
+  );
+}
+
+export async function generateInvoicePDF(args: RenderArgs) {
+  return await ReactPDF.renderToStream(
+    createInvoiceComponent(args, RenderingContexts.Pdf)
+  );
+}
+
+export async function generateInvoiceHTML(
+  args: RenderArgs
+): Promise<ReactDOM.PipeableStream> {
+  const invoiceComponent = createInvoiceComponent(args, RenderingContexts.Html);
+
+  return new Promise((res) => {
+    const stream = ReactDOM.renderToPipeableStream(invoiceComponent, {
+      onShellReady() {
+        res(stream);
+      },
+    });
+  });
 }

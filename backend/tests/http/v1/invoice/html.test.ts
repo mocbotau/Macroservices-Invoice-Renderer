@@ -3,13 +3,12 @@ import path from "path";
 import app from "@src/app";
 import { readFile } from "fs/promises";
 import { createHash } from "crypto";
-import { ublToJSON } from "@src/util";
 
 const TEST_API_KEY = "SENG2021-F14AMACROSERVICES";
 
 function renderInvoiceRequestTest() {
   return request(app)
-    .post("/v1/invoice/render/json")
+    .post("/v1/invoice/render/html")
     .set({ "api-key": TEST_API_KEY });
 }
 
@@ -20,16 +19,16 @@ beforeEach(() => {
 describe("Invoice route", () => {
   test("No API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/json")
-      .send({ ubl: "123" });
+      .post("/v1/invoice/render/html")
+      .send({ ubl: "123", language: "cn", style: 3 });
     expect(resp.statusCode).toBe(401);
   });
 
   test("Wrong API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/json")
+      .post("/v1/invoice/render/html")
       .set({ "api-key": "thisisawrongapikey" })
-      .send({ ubl: "123" });
+      .send({ ubl: "123", language: "cn", style: 3 });
     expect(resp.statusCode).toBe(403);
   });
 
@@ -38,26 +37,38 @@ describe("Invoice route", () => {
     expect(resp.statusCode).toBe(422);
   });
 
-  test("Invalid UBL provided", async () => {
+  test("Invalid language provided", async () => {
     const resp = await renderInvoiceRequestTest().send({
       ubl: "123",
+      language: "kr",
+      style: 3,
     });
-    expect(resp.statusCode).toBe(422);
+    expect(resp.statusCode).toBe(400);
   });
 
-  test("It should return the JSON rendition of the ubl file", async () => {
-    const ubl = await readFile(
-      path.join(__dirname, "../../../resources/example1.xml"),
-      {
-        encoding: "utf8",
-      }
-    );
-
+  test("Invalid style provided", async () => {
     const resp = await renderInvoiceRequestTest().send({
-      ubl,
+      ubl: "123",
+      language: "cn",
+      style: -1,
+    });
+    expect(resp.statusCode).toBe(400);
+  });
+
+  test("It should return a HTML file", async () => {
+    const resp = await renderInvoiceRequestTest().send({
+      ubl: await readFile(
+        path.join(__dirname, "../../../resources/example1.xml"),
+        {
+          encoding: "utf8",
+        }
+      ),
+      language: "cn",
+      style: 3,
     });
 
     expect(resp.statusCode).toBe(200);
-    expect(resp.body).toStrictEqual(ublToJSON(ubl));
+    expect(resp.headers["content-type"]).toBe("text/html");
+    expect(resp.body).toBeDefined();
   });
 });
