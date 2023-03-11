@@ -1,7 +1,6 @@
 import { ValidationError, XMLParser, XMLValidator } from "fast-xml-parser";
 import { JSONValue } from "./interfaces";
 import { InvalidUBL } from "@src/error";
-import { REQUIRED_FIELDS } from "./constants";
 
 /**
  * Given a UBL formatted XML string, converts the tag/attribute into JSON key-value pairs.
