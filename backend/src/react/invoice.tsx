@@ -1,15 +1,8 @@
-import React from "react";
-import ReactPDF, {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-} from "@react-pdf/renderer";
+import React, { Suspense } from "react";
+import ReactPDF, { Page, View, Document } from "@react-pdf/renderer";
 import { RenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
 
-import { Party } from "./components/Party";
 import { styles } from "./styles";
 import { JSONValue } from "@src/interfaces";
 import { Header } from "./components/Header";
@@ -19,7 +12,9 @@ import { InvoiceTable } from "./components/InvoiceTable";
 import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
-import { MAX_STYLES } from "@src/constants";
+import { MAX_STYLES, SUPPORTED_LANGUAGES } from "@src/constants";
+import "@src/i18n.ts";
+import i18next from "i18next";
 
 const Invoice = (props: { ubl: JSONValue }) => {
   const ubl = props.ubl;
@@ -54,7 +49,7 @@ const Invoice = (props: { ubl: JSONValue }) => {
 export default async function generateInvoice(args: RenderArgs) {
   if (!args || !args.ubl) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
-  } else if (!args.language || !["en", "cn"].includes(args.language)) {
+  } else if (!args.language || !SUPPORTED_LANGUAGES.includes(args.language)) {
     throw new InvalidLanguage();
   } else if (
     args.style === undefined ||
@@ -64,5 +59,10 @@ export default async function generateInvoice(args: RenderArgs) {
     // assuming style numbers from 0-4
     throw new InvalidStyle();
   }
-  return await ReactPDF.renderToStream(<Invoice ubl={ublToJSON(args.ubl)} />);
+  await i18next.changeLanguage(args.language);
+  return await ReactPDF.renderToStream(
+    <Suspense fallback="loading">
+      <Invoice ubl={ublToJSON(args.ubl)} />
+    </Suspense>
+  );
 }

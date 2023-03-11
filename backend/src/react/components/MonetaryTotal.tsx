@@ -4,6 +4,8 @@ import { View, Text } from "@react-pdf/renderer";
 import { JSONValue } from "@src/interfaces";
 import { styles } from "../styles";
 import { formatCurrency } from "@src/util";
+import { useTranslation } from "react-i18next";
+import { regularLanguage } from "../utils";
 
 const renderOrder = [
   ["LineExtensionAmount", "Subtotal (items)"],
@@ -22,6 +24,7 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
   if (!totals["AllowanceTotalAmount"] && !totals["ChargeTotalAmount"]) {
     delete totals["LineExtensionAmount"];
   }
+  const { t: translateHook, i18n } = useTranslation();
 
   return (
     <View style={[styles.tableWrapper_borderless, styles.totalTable]}>
@@ -42,15 +45,17 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
                 styles.col_borderless,
                 { width: "60%", padding: 2 },
                 item[0] === "PayableAmount" ? styles.big : {},
+                regularLanguage(i18n.language),
               ]}
             >
-              {item[1]}:
+              {translateHook(item[1])}:
             </Text>
             <Text
               style={[
                 styles.col_borderless,
                 { width: "40%", textAlign: "right", padding: 2 },
                 item[0] === "PayableAmount" ? styles.big : {},
+                regularLanguage(i18n.language),
               ]}
             >
               {formatCurrency(totals[item[0]])}

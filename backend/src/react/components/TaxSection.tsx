@@ -2,34 +2,45 @@ import React from "react";
 import { Text, View } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
-import { styles, pageWidth, pageMargin } from "../styles";
+import { styles } from "../styles";
 import { formatCurrency } from "@src/util";
+import { useTranslation } from "react-i18next";
+import { boldLanguage, regularLanguage } from "../utils";
 
 export const TaxSection = (props: { taxTotal: JSONValue }) => {
   const taxTotal = props.taxTotal;
+  const { t: translateHook, i18n } = useTranslation();
 
   return (
     <View>
-      <Text style={styles.h1}>Tax Summary</Text>
+      <Text style={[styles.h1, regularLanguage(i18n.language)]}>
+        {translateHook("tax_summary")}
+      </Text>
       <View style={[styles.tableWrapper]}>
         <View style={[styles.row, { borderTopWidth: 0 }]}>
           <Text
             style={[
               styles.col,
-              styles.bold,
+              boldLanguage(i18n.language),
               { borderLeftWidth: 0, width: "40%" },
             ]}
           >
-            Tax Item
+            {translateHook("tax_item")}
           </Text>
-          <Text style={[styles.col, styles.bold, { width: "20%" }]}>
-            Taxable Amount
+          <Text
+            style={[styles.col, boldLanguage(i18n.language), { width: "20%" }]}
+          >
+            {translateHook("taxable_amount")}
           </Text>
-          <Text style={[styles.col, styles.bold, { width: "20%" }]}>
-            Tax Percent
+          <Text
+            style={[styles.col, boldLanguage(i18n.language), { width: "20%" }]}
+          >
+            {translateHook("tax_percent")}
           </Text>
-          <Text style={[styles.col, styles.bold, { width: "20%" }]}>
-            Tax Subtotal
+          <Text
+            style={[styles.col, boldLanguage(i18n.language), { width: "20%" }]}
+          >
+            {translateHook("tax_subtotal")}
           </Text>
         </View>
         {(taxTotal["TaxSubtotal"] as JSONValue[]).map((item, i) => (

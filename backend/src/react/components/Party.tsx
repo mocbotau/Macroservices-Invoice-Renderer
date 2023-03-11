@@ -1,14 +1,17 @@
 import React from "react";
 import { Text, View } from "@react-pdf/renderer";
 
-import { styles } from "../styles";
 import { JSONValue } from "@src/interfaces";
 import { ABN_ID, COUNTRY_MAP } from "@src/constants";
 import { Break } from "./Break";
+import { boldLanguage } from "../utils";
+import { useTranslation } from "react-i18next";
 
 export const Party = (props: { party: JSONValue }) => {
   const party = props.party;
   const postalAddress = party["PostalAddress"];
+
+  const { i18n } = useTranslation();
 
   const ABN =
     (party["PartyLegalEntity"]["CompanyID"]
@@ -46,7 +49,9 @@ export const Party = (props: { party: JSONValue }) => {
         </View>
       )}
 
-      {partyName && <Text style={styles.bold}>{partyName}</Text>}
+      {partyName && (
+        <Text style={boldLanguage(i18n.language)}>{partyName}</Text>
+      )}
       {ABN && <Text>ABN: {ABN}</Text>}
 
       <Break height={8} />

@@ -4,13 +4,15 @@ import { Text, View } from "@react-pdf/renderer";
 import { JSONValue } from "@src/interfaces";
 import { InvoiceTableRow } from "./InvoiceTableRow";
 import { styles } from "../styles";
+import { useTranslation } from "react-i18next";
+import { boldLanguage, regularLanguage } from "../utils";
 
 const baseItems = {
   "ID": [2, "Item ID"],
   "Note": [5, "Note"],
-  "InvoicedQuantity": [2, "Qty."],
+  "InvoicedQuantity": [2, "Qty"],
   "LineExtensionAmount": [4, "Subtotal"],
-  "AccountingCost": [3, "Item Code"],
+  "AccountingCost": [3, "Item Type"],
   "InvoicePeriod": [0, "Invoice Period"], // 3
   "OrderLineReference": [0, "Order ID"], // 2
   "DocumentReference": [0, "Document #"], // 3
@@ -37,6 +39,8 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
   const invoiceLines = props.invoiceLines;
   const usedWeights = {};
 
+  const { t: translateHook, i18n } = useTranslation();
+
   invoiceLines.forEach((line) => {
     Object.keys(line).forEach((item) => {
       if (!usedWeights[item]) usedWeights[item] = baseItems[item][0];
@@ -56,7 +60,9 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
 
   return (
     <View>
-      <Text style={styles.h1}>Invoice Items</Text>
+      <Text style={[styles.h1, regularLanguage(i18n.language)]}>
+        {translateHook("invoice_items")}
+      </Text>
       <View style={styles.tableWrapper}>
         <View style={[styles.row, { borderTopWidth: 0 }]}>
           {renderOrder
@@ -70,7 +76,9 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
                   i === 0 ? { borderLeftWidth: 0 } : {},
                 ]}
               >
-                <Text style={styles.bold}>{baseItems[item][1]}</Text>
+                <Text style={boldLanguage(i18n.language)}>
+                  {translateHook(baseItems[item][1])}
+                </Text>
               </View>
             ))}
         </View>

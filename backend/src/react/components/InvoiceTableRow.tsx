@@ -3,8 +3,9 @@ import { Text, View } from "@react-pdf/renderer";
 
 import { JSONValue } from "@src/interfaces";
 import { styles } from "../styles";
-import { Break } from "./Break";
 import { formatCurrency } from "@src/util";
+import { useTranslation } from "react-i18next";
+import { lightLanguage } from "../utils";
 
 export const InvoiceTableRow = (props: {
   invoiceLine: JSONValue;
@@ -13,6 +14,8 @@ export const InvoiceTableRow = (props: {
   const defaultGST = 10;
   const widths = props.widths;
   const invoiceLine = props.invoiceLine;
+
+  const { i18n } = useTranslation();
 
   return (
     <View style={styles.row}>
@@ -37,7 +40,7 @@ export const InvoiceTableRow = (props: {
               : " *"}
           </Text>
           {invoiceLine["Item"]["Description"] && (
-            <Text style={[styles.oblique]}>
+            <Text style={[lightLanguage(i18n.language), { fontSize: 12 }]}>
               {invoiceLine["Item"]["Description"]}
             </Text>
           )}

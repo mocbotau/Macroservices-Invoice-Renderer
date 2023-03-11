@@ -4,6 +4,8 @@ import { Text, View } from "@react-pdf/renderer";
 import { styles } from "../styles";
 import { JSONValue } from "@src/interfaces";
 import { Break } from "./Break";
+import { useTranslation } from "react-i18next";
+import { boldLanguage } from "../utils";
 
 export const Metadata = (props: {
   id: JSONValue;
@@ -15,22 +17,31 @@ export const Metadata = (props: {
     props.note,
     props.paymentTerms ? props.paymentTerms["Note"] : undefined,
   ].filter((x) => x);
+
+  const { t: translateHook, i18n } = useTranslation();
+
   return (
     <View>
       <View style={[styles.horizontalFlex, { flexWrap: "wrap" }]}>
         <View style={styles.flexbox}>
-          <Text style={styles.bold}>Invoice ID</Text>
+          <Text style={boldLanguage(i18n.language)}>
+            {translateHook("invoice_id")}
+          </Text>
           <Text>{props.id.toString()}</Text>
         </View>
         <View style={styles.flexbox}>
-          <Text style={styles.bold}>Issue date</Text>
+          <Text style={boldLanguage(i18n.language)}>
+            {translateHook("issue_date")}
+          </Text>
           <Text>{props.issueDate.toString()}</Text>
         </View>
       </View>
       <Break />
       {note.length && (
         <View>
-          <Text style={styles.bold}>Invoice note</Text>
+          <Text style={boldLanguage(i18n.language)}>
+            {translateHook("invoice_note")}
+          </Text>
           <Text>{note.join("\n")}</Text>
         </View>
       )}
