@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production ts-node -r tsconfig-paths/register src/server.ts",
     "dev": "NODE_ENV=development nodemon -w ./src src/server.ts -x 'ts-node -r tsconfig-paths/register'",
-    "test": "NODE_ENV=test jest --detectOpenHandles",
+    "test": "jest",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint src/**/*.ts --fix",
     "check-prettier": "prettier -c src tests",
