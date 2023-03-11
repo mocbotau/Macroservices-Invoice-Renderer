@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import RPDF from "@react-pdf/renderer";
 
 import { renderingContext, RenderingContexts } from "./renderingContext";
-import { INNER_WIDTH } from "@src/react/styles";
+import { INNER_WIDTH } from "@src/constants";
 
 const Page = ({ children, size }) => {
   const renderType = useContext(renderingContext);

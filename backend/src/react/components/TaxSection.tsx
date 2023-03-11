@@ -1,7 +1,7 @@
 import React from "react";
 
 import { JSONValue } from "@src/interfaces";
-import { styles, PAGE_WIDTH, PAGE_MARGIN } from "../styles";
+import { styles } from "../styles";
 import { formatCurrency } from "@src/util";
 
 import View from "./base/View";
