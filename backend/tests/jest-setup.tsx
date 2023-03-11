@@ -11,3 +11,10 @@ jest.mock("@react-pdf/renderer", () => ({
   View: ({ children }) => <div>{children}</div>,
   Font: { register: () => null },
 }));
+
+jest.mock("@src/i18next", () => ({ changeLanguage: () => undefined }));
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));

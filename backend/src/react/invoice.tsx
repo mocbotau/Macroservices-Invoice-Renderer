@@ -14,7 +14,7 @@ import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
 import { MAX_STYLES, SUPPORTED_LANGUAGES } from "@src/constants";
-import i18next from "@src/i18n";
+import i18next from "@src/i18next";
 
 import {
   renderingContext,

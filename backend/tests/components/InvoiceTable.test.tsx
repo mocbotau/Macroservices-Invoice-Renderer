@@ -2,20 +2,19 @@
  * @jest-environment jsdom
  */
 
-import "./jest-setup";
+import "../jest-setup";
 
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { InvoiceTable } from "@src/react/components/InvoiceTable";
-import i18next from "@tests/components/i18nTest";
 
 import testObject from "@tests/resources/example1.json";
 
 describe("Invoice table component", () => {
   test("It should contain headings and data items", () => {
     render(
-      <InvoiceTable invoiceLines={testObject.InvoiceLine} i18next={i18next} />
+      <InvoiceTable invoiceLines={testObject.InvoiceLine} i18next={undefined} />
     );
 
     const textFields = [

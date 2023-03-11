@@ -60,3 +60,5 @@ describe("Invoice route", () => {
     expect(resp.body).toBeDefined();
   });
 });
+
+function a() {}
