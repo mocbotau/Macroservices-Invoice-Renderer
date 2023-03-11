@@ -1,4 +1,4 @@
-import React, { Suspense, useContext } from "react";
+import React, { Suspense } from "react";
 import ReactPDF from "@react-pdf/renderer";
 import { RenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
@@ -32,6 +32,7 @@ const Invoice = (props: {
 }) => {
   const userStyle = extraStyles[props.styleContext];
   const ubl = props.ubl;
+
   return (
     <renderingContext.Provider value={props.renderingContext}>
       <styleContext.Provider value={props.styleContext}>

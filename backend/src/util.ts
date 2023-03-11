@@ -1,6 +1,7 @@
 import { ValidationError, XMLParser, XMLValidator } from "fast-xml-parser";
 import { JSONValue } from "./interfaces";
 import { InvalidUBL } from "@src/error";
+import { REQUIRED_FIELDS } from "./constants";
 
 /**
  * Given a UBL formatted XML string, converts the tag/attribute into JSON key-value pairs.
@@ -52,8 +53,24 @@ export function ublToJSON(ublStr: string): JSONValue {
       attributeName.replace(/^c.c:/, ""),
   };
   const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
+  const result = postProcessUBL(parsed, "Invoice");
+  const missingComponents: string[] = [];
 
-  return postProcessUBL(parsed, "Invoice");
+  REQUIRED_FIELDS.forEach((key: string) => {
+    if (!result[key]) {
+      missingComponents.push(key);
+    }
+  });
+
+  if (missingComponents.length !== 0) {
+    throw new InvalidUBL({
+      message: `The provided UBL is missing some mandatory components: ${missingComponents
+        .join(", ")
+        .replace(/,\s*$/, "")}`,
+    });
+  }
+
+  return result;
 }
 
 export function formatCurrency(currencyObject: JSONValue) {
