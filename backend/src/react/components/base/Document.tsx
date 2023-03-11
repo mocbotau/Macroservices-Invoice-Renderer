@@ -9,7 +9,7 @@ const Document = ({ children }) => {
   if (renderType === RenderingContexts.Pdf) {
     return <RPDF.Document>{children}</RPDF.Document>;
   } else {
-    return <html>{children}</html>;
+    return <html style={{ "display": "flex" }}>{children}</html>;
   }
 };
 

@@ -10,7 +10,9 @@ const Page = ({ children, size }) => {
   if (renderType === RenderingContexts.Pdf) {
     return <RPDF.Page size={size}>{children}</RPDF.Page>;
   } else {
-    return <body style={{ width: INNER_WIDTH }}>{children}</body>;
+    return (
+      <body style={{ margin: "auto", width: INNER_WIDTH }}>{children}</body>
+    );
   }
 };
 
