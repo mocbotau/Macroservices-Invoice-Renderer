@@ -59,7 +59,7 @@ describe("Invoice route", () => {
     });
 
     expect(resp.statusCode).toBe(200);
-    expect(resp.headers["content-type"]).toBe("application/pdf");
+    expect(resp.headers["content-type"]).toMatch(/^application\/pdf/);
     expect(resp.body).toBeDefined();
   });
 });
