@@ -1,4 +1,4 @@
-import "../jest-setup";
+import "@tests/jest-setup";
 
 import request from "supertest";
 import path from "path";
