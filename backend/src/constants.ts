@@ -7,6 +7,19 @@ export const COUNTRY_MAP = {
 export const MAX_STYLES = 5;
 export const DEFAULT_HEIGHT = 16;
 
-export const PAGE_WIDTH = 8.27 * 72; // A4 = 8.97 in x 72 dpi
-export const PAGE_MARGIN = 24;
-export const INNER_WIDTH = PAGE_WIDTH - 2 * PAGE_MARGIN;
+export const PAGE_SIZES: {
+  [page: string]: { WIDTH: number; MARGIN: number; INNER_WIDTH?: number };
+} = {
+  A4P: {
+    WIDTH: 8.27 * 72, // A4 portrait = 8.97 in x 72 dpi
+    MARGIN: 24,
+  },
+  A4L: {
+    WIDTH: 11.69 * 72, // A4 landscape = 11.69 in x 72 dpi
+    MARGIN: 24,
+  },
+};
+Object.keys(PAGE_SIZES).forEach(
+  (x) =>
+    (PAGE_SIZES[x].INNER_WIDTH = PAGE_SIZES[x].WIDTH - 2 * PAGE_SIZES[x].MARGIN)
+);

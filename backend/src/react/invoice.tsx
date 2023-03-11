@@ -5,7 +5,7 @@ import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
 import ReactDOM from "react-dom/server";
 
 import { Party } from "./components/Party";
-import { styles } from "./styles";
+import { defaultStyles } from "./styles";
 import { JSONValue } from "@src/interfaces";
 import { Header } from "./components/Header";
 import { Metadata } from "./components/Metadata";
@@ -34,7 +34,7 @@ const Invoice = (props: {
     <renderingContext.Provider value={props.renderingContext}>
       <Document>
         <Page size="A4">
-          <View style={styles.page}>
+          <View style={defaultStyles.page}>
             <Header
               supplierParty={ubl["AccountingSupplierParty"]}
               customerParty={ubl["AccountingCustomerParty"]}

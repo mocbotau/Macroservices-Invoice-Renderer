@@ -1,6 +1,6 @@
 import React from "react";
 
-import { styles } from "../styles";
+import { defaultStyles } from "../styles";
 import { JSONValue } from "@src/interfaces";
 import { ABN_ID, COUNTRY_MAP } from "@src/constants";
 import { Break } from "./Break";
@@ -48,7 +48,7 @@ export const Party = (props: { party: JSONValue }) => {
         </View>
       )}
 
-      {partyName && <Text style={styles.bold}>{partyName}</Text>}
+      {partyName && <Text style={defaultStyles.bold}>{partyName}</Text>}
       {ABN && <Text>ABN: {ABN}</Text>}
 
       <Break height={8} />

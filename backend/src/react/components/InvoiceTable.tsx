@@ -2,7 +2,7 @@ import React from "react";
 
 import { JSONValue } from "@src/interfaces";
 import { InvoiceTableRow } from "./InvoiceTableRow";
-import { styles } from "../styles";
+import { defaultStyles } from "../styles";
 
 import View from "./base/View";
 import Text from "./base/Text";
@@ -58,21 +58,21 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
 
   return (
     <View>
-      <Text style={styles.h1}>Invoice Items</Text>
-      <View style={styles.tableWrapper}>
-        <View style={[styles.row, { borderTopWidth: 0 }]}>
+      <Text style={defaultStyles.h1}>Invoice Items</Text>
+      <View style={defaultStyles.tableWrapper}>
+        <View style={[defaultStyles.row, { borderTopWidth: 0 }]}>
           {renderOrder
             .filter((item) => usedWeights[item])
             .map((item, i) => (
               <View
                 key={i}
                 style={[
-                  styles.col,
+                  defaultStyles.col,
                   widths[item],
                   i === 0 ? { borderLeftWidth: 0 } : {},
                 ]}
               >
-                <Text style={styles.bold}>{baseItems[item][1]}</Text>
+                <Text style={defaultStyles.bold}>{baseItems[item][1]}</Text>
               </View>
             ))}
         </View>

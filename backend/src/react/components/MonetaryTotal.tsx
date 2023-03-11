@@ -1,7 +1,7 @@
 import React from "react";
 
 import { JSONValue } from "@src/interfaces";
-import { styles } from "../styles";
+import { defaultStyles } from "../styles";
 import { formatCurrency } from "@src/util";
 
 import View from "./base/View";
@@ -26,13 +26,20 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
   }
 
   return (
-    <View style={[styles.tableWrapper_borderless, styles.totalTable]}>
+    <View
+      style={[
+        defaultStyles.tableWrapper,
+        defaultStyles.borderless,
+        defaultStyles.totalTable,
+      ]}
+    >
       {renderOrder
         .filter((item) => item[0] in (totals as Object))
         .map((item, i) => (
           <View
             style={[
-              styles.row_borderless,
+              defaultStyles.row,
+              defaultStyles.borderless,
               item[0] === "PayableAmount"
                 ? { borderTop: 2, borderColor: "black", marginTop: 8 }
                 : {},
@@ -41,18 +48,20 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
           >
             <Text
               style={[
-                styles.col_borderless,
+                defaultStyles.col,
+                defaultStyles.borderless,
                 { width: "60%", padding: 2 },
-                item[0] === "PayableAmount" ? styles.big : {},
+                item[0] === "PayableAmount" ? defaultStyles.big : {},
               ]}
             >
               {item[1]}:
             </Text>
             <Text
               style={[
-                styles.col_borderless,
+                defaultStyles.col,
+                defaultStyles.borderless,
                 { width: "40%", textAlign: "right", padding: 2 },
-                item[0] === "PayableAmount" ? styles.big : {},
+                item[0] === "PayableAmount" ? defaultStyles.big : {},
               ]}
             >
               {formatCurrency(totals[item[0]])}

@@ -1,10 +1,63 @@
 import { StyleSheet } from "@react-pdf/renderer";
+import React from "react";
 
-import { INNER_WIDTH, PAGE_MARGIN, PAGE_WIDTH } from "@src/constants";
+import { PAGE_SIZES } from "@src/constants";
 
-export const styles = StyleSheet.create({
+export enum StyleContexts {
+  Default,
+  Landscape,
+  Detailed,
+  Summary,
+  NoColourSummary,
+}
+
+export const styleContext = React.createContext("default");
+
+export const extraStyles: object[] = [
+  {
+    meta: {
+      pageSize: "A4P",
+    },
+  },
+  {
+    meta: {
+      pageSize: "A4L",
+    },
+  },
+  {
+    meta: {
+      pageSize: "A4L",
+    },
+  },
+  {
+    meta: {
+      pageSize: "A4P",
+    },
+  },
+  {
+    meta: {
+      pageSize: "A4P",
+    },
+  },
+];
+extraStyles.forEach((x) => {
+  const pageSize = x["meta"].pageSize;
+
+  if (pageSize) {
+    x["page"].margin = PAGE_SIZES[pageSize].MARGIN;
+    x["tableWrapper"].width = PAGE_SIZES[pageSize].INNER_WIDTH;
+    x["totalTable"].width =
+      PAGE_SIZES[pageSize].WIDTH / 2 - PAGE_SIZES[pageSize].MARGIN;
+    x["totalTable"].marginLeft =
+      PAGE_SIZES[pageSize].WIDTH -
+      PAGE_SIZES[pageSize].WIDTH / 2 -
+      PAGE_SIZES[pageSize].MARGIN;
+  }
+});
+
+export const defaultStyles = StyleSheet.create({
   page: {
-    margin: PAGE_MARGIN,
+    margin: PAGE_SIZES.A4P.MARGIN,
     fontFamily: "Helvetica",
     fontSize: 14,
   },
@@ -18,6 +71,7 @@ export const styles = StyleSheet.create({
     fontFamily: "Helvetica-Oblique",
   },
   title: {
+    fontFamily: "Helvetica-Bold",
     fontSize: 48,
   },
   h1: {
@@ -37,16 +91,10 @@ export const styles = StyleSheet.create({
   tableWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-    width: INNER_WIDTH,
+    width: PAGE_SIZES.A4P.INNER_WIDTH,
     marginTop: 8,
     borderWidth: 2,
     borderColor: "black",
-  },
-  tableWrapper_borderless: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    width: INNER_WIDTH,
-    marginTop: 8,
   },
   row: {
     display: "flex",
@@ -57,12 +105,6 @@ export const styles = StyleSheet.create({
     borderColor: "black",
     width: "100%",
   },
-  row_borderless: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "stretch",
-    width: "100%",
-  },
   col: {
     padding: 8,
     display: "flex",
@@ -70,12 +112,14 @@ export const styles = StyleSheet.create({
     borderLeftWidth: 2,
     borderColor: "black",
   },
-  col_borderless: {
+  borderless: {
     padding: 8,
+    borderWidth: 0,
     display: "flex",
   },
   totalTable: {
-    width: PAGE_WIDTH / 2 - PAGE_MARGIN,
-    marginLeft: PAGE_WIDTH - PAGE_WIDTH / 2 - PAGE_MARGIN,
+    width: PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
+    marginLeft:
+      PAGE_SIZES.A4P.WIDTH - PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
   },
 });
