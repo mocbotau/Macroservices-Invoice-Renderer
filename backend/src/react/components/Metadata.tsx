@@ -85,7 +85,7 @@ export const Metadata = (props: {
                     .filter((x) => x !== undefined)
                     .join(" ")}
                 </Text>
-                <Text>{COUNTRY_MAP[countryCode]}</Text>
+                <Text>{COUNTRY_MAP[countryCode] || countryCode}</Text>
                 {deliveryAddress["AddressLine"] && (
                   <Text>{deliveryAddress["AddressLine"]["Line"]}</Text>
                 )}

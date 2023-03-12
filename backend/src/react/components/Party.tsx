@@ -71,7 +71,7 @@ export const Party = (props: { party: JSONValue }) => {
             .filter((x) => x !== undefined)
             .join(" ")}
         </Text>
-        <Text>{COUNTRY_MAP[countryCode]}</Text>
+        <Text>{COUNTRY_MAP[countryCode] || countryCode}</Text>
         {postalAddress["AddressLine"] && (
           <Text>{postalAddress["AddressLine"]["Line"]}</Text>
         )}
