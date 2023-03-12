@@ -1,5 +1,8 @@
 ![Banner](https://user-images.githubusercontent.com/38149391/224549714-ad91a3ef-c056-4a89-ae7e-2c5375b63ff1.png)
-
+![TS](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
+![NPM](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white)
 
 ## About
 
@@ -13,14 +16,9 @@ This API renders UBL formatted XML into a human readable format.
 - Comprehensive Error Handling (Invalid UBL, Missing Data)
 - Secured access w/ API keys
 
----
+# Deployment
+This service is already deployed for public use and is accessible from [this link](http://192.9.175.202/v1/healthcheck).
 
-**Our deployed API can be found [here](http://192.9.175.202/v1/healthcheck)**
+# API Documentation
+You may find the documentation for our API [here](http://192.9.175.202/docs)
 
----
-
-<!-- ## Deployment
-To deploy this repo on a machine:
-
-1. Clone this repo
-2.  -->
