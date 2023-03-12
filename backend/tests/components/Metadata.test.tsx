@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "./jest-setup";
+import "../jest-setup";
 
 import React from "react";
 import { render, screen } from "@testing-library/react";
@@ -23,6 +23,7 @@ describe("Metadata component", () => {
         issueDate={testObject["IssueDate"]}
         paymentTerms={testObject["PaymentTerms"]}
         note={testObject["Note"]}
+        i18next={undefined}
       />
     );
 

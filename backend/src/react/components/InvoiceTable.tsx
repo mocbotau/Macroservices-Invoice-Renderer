@@ -2,17 +2,19 @@ import React, { useContext } from "react";
 
 import { JSONValue } from "@src/interfaces";
 import { InvoiceTableRow } from "./InvoiceTableRow";
+import { useTranslation } from "react-i18next";
 import { Detail, extraStyles, styleContext } from "../styles";
 
 import View from "./base/View";
 import Text from "./base/Text";
+import { i18n } from "i18next";
 
 const baseItems = {
   "ID": [2, "Item ID", Detail.DEFAULT],
   "Note": [5, "Note", Detail.DETAILED],
-  "InvoicedQuantity": [2, "Qty.", Detail.SUMMARY],
+  "InvoicedQuantity": [2, "Qty", Detail.SUMMARY],
   "LineExtensionAmount": [4, "Subtotal", Detail.SUMMARY],
-  "AccountingCost": [3, "Item Code", Detail.DETAILED],
+  "AccountingCost": [3, "Item Type", Detail.DETAILED],
   "InvoicePeriod": [0, "Invoice Period", Detail.DETAILED], // 3
   "OrderLineReference": [0, "Order ID", Detail.DETAILED], // 2
   "DocumentReference": [0, "Document #", Detail.DETAILED], // 3
@@ -35,11 +37,15 @@ const renderOrder = [
   "LineExtensionAmount",
 ];
 
-export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
+export const InvoiceTable = (props: {
+  invoiceLines: JSONValue[];
+  i18next: i18n;
+}) => {
   const userStyle = extraStyles[useContext(styleContext)];
-
   const invoiceLines = props.invoiceLines;
   const usedWeights = {};
+
+  const { t: translateHook } = useTranslation();
 
   invoiceLines.forEach((line) => {
     Object.keys(line).forEach((item) => {
@@ -64,19 +70,26 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
 
   return (
     <View>
-      <Text style={userStyle["h1"]}>Invoice Items</Text>
+      <Text style={userStyle["h1"]}>{translateHook("invoice_items")}</Text>
       <View style={userStyle["tableWrapper"]}>
         <View style={userStyle["row"]}>
           {renderOrder
             .filter((item) => usedWeights[item])
             .map((item, i) => (
               <View key={i} style={[userStyle["col"], widths[item]]}>
-                <Text style={userStyle["bold"]}>{baseItems[item][1]}</Text>
+                <Text style={userStyle["bold"]}>
+                  {translateHook(baseItems[item][1])}
+                </Text>
               </View>
             ))}
         </View>
         {invoiceLines.map((line, i) => (
-          <InvoiceTableRow key={i} invoiceLine={line} widths={widths} />
+          <InvoiceTableRow
+            key={i}
+            invoiceLine={line}
+            widths={widths}
+            i18next={props.i18next}
+          />
         ))}
       </View>
     </View>

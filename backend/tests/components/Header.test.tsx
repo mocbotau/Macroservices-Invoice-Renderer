@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "./jest-setup";
+import "../jest-setup";
 
 import React from "react";
 import { render, screen } from "@testing-library/react";
@@ -17,13 +17,14 @@ describe("Header component", () => {
       <Header
         supplierParty={testObject["AccountingSupplierParty"]}
         customerParty={testObject["AccountingCustomerParty"]}
+        i18next={undefined}
       />
     );
 
     const textFields = [
       "Ebusiness Software Services Pty Ltd",
       "Awolako Enterprises Pty Ltd",
-      "Invoice",
+      "invoice", // unstubbed translation configuration for i18n returns the key as the same translation, hence the lowercase i
     ];
     textFields.forEach((text) => expect(screen.getByText(text)).toBeTruthy());
   });

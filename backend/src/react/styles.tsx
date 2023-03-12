@@ -1,6 +1,23 @@
+import { StyleSheet, Font } from "@react-pdf/renderer";
+import "@react-pdf/font";
 import React from "react";
 
 import { PAGE_SIZES } from "@src/constants";
+
+Font.register({
+  family: "arial-regular",
+  src: "fonts/Arial-Unicode.ttf",
+});
+
+Font.register({
+  family: "arial-bold",
+  src: "fonts/Arial-Unicode-Bold.ttf",
+});
+
+Font.register({
+  family: "arial",
+  src: "fonts/Arial-Unicode-Italic.ttf",
+});
 
 export enum Detail {
   SUMMARY,
@@ -15,22 +32,25 @@ const defaultStyle = {
   },
   page: {
     margin: PAGE_SIZES.A4P.MARGIN,
-    fontFamily: "Helvetica",
     fontSize: 14,
+    fontFamily: "arial-regular",
   },
-  bold: {
-    fontFamily: "Helvetica-Bold",
-  },
-  oblique: {
-    fontFamily: "Helvetica-Oblique",
+  section: {
+    padding: 8,
   },
   title: {
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "arial-bold",
     fontSize: 48,
   },
   h1: {
     fontSize: 24,
     marginTop: 12,
+  },
+  bold: {
+    fontFamily: "arial-bold",
+  },
+  oblique: {
+    fontFamily: "arial-oblique",
   },
   big: {
     fontSize: 18,

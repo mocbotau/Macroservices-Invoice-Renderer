@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "./jest-setup";
+import "../jest-setup";
 
 import React from "react";
 import { render, screen } from "@testing-library/react";
@@ -25,6 +25,7 @@ describe("Invoice table row component", () => {
       <InvoiceTableRow
         invoiceLine={testObject.InvoiceLine[0]}
         widths={widths}
+        i18next={undefined}
       />
     );
 

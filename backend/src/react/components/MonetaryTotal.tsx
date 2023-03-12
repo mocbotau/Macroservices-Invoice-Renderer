@@ -3,6 +3,8 @@ import React, { useContext } from "react";
 import { JSONValue } from "@src/interfaces";
 import { Detail, extraStyles, styleContext } from "../styles";
 import { formatCurrency } from "@src/util";
+import { useTranslation } from "react-i18next";
+import { i18n } from "i18next";
 
 import View from "./base/View";
 import Text from "./base/Text";
@@ -19,13 +21,17 @@ const renderOrder = [
   ["PayableAmount", "Payable amount"],
 ];
 
-export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
+export const MonetaryTotal = (props: {
+  legalMonetaryTotal: JSONValue;
+  i18next: i18n;
+}) => {
   const userStyle = extraStyles[useContext(styleContext)];
   const totals = props.legalMonetaryTotal;
 
   if (!totals["AllowanceTotalAmount"] && !totals["ChargeTotalAmount"]) {
     delete totals["LineExtensionAmount"];
   }
+  const { t: translateHook } = useTranslation();
 
   return (
     <View
@@ -64,7 +70,7 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
                   item[0] === "PayableAmount" ? userStyle["big"] : {},
                 ]}
               >
-                {item[1]}:
+                {translateHook(item[1])}:
               </Text>
               <Text
                 style={[

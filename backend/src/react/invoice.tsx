@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { Suspense, useContext } from "react";
 import ReactPDF from "@react-pdf/renderer";
 import { RenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
@@ -13,7 +13,8 @@ import { InvoiceTable } from "./components/InvoiceTable";
 import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
-import { MAX_STYLES, PAGE_SIZES } from "@src/constants";
+import { MAX_STYLES, SUPPORTED_LANGUAGES, PAGE_SIZES } from "@src/constants";
+import i18next from "@src/i18next";
 
 import {
   renderingContext,
@@ -47,6 +48,7 @@ const Invoice = (props: {
               <Header
                 supplierParty={ubl["AccountingSupplierParty"]}
                 customerParty={ubl["AccountingCustomerParty"]}
+                i18next={i18next}
               />
               <Show min={Detail.DEFAULT}>
                 <Break height={32} solid />
@@ -63,16 +65,23 @@ const Invoice = (props: {
                 accountingCost={ubl["AccountingCost"]}
                 note={ubl["Note"]}
                 delivery={ubl["Delivery"]}
+                i18next={i18next}
               />
               <Break height={16} />
               <Break height={8} solid />
-              <InvoiceTable invoiceLines={ubl["InvoiceLine"]} />
+              <InvoiceTable
+                invoiceLines={ubl["InvoiceLine"]}
+                i18next={i18next}
+              />
               <Show min={Detail.DEFAULT}>
                 <Break height={8} />
-                <TaxSection taxTotal={ubl["TaxTotal"]} />
+                <TaxSection taxTotal={ubl["TaxTotal"]} i18next={i18next} />
               </Show>
               <Break height={8} />
-              <MonetaryTotal legalMonetaryTotal={ubl["LegalMonetaryTotal"]} />
+              <MonetaryTotal
+                legalMonetaryTotal={ubl["LegalMonetaryTotal"]}
+                i18next={i18next}
+              />
             </View>
           </Page>
         </Document>
@@ -81,14 +90,14 @@ const Invoice = (props: {
   );
 };
 
-function createInvoiceComponent(
+async function createInvoiceComponent(
   args: RenderArgs,
   renderingContext: RenderingContexts,
   styleId: number
 ) {
   if (!args || !args.ubl) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
-  } else if (!args.language || !["en", "cn"].includes(args.language)) {
+  } else if (!args.language || !SUPPORTED_LANGUAGES.includes(args.language)) {
     throw new InvalidLanguage();
   } else if (
     args.style === undefined ||
@@ -98,26 +107,29 @@ function createInvoiceComponent(
     // assuming style numbers from 0-4
     throw new InvalidStyle();
   }
+  await i18next.changeLanguage(args.language);
 
   return (
-    <Invoice
-      ubl={ublToJSON(args.ubl)}
-      renderingContext={renderingContext}
-      styleContext={styleId}
-    />
+    <Suspense fallback="loading">
+      <Invoice
+        ubl={ublToJSON(args.ubl)}
+        renderingContext={renderingContext}
+        styleContext={styleId}
+      />
+    </Suspense>
   );
 }
 
 export async function generateInvoicePDF(args: RenderArgs) {
   return await ReactPDF.renderToStream(
-    createInvoiceComponent(args, RenderingContexts.Pdf, args.style)
+    await createInvoiceComponent(args, RenderingContexts.Pdf, args.style)
   );
 }
 
 export async function generateInvoiceHTML(
   args: RenderArgs
 ): Promise<ReactDOM.PipeableStream> {
-  const invoiceComponent = createInvoiceComponent(
+  const invoiceComponent = await createInvoiceComponent(
     args,
     RenderingContexts.Html,
     args.style

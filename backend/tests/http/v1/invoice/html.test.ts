@@ -1,3 +1,5 @@
+import "@tests/jest-setup";
+
 import request from "supertest";
 import path from "path";
 import app from "@src/app";
@@ -37,7 +39,7 @@ describe("Invoice route", () => {
   test("Invalid style provided", async () => {
     const resp = await renderInvoiceRequestTest("html").send({
       ubl: "123",
-      language: "cn",
+      language: "zh",
       style: -1,
     });
     expect(resp.statusCode).toBe(400);
@@ -51,7 +53,7 @@ describe("Invoice route", () => {
           encoding: "utf8",
         }
       ),
-      language: "cn",
+      language: "zh",
       style: 3,
     });
 
@@ -60,3 +62,5 @@ describe("Invoice route", () => {
     expect(resp.body).toBeDefined();
   });
 });
+
+function a() {}

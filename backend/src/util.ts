@@ -107,17 +107,3 @@ function postProcessUBL(ublObject: JSONValue, jpath = "") {
 
   return result;
 }
-
-export function getPeriodString(periodObj) {
-  let period = "";
-  if (periodObj["StartDate"] && periodObj["EndDate"]) {
-    period = `${periodObj["StartDate"]} - ${periodObj["EndDate"]}`;
-  } else if (periodObj["StartDate"]) {
-    period = `Period starting ${periodObj["StartDate"]}`;
-  } else if (periodObj["EndDate"]) {
-    period = `Period ending ${periodObj["EndDate"]}`;
-  } else {
-    period = "Unknown period";
-  }
-  return period;
-}

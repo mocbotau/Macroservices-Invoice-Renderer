@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { JSONValue } from "@src/interfaces";
 import { Detail, extraStyles, styleContext } from "../styles";
 import { formatCurrency } from "@src/util";
+import { i18n } from "i18next";
 
 import View from "./base/View";
 import Text from "./base/Text";
@@ -12,6 +13,7 @@ export const InvoiceTableRow = (props: {
   key?: number;
   invoiceLine: JSONValue;
   widths: { [x: string]: { width: string } };
+  i18next: i18n;
 }) => {
   const userStyle = extraStyles[useContext(styleContext)];
 

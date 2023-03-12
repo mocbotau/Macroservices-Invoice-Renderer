@@ -14,3 +14,8 @@ export type JSONValue =
   | boolean
   | { [x: string]: JSONValue }
   | Array<JSONValue>;
+
+export type PeriodType = {
+  startDate?: string;
+  endDate?: string;
+};

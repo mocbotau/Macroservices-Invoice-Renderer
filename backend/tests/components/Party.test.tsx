@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "./jest-setup";
+import "../jest-setup";
 
 import React from "react";
 import { render, screen } from "@testing-library/react";
@@ -22,6 +22,7 @@ describe("Party component", () => {
       "Dulwich Hill 2203",
       "Australia",
     ];
+
     textFields.forEach((text) => expect(screen.getByText(text)).toBeTruthy());
   });
 });

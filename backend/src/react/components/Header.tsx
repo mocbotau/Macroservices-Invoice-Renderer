@@ -8,25 +8,29 @@ import { Break } from "./Break";
 
 import View from "./base/View";
 import Text from "./base/Text";
+import { i18n } from "i18next";
+import { useTranslation } from "react-i18next";
 import { Show } from "./Show";
 
 export const Header = (props: {
   supplierParty: JSONValue;
   customerParty: JSONValue;
+  i18next: i18n;
 }) => {
   const userStyle = extraStyles[useContext(styleContext)];
+  const { t: translateHook } = useTranslation();
 
   return (
     <View>
-      <Text style={userStyle["title"]}>Invoice</Text>
+      <Text style={userStyle["title"]}>{translateHook("invoice")}</Text>
       <View style={userStyle["horizontalFlex"]}>
         <Show min={Detail.DEFAULT} style={userStyle["flexbox"]}>
-          <Text style={userStyle["h1"]}>To</Text>
+          <Text style={userStyle["h1"]}>{translateHook("to")}</Text>
           <Break height={8} />
           <Party party={props.customerParty["Party"]} />
         </Show>
         <View style={userStyle["flexbox"]}>
-          <Text style={userStyle["h1"]}>From</Text>
+          <Text style={userStyle["h1"]}>{translateHook("from")}</Text>
           <Break height={8} />
           <Party party={props.supplierParty["Party"]} />
         </View>
