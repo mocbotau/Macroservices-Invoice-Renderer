@@ -5,6 +5,9 @@ import { renderingContext, RenderingContexts } from "./renderingContext";
 import { styleContext, extraStyles } from "@src/react/styles";
 import { PAGE_SIZES } from "@src/constants";
 
+/**
+ * This component represents a blank canvas in which the invoice is rendered to.
+ */
 const Page = (props) => {
   const renderType = useContext(renderingContext);
   const userStyle = extraStyles[useContext(styleContext)];

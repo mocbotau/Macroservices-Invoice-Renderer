@@ -11,6 +11,10 @@ import { i18n } from "i18next";
 import { Show } from "./Show";
 import { COUNTRY_MAP } from "@src/constants";
 
+/**
+ * This component renders the metadata associated with an invoice.
+ * @param {JSONValue} props - an object containing the id, invoice period, issue date, due date, accounting cost, payments terms, notes delivery and i18 translation module.
+ */
 export const Metadata = (props: {
   id: JSONValue;
   invoicePeriod: PeriodType;

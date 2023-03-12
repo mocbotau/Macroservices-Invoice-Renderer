@@ -9,6 +9,10 @@ import View from "./base/View";
 import Text from "./base/Text";
 import { Show } from "./Show";
 
+/**
+ * This component renders the data relating to the parties of the invoice
+ * @param {JSONValue} props - an object containing the party information
+ */
 export const Party = (props: { party: JSONValue }) => {
   const userStyle = extraStyles[useContext(styleContext)];
 

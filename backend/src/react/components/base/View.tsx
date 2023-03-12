@@ -3,6 +3,9 @@ import RPDF from "@react-pdf/renderer";
 
 import { renderingContext, RenderingContexts } from "./renderingContext";
 
+/**
+ * This component defines a container to hold information (HTML div)
+ */
 const View = (props) => {
   const renderType = useContext(renderingContext);
 

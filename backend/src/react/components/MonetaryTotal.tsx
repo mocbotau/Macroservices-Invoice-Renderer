@@ -21,6 +21,10 @@ const renderOrder = [
   ["PayableAmount", "Payable amount"],
 ];
 
+/**
+ * This component renders the subtotals and payable amounts for the invoice.
+ * @param {JSONValue} props - an object containing the legal monetary total, and the i18n translation module
+ */
 export const MonetaryTotal = (props: {
   legalMonetaryTotal: JSONValue;
   i18next: i18n;

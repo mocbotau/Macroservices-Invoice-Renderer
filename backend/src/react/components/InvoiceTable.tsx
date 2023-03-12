@@ -37,6 +37,10 @@ const renderOrder = [
   "LineExtensionAmount",
 ];
 
+/**
+ * This component renders a table which will hold all data relevant to the invoice items.
+ * @param {JSONValue} props - an object containing the invoice lines and i18n translation module
+ */
 export const InvoiceTable = (props: {
   invoiceLines: JSONValue[];
   i18next: i18n;
