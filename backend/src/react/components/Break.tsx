@@ -4,6 +4,10 @@ import { DEFAULT_HEIGHT } from "@src/constants";
 import View from "./base/View";
 import { extraStyles, styleContext } from "../styles";
 
+/**
+ * This component renders a break (HTML br)
+ * @param {JSONValue} props - an object containing the height and solid
+ */
 export const Break = (props: { height?: number; solid?: boolean }) => {
   const userStyle = extraStyles[useContext(styleContext)];
 

@@ -9,6 +9,10 @@ import View from "./base/View";
 import Text from "./base/Text";
 import { i18n } from "i18next";
 
+/**
+ * This component renders the table to show tax information.
+ * @param {JSONValue} props - an object containing the Tax Total and the i18n translation module
+ */
 export const TaxSection = (props: { taxTotal: JSONValue; i18next: i18n }) => {
   const userStyle = extraStyles[useContext(styleContext)];
   const taxTotal = props.taxTotal;

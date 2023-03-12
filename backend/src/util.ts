@@ -2,15 +2,14 @@ import { ValidationError, XMLParser, XMLValidator } from "fast-xml-parser";
 import { JSONValue } from "./interfaces";
 import { InvalidUBL } from "@src/error";
 
+const textNodeName = "_text";
+
 /**
  * Given a UBL formatted XML string, converts the tag/attribute into JSON key-value pairs.
  * @param {string} ublStr - the UBL formatted XML string to parse
  * @throws {InvalidUBL} - when XML input is invalid
  * @returns {JSONValue} - a json object representing the parsed UBL string.
  */
-
-const textNodeName = "_text";
-
 export function ublToJSON(ublStr: string): JSONValue {
   let errObject: ValidationError;
   if ((errObject = XMLValidator.validate(ublStr) as ValidationError)?.err) {
@@ -55,6 +54,11 @@ export function ublToJSON(ublStr: string): JSONValue {
   return postProcessUBL(parsed, "Invoice");
 }
 
+/**
+ * Given a currency object, returns a human readable formatted string.
+ * @param {JSONValue} currencyObject  - A currency object
+ * @returns {str} - The formatted string (e.g "$10.10", "-$87.21")
+ */
 export function formatCurrency(currencyObject: JSONValue) {
   let result = "";
 
@@ -76,6 +80,12 @@ export function formatCurrency(currencyObject: JSONValue) {
   return result;
 }
 
+/**
+ * Due to library flaws, this function recursively travels through the JSON hierarchy to transform the originally parsed UBL into a consistent JSON output.
+ * @param {JSONValue} ublObject - A UBL object (output from ublToJSON())
+ * @param {string} jpath - The tail end JSON hierarchal path
+ * @returns {{[x: string]: JSONValue} | JSONValue[]} The transformed JSON output
+ */
 function postProcessUBL(ublObject: JSONValue, jpath = "") {
   const alwaysTextNode: string[] = [
     "Invoice.AdditionalDocumentReference.ID",

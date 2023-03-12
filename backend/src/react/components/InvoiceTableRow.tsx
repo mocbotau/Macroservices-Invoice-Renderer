@@ -9,6 +9,10 @@ import View from "./base/View";
 import Text from "./base/Text";
 import { Show } from "./Show";
 
+/**
+ * This component renders a table row within the invoice table
+ * @param {JSONValue} props - an object containing the supplier Party, customerParty and the i18n translation module
+ */
 export const InvoiceTableRow = (props: {
   key?: number;
   invoiceLine: JSONValue;

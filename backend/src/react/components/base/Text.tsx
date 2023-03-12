@@ -3,6 +3,10 @@ import RPDF from "@react-pdf/renderer";
 
 import { renderingContext, RenderingContexts } from "./renderingContext";
 
+/**
+ * This component defines a basic text field (HTML p tag)
+ * @param {JSONValue} props - an object containing the style
+ */
 const Text = (props) => {
   const renderType = useContext(renderingContext);
 

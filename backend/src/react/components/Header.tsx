@@ -12,6 +12,10 @@ import { i18n } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Show } from "./Show";
 
+/**
+ * This component renders the header for the invoice file.
+ * @param {JSONValue} props - an object containing the supplier Party, customerParty and the i18n translation module
+ */
 export const Header = (props: {
   supplierParty: JSONValue;
   customerParty: JSONValue;

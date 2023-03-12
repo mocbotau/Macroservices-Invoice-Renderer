@@ -3,6 +3,9 @@ import RPDF from "@react-pdf/renderer";
 
 import { renderingContext, RenderingContexts } from "./renderingContext";
 
+/**
+ * This component forms a base for the invoice.
+ */
 const Document = (props) => {
   const renderType = useContext(renderingContext);
 
