@@ -1,24 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { JSONValue } from "@src/interfaces";
 import { InvoiceTableRow } from "./InvoiceTableRow";
-import { styles } from "../styles";
+import { Detail, extraStyles, styleContext } from "../styles";
 
 import View from "./base/View";
 import Text from "./base/Text";
 
 const baseItems = {
-  "ID": [2, "Item ID"],
-  "Note": [5, "Note"],
-  "InvoicedQuantity": [2, "Qty."],
-  "LineExtensionAmount": [4, "Subtotal"],
-  "AccountingCost": [3, "Item Code"],
-  "InvoicePeriod": [0, "Invoice Period"], // 3
-  "OrderLineReference": [0, "Order ID"], // 2
-  "DocumentReference": [0, "Document #"], // 3
-  "AllowanceCharge": [0, "Surcharge"], // 3 or 5 with reason
-  "Item": [5, "Item"],
-  "Price": [4, "Unit Price"],
+  "ID": [2, "Item ID", Detail.DEFAULT],
+  "Note": [5, "Note", Detail.DETAILED],
+  "InvoicedQuantity": [2, "Qty.", Detail.SUMMARY],
+  "LineExtensionAmount": [4, "Subtotal", Detail.SUMMARY],
+  "AccountingCost": [3, "Item Code", Detail.DETAILED],
+  "InvoicePeriod": [0, "Invoice Period", Detail.DETAILED], // 3
+  "OrderLineReference": [0, "Order ID", Detail.DETAILED], // 2
+  "DocumentReference": [0, "Document #", Detail.DETAILED], // 3
+  "AllowanceCharge": [0, "Surcharge", Detail.DEFAULT], // 3 or 5 with reason
+  "Item": [5, "Item", Detail.SUMMARY],
+  "Price": [4, "Unit Price", Detail.SUMMARY],
 };
 
 const renderOrder = [
@@ -36,12 +36,18 @@ const renderOrder = [
 ];
 
 export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
+  const userStyle = extraStyles[useContext(styleContext)];
+
   const invoiceLines = props.invoiceLines;
   const usedWeights = {};
 
   invoiceLines.forEach((line) => {
     Object.keys(line).forEach((item) => {
-      if (!usedWeights[item]) usedWeights[item] = baseItems[item][0];
+      if (!usedWeights[item])
+        usedWeights[item] =
+          baseItems[item][2] <= userStyle["meta"].detail
+            ? baseItems[item][0]
+            : 0;
     });
   });
 
@@ -58,21 +64,14 @@ export const InvoiceTable = (props: { invoiceLines: JSONValue[] }) => {
 
   return (
     <View>
-      <Text style={styles.h1}>Invoice Items</Text>
-      <View style={styles.tableWrapper}>
-        <View style={[styles.row, { borderTopWidth: 0 }]}>
+      <Text style={userStyle["h1"]}>Invoice Items</Text>
+      <View style={userStyle["tableWrapper"]}>
+        <View style={userStyle["row"]}>
           {renderOrder
             .filter((item) => usedWeights[item])
             .map((item, i) => (
-              <View
-                key={i}
-                style={[
-                  styles.col,
-                  widths[item],
-                  i === 0 ? { borderLeftWidth: 0 } : {},
-                ]}
-              >
-                <Text style={styles.bold}>{baseItems[item][1]}</Text>
+              <View key={i} style={[userStyle["col"], widths[item]]}>
+                <Text style={userStyle["bold"]}>{baseItems[item][1]}</Text>
               </View>
             ))}
         </View>

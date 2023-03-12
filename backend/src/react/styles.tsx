@@ -1,15 +1,22 @@
-import { StyleSheet } from "@react-pdf/renderer";
+import React from "react";
 
-import { INNER_WIDTH, PAGE_MARGIN, PAGE_WIDTH } from "@src/constants";
+import { PAGE_SIZES } from "@src/constants";
 
-export const styles = StyleSheet.create({
+export enum Detail {
+  SUMMARY,
+  DEFAULT,
+  DETAILED,
+}
+
+const defaultStyle = {
+  meta: {
+    pageSize: "A4P",
+    detail: Detail.DEFAULT,
+  },
   page: {
-    margin: PAGE_MARGIN,
+    margin: PAGE_SIZES.A4P.MARGIN,
     fontFamily: "Helvetica",
     fontSize: 14,
-  },
-  section: {
-    padding: 8,
   },
   bold: {
     fontFamily: "Helvetica-Bold",
@@ -18,6 +25,7 @@ export const styles = StyleSheet.create({
     fontFamily: "Helvetica-Oblique",
   },
   title: {
+    fontFamily: "Helvetica-Bold",
     fontSize: 48,
   },
   h1: {
@@ -37,45 +45,121 @@ export const styles = StyleSheet.create({
   tableWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-    width: INNER_WIDTH,
+    width: PAGE_SIZES.A4P.INNER_WIDTH,
     marginTop: 8,
-    borderWidth: 2,
+    borderBottomWidth: 2,
+    borderRightWidth: 2,
     borderColor: "black",
-  },
-  tableWrapper_borderless: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    width: INNER_WIDTH,
-    marginTop: 8,
   },
   row: {
     display: "flex",
     flexDirection: "row",
     alignItems: "stretch",
-    borderTop: "solid",
     borderTopWidth: 2,
     borderColor: "black",
     width: "100%",
   },
-  row_borderless: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "stretch",
-    width: "100%",
-  },
   col: {
-    padding: 8,
+    padding: 4,
     display: "flex",
-    borderLeft: "solid",
     borderLeftWidth: 2,
     borderColor: "black",
   },
-  col_borderless: {
-    padding: 8,
-    display: "flex",
+  borderless: {
+    borderWidth: 0,
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
   },
   totalTable: {
-    width: PAGE_WIDTH / 2 - PAGE_MARGIN,
-    marginLeft: PAGE_WIDTH - PAGE_WIDTH / 2 - PAGE_MARGIN,
+    width: PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
+    marginLeft:
+      PAGE_SIZES.A4P.WIDTH - PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
   },
+};
+
+export const styleContext = React.createContext(0);
+
+export const extraStyles: object[] = [
+  {
+    // Coloured
+    meta: {
+      pageSize: "A4P",
+    },
+    title: {
+      color: "#0d2363",
+    },
+    h1: {
+      color: "#2a4cb0",
+    },
+    bold: {
+      color: "#4a74f0",
+    },
+    break: {
+      borderColor: "#0d2363",
+    },
+    tableWrapper: {
+      borderColor: "#0d2363",
+    },
+    row: {
+      borderColor: "#0d2363",
+    },
+    col: {
+      borderColor: "#0d2363",
+    },
+  },
+  {
+    // Landscape
+    meta: {
+      pageSize: "A4L",
+    },
+  },
+  {
+    // Detailed
+    meta: {
+      pageSize: "A4L",
+      detail: Detail.DETAILED,
+    },
+  },
+  {
+    // Summary
+    meta: {
+      pageSize: "A4P",
+      detail: Detail.SUMMARY,
+    },
+  },
+  {
+    // Default
+    meta: {
+      pageSize: "A4P",
+    },
+  },
+];
+
+extraStyles.forEach((x) => {
+  const pageSize = x["meta"].pageSize;
+
+  if (pageSize) {
+    if (!x["page"]) x["page"] = {};
+    if (!x["tableWrapper"]) x["tableWrapper"] = {};
+    if (!x["totalTable"]) x["totalTable"] = {};
+
+    x["page"].margin = PAGE_SIZES[pageSize].MARGIN;
+    x["tableWrapper"].width = PAGE_SIZES[pageSize].INNER_WIDTH;
+    x["totalTable"].width =
+      PAGE_SIZES[pageSize].WIDTH / 2 - PAGE_SIZES[pageSize].MARGIN;
+    x["totalTable"].marginLeft =
+      PAGE_SIZES[pageSize].WIDTH -
+      PAGE_SIZES[pageSize].WIDTH / 2 -
+      PAGE_SIZES[pageSize].MARGIN;
+  }
+
+  for (const styleObj in defaultStyle) {
+    if (x[styleObj] === undefined) x[styleObj] = {};
+    for (const styleProp in defaultStyle[styleObj]) {
+      if (x[styleObj][styleProp] === undefined)
+        x[styleObj][styleProp] = defaultStyle[styleObj][styleProp];
+    }
+  }
 });

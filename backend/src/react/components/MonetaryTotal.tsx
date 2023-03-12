@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { JSONValue } from "@src/interfaces";
-import { styles } from "../styles";
+import { Detail, extraStyles, styleContext } from "../styles";
 import { formatCurrency } from "@src/util";
 
 import View from "./base/View";
 import Text from "./base/Text";
+import { Show } from "./Show";
 
 const renderOrder = [
   ["LineExtensionAmount", "Subtotal (items)"],
@@ -19,6 +20,7 @@ const renderOrder = [
 ];
 
 export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
+  const userStyle = extraStyles[useContext(styleContext)];
   const totals = props.legalMonetaryTotal;
 
   if (!totals["AllowanceTotalAmount"] && !totals["ChargeTotalAmount"]) {
@@ -26,38 +28,56 @@ export const MonetaryTotal = (props: { legalMonetaryTotal: JSONValue }) => {
   }
 
   return (
-    <View style={[styles.tableWrapper_borderless, styles.totalTable]}>
+    <View
+      style={[
+        userStyle["tableWrapper"],
+        userStyle["borderless"],
+        userStyle["totalTable"],
+      ]}
+    >
       {renderOrder
         .filter((item) => item[0] in (totals as Object))
         .map((item, i) => (
-          <View
-            style={[
-              styles.row_borderless,
-              item[0] === "PayableAmount"
-                ? { borderTop: 2, borderColor: "black", marginTop: 8 }
-                : {},
-            ]}
+          <Show
+            min={
+              ["PayableAmount, TaxExclusiveAmount"].includes(item[0])
+                ? Detail.SUMMARY
+                : Detail.DEFAULT
+            }
             key={i}
           >
-            <Text
+            <View
               style={[
-                styles.col_borderless,
-                { width: "60%", padding: 2 },
-                item[0] === "PayableAmount" ? styles.big : {},
+                userStyle["row"],
+                userStyle["borderless"],
+                item[0] === "PayableAmount"
+                  ? { borderTopWidth: 2, borderColor: "black", marginTop: 8 }
+                  : {},
+                item[0] === "PayableAmount" ? userStyle["break"] : {},
               ]}
             >
-              {item[1]}:
-            </Text>
-            <Text
-              style={[
-                styles.col_borderless,
-                { width: "40%", textAlign: "right", padding: 2 },
-                item[0] === "PayableAmount" ? styles.big : {},
-              ]}
-            >
-              {formatCurrency(totals[item[0]])}
-            </Text>
-          </View>
+              <Text
+                style={[
+                  userStyle["col"],
+                  userStyle["borderless"],
+                  { width: "60%", padding: 2 },
+                  item[0] === "PayableAmount" ? userStyle["big"] : {},
+                ]}
+              >
+                {item[1]}:
+              </Text>
+              <Text
+                style={[
+                  userStyle["col"],
+                  userStyle["borderless"],
+                  { width: "40%", textAlign: "right", padding: 2 },
+                  item[0] === "PayableAmount" ? userStyle["big"] : {},
+                ]}
+              >
+                {formatCurrency(totals[item[0]])}
+              </Text>
+            </View>
+          </Show>
         ))}
     </View>
   );
