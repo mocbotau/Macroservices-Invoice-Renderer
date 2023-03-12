@@ -90,10 +90,15 @@ const Invoice = (props: {
   );
 };
 
+/**
+ * Creates an Invoice component using react-pdf
+ * @param {RenderArgs} args - an object containing language, a styleID and the UBL string
+ * @param {RenderingContexts} renderingContext - the rendering context
+ * @returns
+ */
 async function createInvoiceComponent(
   args: RenderArgs,
-  renderingContext: RenderingContexts,
-  styleId: number
+  renderingContext: RenderingContexts
 ) {
   if (!args || !args.ubl) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
@@ -114,25 +119,34 @@ async function createInvoiceComponent(
       <Invoice
         ubl={ublToJSON(args.ubl)}
         renderingContext={renderingContext}
-        styleContext={styleId}
+        styleContext={args.style}
       />
     </Suspense>
   );
 }
 
+/**
+ * Creates a PDF invoice using react-pdf
+ * @param {RenderArgs} args - an object containing language, a styleID and the UBL string
+ * @returns {Promise<NodeJS.ReadableStream>} - The PDF file stream
+ */
 export async function generateInvoicePDF(args: RenderArgs) {
   return await ReactPDF.renderToStream(
-    await createInvoiceComponent(args, RenderingContexts.Pdf, args.style)
+    await createInvoiceComponent(args, RenderingContexts.Pdf)
   );
 }
 
+/**
+ * Creates a HTML invoice using react-pdf
+ * @param {RenderArgs} args - an object containing language, a styleID and the UBL string
+ * @returns {Promise<ReactDOM.PipeableStream>} - The PDF file stream
+ */
 export async function generateInvoiceHTML(
   args: RenderArgs
 ): Promise<ReactDOM.PipeableStream> {
   const invoiceComponent = await createInvoiceComponent(
     args,
-    RenderingContexts.Html,
-    args.style
+    RenderingContexts.Html
   );
 
   return new Promise((res) => {
