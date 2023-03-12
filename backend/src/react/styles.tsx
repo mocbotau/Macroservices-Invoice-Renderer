@@ -18,9 +18,6 @@ const defaultStyle = {
     fontFamily: "Helvetica",
     fontSize: 14,
   },
-  section: {
-    padding: 8,
-  },
   bold: {
     fontFamily: "Helvetica-Bold",
   },
@@ -63,7 +60,7 @@ const defaultStyle = {
     width: "100%",
   },
   col: {
-    padding: 8,
+    padding: 4,
     display: "flex",
     borderLeftWidth: 2,
     borderColor: "black",

@@ -16,6 +16,10 @@ describe("Metadata component", () => {
     render(
       <Metadata
         id={testObject["ID"]}
+        delivery={testObject["Delivery"]}
+        dueDate={testObject["DueDate"]}
+        accountingCost={testObject["AccountingCost"]}
+        invoicePeriod={testObject["InvoicePeriod"]}
         issueDate={testObject["IssueDate"]}
         paymentTerms={testObject["PaymentTerms"]}
         note={testObject["Note"]}

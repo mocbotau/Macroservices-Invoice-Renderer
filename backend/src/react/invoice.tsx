@@ -56,9 +56,13 @@ const Invoice = (props: {
               </Show>
               <Metadata
                 id={ubl["ID"]}
+                invoicePeriod={ubl["InvoicePeriod"]}
                 issueDate={ubl["IssueDate"]}
+                dueDate={ubl["DueDate"]}
                 paymentTerms={ubl["PaymentTerms"]}
+                accountingCost={ubl["AccountingCost"]}
                 note={ubl["Note"]}
+                delivery={ubl["Delivery"]}
               />
               <Break height={16} />
               <Break height={8} solid />

@@ -1,4 +1,4 @@
-import { formatCurrency, ublToJSON } from "@src/util";
+import { formatCurrency, getPeriodString, ublToJSON } from "@src/util";
 import { readFile } from "fs/promises";
 import testObject from "@tests/resources/example1.json";
 import { InvalidUBL } from "@src/error";
@@ -152,6 +152,24 @@ describe("Formatting currency amounts", () => {
     );
     expect(formatCurrency({ _text: -10, $currencyID: "AUD" })).toEqual(
       "-$10.00 AUD"
+    );
+  });
+});
+
+describe("Generating date strings", () => {
+  test("It should format a date with a start and end", () => {
+    expect(
+      getPeriodString({ StartDate: "2023-01-01", EndDate: "2024-01-01" })
+    ).toEqual("2023-01-01 - 2024-01-01");
+  });
+  test("It should format a date with only a start", () => {
+    expect(getPeriodString({ StartDate: "2023-01-01" })).toEqual(
+      "Period starting 2023-01-01"
+    );
+  });
+  test("It should format a date with only an end", () => {
+    expect(getPeriodString({ EndDate: "2024-01-01" })).toEqual(
+      "Period ending 2024-01-01"
     );
   });
 });
