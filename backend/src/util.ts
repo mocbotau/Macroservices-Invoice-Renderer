@@ -51,7 +51,6 @@ export function ublToJSON(ublStr: string): JSONValue {
       attributeName.replace(/^c.c:/, ""),
   };
   const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
-
   return postProcessUBL(parsed, "Invoice");
 }
 

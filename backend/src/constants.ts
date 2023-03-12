@@ -32,3 +32,13 @@ Object.keys(PAGE_SIZES).forEach(
   (x) =>
     (PAGE_SIZES[x].INNER_WIDTH = PAGE_SIZES[x].WIDTH - 2 * PAGE_SIZES[x].MARGIN)
 );
+
+export const REQUIRED_FIELDS = [
+  "AccountingSupplierParty",
+  "AccountingCustomerParty",
+  "InvoiceLine",
+  "ID",
+  "IssueDate",
+  "TaxTotal",
+  "LegalMonetaryTotal",
+];
