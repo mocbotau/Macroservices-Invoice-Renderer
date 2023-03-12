@@ -1,4 +1,4 @@
-import React, { Suspense, useContext } from "react";
+import React, { Suspense } from "react";
 import ReactPDF from "@react-pdf/renderer";
 import { RenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
@@ -13,7 +13,12 @@ import { InvoiceTable } from "./components/InvoiceTable";
 import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
-import { MAX_STYLES, SUPPORTED_LANGUAGES, PAGE_SIZES } from "@src/constants";
+import {
+  MAX_STYLES,
+  SUPPORTED_LANGUAGES,
+  PAGE_SIZES,
+  REQUIRED_FIELDS,
+} from "@src/constants";
 import i18next from "@src/i18next";
 
 import {
@@ -32,6 +37,23 @@ const Invoice = (props: {
 }) => {
   const userStyle = extraStyles[props.styleContext];
   const ubl = props.ubl;
+
+  const missingComponents: string[] = [];
+
+  REQUIRED_FIELDS.forEach((key: string) => {
+    if (!ubl[key]) {
+      missingComponents.push(key);
+    }
+  });
+
+  if (missingComponents.length !== 0) {
+    throw new InvalidUBL({
+      message: `The provided UBL is missing some mandatory components: ${missingComponents
+        .join(", ")
+        .replace(/,\s*$/, "")}`,
+    });
+  }
+
   return (
     <renderingContext.Provider value={props.renderingContext}>
       <styleContext.Provider value={props.styleContext}>

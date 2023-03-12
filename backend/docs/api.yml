@@ -32,7 +32,14 @@ paths:
       tags:
         - Render
       summary: Render a UBL XML file into a PDF file.
-      description: Given a UBL XML file, renders into a human readable visualisation in PDF form.
+      description: |
+        Given a UBL XML file, renders into a human readable visualisation in PDF form.
+          There are 5 styles to choose from which are currently implemented.
+          * Style ID 0 - Default: blue themed title headings for aesthetic appeal, and a moderate level of detail
+          * Style ID 1 - Landscape: black and white landscape invoice with moderate detail for users who find the default layout too horizontally cramped
+          * Style ID 2 - Detailed: as with Landscape style, but with greater detail for accountants and other professionals to visualise relevant data
+          * Style ID 3 - Summary: black and white portrait invoice with minimal detail for shorter files and quicker understanding of invoice items
+          * Style ID 4 - Default High Contrast: black and white version of Default style for vision impaired users (or those with only black and white printing)
       security:
         - APIKey: []
       requestBody:
@@ -60,7 +67,14 @@ paths:
       tags:
         - Render
       summary: Render a UBL XML file and returns HTML.
-      description: Given a UBL XML file, renders into a human readable visualisation in HTML form.
+      description: |-
+        Given a UBL XML file, renders into a human readable visualisation in HTML form.
+          There are 5 styles to choose from which are currently implemented.
+          * Style ID 0 - Default: blue themed title headings for aesthetic appeal, and a moderate level of detail
+          * Style ID 1 - Landscape: black and white landscape invoice with moderate detail for users who find the default layout too horizontally cramped
+          * Style ID 2 - Detailed: as with Landscape style, but with greater detail for accountants and other professionals to visualise relevant data
+          * Style ID 3 - Summary: black and white portrait invoice with minimal detail for shorter files and quicker understanding of invoice items
+          * Style ID 4 - Default High Contrast: black and white version of Default style for vision impaired users (or those with only black and white printing)
       security:
         - APIKey: []
       requestBody:
@@ -138,6 +152,9 @@ components:
           example: "<Invoice></Invoice>"
         style:
           type: integer
+          description: The style of the invoice to render.
+          minimum: 0
+          maximum: 4
         language:
           type: string
           enum:
