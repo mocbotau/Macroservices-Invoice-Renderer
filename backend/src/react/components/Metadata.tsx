@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 
-import { defaultStyles } from "../styles";
+import { Detail, extraStyles, styleContext } from "../styles";
 import { JSONValue } from "@src/interfaces";
 import { Break } from "./Break";
 
 import View from "./base/View";
 import Text from "./base/Text";
+import { Show } from "./Show";
 
 export const Metadata = (props: {
   id: JSONValue;
@@ -13,28 +14,29 @@ export const Metadata = (props: {
   paymentTerms: JSONValue;
   note: JSONValue;
 }) => {
+  const userStyle = extraStyles[useContext(styleContext)];
   const note = [
     props.note,
     props.paymentTerms ? props.paymentTerms["Note"] : undefined,
   ].filter((x) => x);
   return (
     <View>
-      <View style={[defaultStyles.horizontalFlex, { flexWrap: "wrap" }]}>
-        <View style={defaultStyles.flexbox}>
-          <Text style={defaultStyles.bold}>Invoice ID</Text>
+      <View style={[userStyle["horizontalFlex"], { flexWrap: "wrap" }]}>
+        <View style={userStyle["flexbox"]}>
+          <Text style={userStyle["bold"]}>Invoice ID</Text>
           <Text>{props.id.toString()}</Text>
         </View>
-        <View style={defaultStyles.flexbox}>
-          <Text style={defaultStyles.bold}>Issue date</Text>
+        <View style={userStyle["flexbox"]}>
+          <Text style={userStyle["bold"]}>Issue date</Text>
           <Text>{props.issueDate.toString()}</Text>
         </View>
       </View>
-      <Break />
       {note.length && (
-        <View>
-          <Text style={defaultStyles.bold}>Invoice note</Text>
+        <Show min={Detail.DEFAULT}>
+          <Break />
+          <Text style={userStyle["bold"]}>Invoice note</Text>
           <Text>{note.join("\n")}</Text>
-        </View>
+        </Show>
       )}
     </View>
   );

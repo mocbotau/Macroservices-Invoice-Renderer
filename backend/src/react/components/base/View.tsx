@@ -16,9 +16,14 @@ const View = (props) => {
     if (!styles) {
       styles = {};
     }
-    if (styles.borderWidth && styles.borderColor) {
-      styles.border = `${styles.borderWidth}px solid ${styles.borderColor}`;
+    for (const dir of ["", "Top", "Bottom", "Left", "Right"]) {
+      if (styles[`border${dir}Width`] && styles.borderColor) {
+        styles[`border${dir}`] = `${styles[`border${dir}Width`]}px solid ${
+          styles.borderColor
+        }`;
+      }
     }
+
     if (styles.flexDirection && !styles.display) {
       styles.display = "flex";
     }

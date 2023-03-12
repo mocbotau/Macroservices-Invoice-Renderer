@@ -1,61 +1,18 @@
-import { StyleSheet } from "@react-pdf/renderer";
 import React from "react";
 
 import { PAGE_SIZES } from "@src/constants";
 
-export enum StyleContexts {
-  Default,
-  Landscape,
-  Detailed,
-  Summary,
-  NoColourSummary,
+export enum Detail {
+  SUMMARY,
+  DEFAULT,
+  DETAILED,
 }
 
-export const styleContext = React.createContext("default");
-
-export const extraStyles: object[] = [
-  {
-    meta: {
-      pageSize: "A4P",
-    },
+const defaultStyle = {
+  meta: {
+    pageSize: "A4P",
+    detail: Detail.DEFAULT,
   },
-  {
-    meta: {
-      pageSize: "A4L",
-    },
-  },
-  {
-    meta: {
-      pageSize: "A4L",
-    },
-  },
-  {
-    meta: {
-      pageSize: "A4P",
-    },
-  },
-  {
-    meta: {
-      pageSize: "A4P",
-    },
-  },
-];
-extraStyles.forEach((x) => {
-  const pageSize = x["meta"].pageSize;
-
-  if (pageSize) {
-    x["page"].margin = PAGE_SIZES[pageSize].MARGIN;
-    x["tableWrapper"].width = PAGE_SIZES[pageSize].INNER_WIDTH;
-    x["totalTable"].width =
-      PAGE_SIZES[pageSize].WIDTH / 2 - PAGE_SIZES[pageSize].MARGIN;
-    x["totalTable"].marginLeft =
-      PAGE_SIZES[pageSize].WIDTH -
-      PAGE_SIZES[pageSize].WIDTH / 2 -
-      PAGE_SIZES[pageSize].MARGIN;
-  }
-});
-
-export const defaultStyles = StyleSheet.create({
   page: {
     margin: PAGE_SIZES.A4P.MARGIN,
     fontFamily: "Helvetica",
@@ -93,14 +50,14 @@ export const defaultStyles = StyleSheet.create({
     flexWrap: "wrap",
     width: PAGE_SIZES.A4P.INNER_WIDTH,
     marginTop: 8,
-    borderWidth: 2,
+    borderBottomWidth: 2,
+    borderRightWidth: 2,
     borderColor: "black",
   },
   row: {
     display: "flex",
     flexDirection: "row",
     alignItems: "stretch",
-    borderTop: "solid",
     borderTopWidth: 2,
     borderColor: "black",
     width: "100%",
@@ -108,18 +65,104 @@ export const defaultStyles = StyleSheet.create({
   col: {
     padding: 8,
     display: "flex",
-    borderLeft: "solid",
     borderLeftWidth: 2,
     borderColor: "black",
   },
   borderless: {
-    padding: 8,
     borderWidth: 0,
-    display: "flex",
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
   },
   totalTable: {
     width: PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
     marginLeft:
       PAGE_SIZES.A4P.WIDTH - PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
   },
+};
+
+export const styleContext = React.createContext(0);
+
+export const extraStyles: object[] = [
+  {
+    // Coloured
+    meta: {
+      pageSize: "A4P",
+    },
+    title: {
+      color: "#0d2363",
+    },
+    h1: {
+      color: "#2a4cb0",
+    },
+    bold: {
+      color: "#4a74f0",
+    },
+    break: {
+      borderColor: "#0d2363",
+    },
+    tableWrapper: {
+      borderColor: "#0d2363",
+    },
+    row: {
+      borderColor: "#0d2363",
+    },
+    col: {
+      borderColor: "#0d2363",
+    },
+  },
+  {
+    // Landscape
+    meta: {
+      pageSize: "A4L",
+    },
+  },
+  {
+    // Detailed
+    meta: {
+      pageSize: "A4L",
+      detail: Detail.DETAILED,
+    },
+  },
+  {
+    // Summary
+    meta: {
+      pageSize: "A4P",
+      detail: Detail.SUMMARY,
+    },
+  },
+  {
+    // Default
+    meta: {
+      pageSize: "A4P",
+    },
+  },
+];
+
+extraStyles.forEach((x) => {
+  const pageSize = x["meta"].pageSize;
+
+  if (pageSize) {
+    if (!x["page"]) x["page"] = {};
+    if (!x["tableWrapper"]) x["tableWrapper"] = {};
+    if (!x["totalTable"]) x["totalTable"] = {};
+
+    x["page"].margin = PAGE_SIZES[pageSize].MARGIN;
+    x["tableWrapper"].width = PAGE_SIZES[pageSize].INNER_WIDTH;
+    x["totalTable"].width =
+      PAGE_SIZES[pageSize].WIDTH / 2 - PAGE_SIZES[pageSize].MARGIN;
+    x["totalTable"].marginLeft =
+      PAGE_SIZES[pageSize].WIDTH -
+      PAGE_SIZES[pageSize].WIDTH / 2 -
+      PAGE_SIZES[pageSize].MARGIN;
+  }
+
+  for (const styleObj in defaultStyle) {
+    if (x[styleObj] === undefined) x[styleObj] = {};
+    for (const styleProp in defaultStyle[styleObj]) {
+      if (x[styleObj][styleProp] === undefined)
+        x[styleObj][styleProp] = defaultStyle[styleObj][styleProp];
+    }
+  }
 });

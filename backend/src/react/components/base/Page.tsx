@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import RPDF from "@react-pdf/renderer";
 
 import { renderingContext, RenderingContexts } from "./renderingContext";
-import { styleContext, StyleContexts, extraStyles } from "@src/react/styles";
+import { styleContext, extraStyles } from "@src/react/styles";
 import { PAGE_SIZES } from "@src/constants";
 
 const Page = (props) => {
@@ -16,7 +16,7 @@ const Page = (props) => {
       <body
         style={{
           margin: "auto",
-          width: PAGE_SIZES[userStyle.meta.pageSize].INNER_WIDTH,
+          width: PAGE_SIZES[userStyle["meta"].pageSize].INNER_WIDTH,
         }}
       >
         {props.children}
