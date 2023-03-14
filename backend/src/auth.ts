@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { InvalidKeyError, UnauthorisedError } from "./error";
 import { NextFunction, Request, Response } from "express";
+import { dbGet } from "./database";
 
 /**
  * Given an API key, determine if the client has access
@@ -17,10 +18,18 @@ export async function validateSession(
   const apiKey = req.headers["api-key"] as string;
   if (apiKey === undefined) {
     throw new UnauthorisedError();
-  } else if (
-    createHash("sha256").update(apiKey).digest("hex") !== process.env.API_KEY
-  ) {
-    throw new InvalidKeyError();
+  } else {
+    const hashedKey = createHash("sha256").update(apiKey).digest("hex");
+
+    const dbResult = await dbGet(
+      "SELECT * FROM ApiKeys WHERE key=?",
+      hashedKey
+    );
+
+    if (dbResult === undefined) {
+      throw new InvalidKeyError();
+    }
+
+    next();
   }
-  next();
 }

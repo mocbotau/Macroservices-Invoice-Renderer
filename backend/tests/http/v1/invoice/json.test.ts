@@ -5,7 +5,11 @@ import path from "path";
 import app from "@src/app";
 import { readFile } from "fs/promises";
 import { ublToJSON } from "@src/util";
-import { renderInvoiceRequestTest } from "./util";
+import { renderInvoiceRequestTest, setupTestKey } from "./util";
+
+beforeAll(async () => {
+  await setupTestKey();
+});
 
 describe("Invoice route", () => {
   test("No API key provided", async () => {
