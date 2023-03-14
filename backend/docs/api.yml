@@ -10,11 +10,26 @@ info:
 servers:
   - url: http://192.9.175.202/v1/
 tags:
+  - name: GenerateKey
+    description: Generate API key
   - name: Render
     description: Invoice Rendering
   - name: Healthcheck
     description: Server Status
 paths:
+  /generatekey:
+    get:
+      tags:
+        - GenerateKey
+      summary: Generates an API key for use in the api-key header.
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateKeyResponse"
+
   /healthcheck:
     get:
       tags:
@@ -167,6 +182,11 @@ components:
           type: string
           description: "The UBL XML file data formatted as a single string. All quotation marks should be single quotes, and there should be no line breaks."
           example: "<Invoice></Invoice>"
+    GenerateKeyResponse:
+      type: object
+      properties:
+        key:
+          type: string
     HealthcheckResponse:
       type: object
       properties:
