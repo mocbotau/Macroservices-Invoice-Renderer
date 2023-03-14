@@ -8,7 +8,7 @@ info:
     - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/se2021-23t1-einvoicing-api-f14a-macroservices-rendering-api) repository
   version: 1.0.0
 servers:
-  - url: http://192.9.175.202/v1/
+  - url: http://192.9.175.202/
 tags:
   - name: GenerateKey
     description: Generate API key
@@ -17,7 +17,7 @@ tags:
   - name: Healthcheck
     description: Server Status
 paths:
-  /generatekey:
+  /v1/generatekey:
     get:
       tags:
         - GenerateKey
@@ -30,7 +30,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/GenerateKeyResponse"
 
-  /healthcheck:
+  /v1/healthcheck:
     get:
       tags:
         - Healthcheck
@@ -42,7 +42,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthcheckResponse"
-  /invoice/render/pdf:
+  /v1/invoice/render/pdf:
     post:
       tags:
         - Render
@@ -77,7 +77,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "422":
           $ref: "#/components/responses/InvalidUBL"
-  /invoice/render/html:
+  /v1/invoice/render/html:
     post:
       tags:
         - Render
@@ -113,7 +113,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "422":
           $ref: "#/components/responses/InvalidUBL"
-  /invoice/render/json:
+  /v1/invoice/render/json:
     post:
       tags:
         - Render

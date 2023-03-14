@@ -24,13 +24,13 @@ export async function dbRun(query: string, ...params): Promise<void> {
 export async function dbGet(
   query: string,
   ...params
-): Promise<Record<string, any> | undefined> {
+): Promise<Record<string, unknown> | undefined> {
   return new Promise((res) => {
     db.get(query, params, (err, row) => {
       if (err) {
         throw err;
       } else {
-        res(row);
+        res(row as Record<string, unknown>);
       }
     });
   });
