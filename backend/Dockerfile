@@ -4,6 +4,8 @@ RUN mkdir /app
 
 WORKDIR /app
 
+VOLUME /app/persistence
+
 COPY package.json package-lock.json ./
 
 RUN npm ci --omit=dev

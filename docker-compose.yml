@@ -7,3 +7,7 @@ services:
     restart: always
     volumes:
       - ./backend/.env:/app/.env:ro
+      - db-data:/app/persistence
+
+volumes:
+  db-data:
