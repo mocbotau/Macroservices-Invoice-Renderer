@@ -11,7 +11,7 @@ const router = express.Router();
 const multerUpload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
-    if (file.originalname.match(/(^[\w\.]+)?\.xml$/)) {
+    if (file.originalname.match(/(^[\w.]+)?\.xml$/)) {
       cb(null, true);
     } else {
       cb(
@@ -25,7 +25,9 @@ const multerUpload = multer({
 
 router.use("/pdf", multerUpload.single("file"), async (req, res) => {
   const result = await generateInvoicePDF({
-    ubl: req.file?.buffer.toString(),
+    ubl: req.get("Content-Type").includes("application/json")
+      ? req.body.ubl
+      : req.file?.buffer.toString(),
     language: req.body.language,
     style: req.body.style,
   });
@@ -35,16 +37,27 @@ router.use("/pdf", multerUpload.single("file"), async (req, res) => {
 });
 
 router.use("/json", multerUpload.single("file"), async (req, res) => {
-  if (!req.file) {
+  if (
+    (req.get("Content-Type").includes("application/json") && !req.body.ubl) ||
+    (req.get("Content-Type").includes("multipart/form-data") && !req.file)
+  ) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
   }
 
-  res.json(ublToJSON(req.file?.buffer.toString()));
+  res.json(
+    ublToJSON(
+      req.get("Content-Type").includes("application/json")
+        ? req.body.ubl
+        : req.file?.buffer.toString()
+    )
+  );
 });
 
 router.use("/html", multerUpload.single("file"), async (req, res) => {
   const stream = await generateInvoiceHTML({
-    ubl: req.file?.buffer.toString(),
+    ubl: req.get("Content-Type").includes("application/json")
+      ? req.body.ubl
+      : req.file?.buffer.toString(),
     language: req.body.language,
     style: req.body.style,
   });
