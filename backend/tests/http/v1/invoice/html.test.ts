@@ -4,7 +4,7 @@ import request from "supertest";
 import path from "path";
 import app from "@src/app";
 import { readFile } from "fs/promises";
-import { renderInvoiceRequestTest, setupTestKey } from "./util";
+import { renderInvoiceRequestTest, setupTestKey } from "../../util";
 
 beforeAll(async () => {
   await setupTestKey();
@@ -66,5 +66,3 @@ describe("Invoice route", () => {
     expect(resp.body).toBeDefined();
   });
 });
-
-function a() {}

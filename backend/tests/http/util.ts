@@ -9,7 +9,10 @@ export async function setupTestKey() {
   testKey = resp.body.key;
 }
 
-export function renderInvoiceRequestTest(apiVersion: "v1" | "v2", route: "html" | "pdf" | "json") {
+export function renderInvoiceRequestTest(
+  apiVersion: "v1" | "v2",
+  route: "html" | "pdf" | "json"
+) {
   if (testKey === undefined) {
     throw new Error(
       "testKey is undefined, perhaps forgot to call setupTestKey?"
