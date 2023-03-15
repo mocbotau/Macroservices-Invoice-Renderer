@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import v1Router from "./routes/v1";
+import v2Router from "./routes/v2";
 import { errorHandler } from "@src/errorHandler";
 import morgan from "morgan";
 import logger from "@src/logger";
@@ -22,7 +23,8 @@ app.use(
   })
 );
 
-app.use("/v1", v1Router);
+app.use("/api/v1", v1Router);
+app.use("/api/v2", v2Router);
 app.use(errorHandler);
 
 export default app;
