@@ -28,12 +28,12 @@ describe("Invoice route", () => {
   });
 
   test("No input body provided", async () => {
-    const resp = await renderInvoiceRequestTest("json");
+    const resp = await renderInvoiceRequestTest("v1", "json");
     expect(resp.statusCode).toBe(422);
   });
 
   test("Invalid UBL provided", async () => {
-    const resp = await renderInvoiceRequestTest("json").send({
+    const resp = await renderInvoiceRequestTest("v1", "json").send({
       ubl: "123",
     });
     expect(resp.statusCode).toBe(422);
@@ -47,7 +47,7 @@ describe("Invoice route", () => {
       }
     );
 
-    const resp = await renderInvoiceRequestTest("json").send({
+    const resp = await renderInvoiceRequestTest("v1", "json").send({
       ubl,
     });
 

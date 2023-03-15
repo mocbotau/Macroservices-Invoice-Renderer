@@ -28,12 +28,12 @@ describe("Invoice route", () => {
   });
 
   test("No input body provided", async () => {
-    const resp = await renderInvoiceRequestTest("pdf");
+    const resp = await renderInvoiceRequestTest("v1", "pdf");
     expect(resp.statusCode).toBe(422);
   });
 
   test("Invalid language provided", async () => {
-    const resp = await renderInvoiceRequestTest("pdf").send({
+    const resp = await renderInvoiceRequestTest("v1", "pdf").send({
       ubl: "123",
       language: "kr",
       style: 3,
@@ -42,7 +42,7 @@ describe("Invoice route", () => {
   });
 
   test("Invalid style provided", async () => {
-    const resp = await renderInvoiceRequestTest("pdf").send({
+    const resp = await renderInvoiceRequestTest("v1", "pdf").send({
       ubl: "123",
       language: "zh",
       style: -1,
@@ -51,7 +51,7 @@ describe("Invoice route", () => {
   });
 
   test("It should return a PDF file", async () => {
-    const resp = await renderInvoiceRequestTest("pdf").send({
+    const resp = await renderInvoiceRequestTest("v1", "pdf").send({
       ubl: await readFile(
         path.join(__dirname, "../../../resources/example1.xml"),
         {
