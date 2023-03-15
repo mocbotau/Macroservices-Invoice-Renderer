@@ -5,7 +5,7 @@ import path from "path";
 import app from "@src/app";
 import { readFile } from "fs/promises";
 import { ublToJSON } from "@src/util";
-import { renderInvoiceRequestTest, setupTestKey } from "./util";
+import { renderInvoiceRequestTest, setupTestKey } from "../../util";
 
 beforeAll(async () => {
   await setupTestKey();
@@ -14,26 +14,26 @@ beforeAll(async () => {
 describe("Invoice route", () => {
   test("No API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/json")
+      .post("/api/v1/invoice/render/json")
       .send({ ubl: "123" });
     expect(resp.statusCode).toBe(401);
   });
 
   test("Wrong API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/json")
+      .post("/api/v1/invoice/render/json")
       .set({ "api-key": "thisisawrongapikey" })
       .send({ ubl: "123" });
     expect(resp.statusCode).toBe(403);
   });
 
   test("No input body provided", async () => {
-    const resp = await renderInvoiceRequestTest("json");
+    const resp = await renderInvoiceRequestTest("v1", "json");
     expect(resp.statusCode).toBe(422);
   });
 
   test("Invalid UBL provided", async () => {
-    const resp = await renderInvoiceRequestTest("json").send({
+    const resp = await renderInvoiceRequestTest("v1", "json").send({
       ubl: "123",
     });
     expect(resp.statusCode).toBe(422);
@@ -47,7 +47,7 @@ describe("Invoice route", () => {
       }
     );
 
-    const resp = await renderInvoiceRequestTest("json").send({
+    const resp = await renderInvoiceRequestTest("v1", "json").send({
       ubl,
     });
 

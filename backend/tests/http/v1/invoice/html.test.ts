@@ -4,7 +4,7 @@ import request from "supertest";
 import path from "path";
 import app from "@src/app";
 import { readFile } from "fs/promises";
-import { renderInvoiceRequestTest, setupTestKey } from "./util";
+import { renderInvoiceRequestTest, setupTestKey } from "../../util";
 
 beforeAll(async () => {
   await setupTestKey();
@@ -13,26 +13,26 @@ beforeAll(async () => {
 describe("Invoice route", () => {
   test("No API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/html")
+      .post("/api/v1/invoice/render/html")
       .send({ ubl: "123", language: "cn", style: 3 });
     expect(resp.statusCode).toBe(401);
   });
 
   test("Wrong API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/html")
+      .post("/api/v1/invoice/render/html")
       .set({ "api-key": "thisisawrongapikey" })
       .send({ ubl: "123", language: "cn", style: 3 });
     expect(resp.statusCode).toBe(403);
   });
 
   test("No input body provided", async () => {
-    const resp = await renderInvoiceRequestTest("html");
+    const resp = await renderInvoiceRequestTest("v1", "html");
     expect(resp.statusCode).toBe(422);
   });
 
   test("Invalid language provided", async () => {
-    const resp = await renderInvoiceRequestTest("html").send({
+    const resp = await renderInvoiceRequestTest("v1", "html").send({
       ubl: "123",
       language: "kr",
       style: 3,
@@ -41,7 +41,7 @@ describe("Invoice route", () => {
   });
 
   test("Invalid style provided", async () => {
-    const resp = await renderInvoiceRequestTest("html").send({
+    const resp = await renderInvoiceRequestTest("v1", "html").send({
       ubl: "123",
       language: "zh",
       style: -1,
@@ -50,7 +50,7 @@ describe("Invoice route", () => {
   });
 
   test("It should return a HTML file", async () => {
-    const resp = await renderInvoiceRequestTest("html").send({
+    const resp = await renderInvoiceRequestTest("v1", "html").send({
       ubl: await readFile(
         path.join(__dirname, "../../../resources/example1.xml"),
         {
@@ -66,5 +66,3 @@ describe("Invoice route", () => {
     expect(resp.body).toBeDefined();
   });
 });
-
-function a() {}
