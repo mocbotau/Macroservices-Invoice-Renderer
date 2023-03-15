@@ -15,7 +15,7 @@ info:
 servers:
   - url: https://macroservices.masterofcubesau.com/api/v2
 tags:
-  - name: GenerateKey
+  - name: Generate Key
     description: Generate API key
   - name: Render
     description: Invoice Rendering
@@ -25,7 +25,7 @@ paths:
   /generatekey:
     get:
       tags:
-        - GenerateKey
+        - Generate Key
       summary: Generates an API key for use in the api-key header.
       responses:
         "200":
