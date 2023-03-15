@@ -39,7 +39,7 @@ router.use("/json", multerUpload.single("file"), async (req, res) => {
     throw new InvalidUBL({ message: "No UBL file was provided." });
   }
 
-  res.json(ublToJSON(req.body.ubl));
+  res.json(ublToJSON(req.file?.buffer.toString()));
 });
 
 router.use("/html", multerUpload.single("file"), async (req, res) => {
