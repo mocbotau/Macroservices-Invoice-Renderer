@@ -4,6 +4,11 @@ info:
   description: |-
     This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
 
+    v2 Changelog:
+    - Added multipart request bodies to support form uploads.
+    - Modified API route. /v1 becomes /api/v1 etc.
+    - Added v2 and v1 docs (/docs/v1 and /docs/v2). Also add latest docs endpoint (/docs)
+
     Some useful links:
     - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/se2021-23t1-einvoicing-api-f14a-macroservices-rendering-api) repository
   version: 1.0.0
