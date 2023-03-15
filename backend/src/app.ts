@@ -5,6 +5,7 @@ import v2Router from "./routes/v2";
 import { errorHandler } from "@src/errorHandler";
 import morgan from "morgan";
 import logger from "@src/logger";
+import cors from "cors";
 
 const stream = {
   write: (message: string) =>
@@ -13,6 +14,7 @@ const stream = {
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(
   morgan("dev", {
