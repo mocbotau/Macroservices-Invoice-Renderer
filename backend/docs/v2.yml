@@ -11,7 +11,7 @@ info:
 
     Some useful links:
     - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/se2021-23t1-einvoicing-api-f14a-macroservices-rendering-api) repository
-  version: 1.0.0
+  version: 2.0.0
 servers:
   - url: https://macroservices.masterofcubesau.com/api/v2
 tags:
