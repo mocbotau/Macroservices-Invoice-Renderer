@@ -6,7 +6,7 @@ import generateKeyRouter from "../v1/generatekey";
 import { validateSession } from "@src/auth";
 
 // v2 imports
-import invoiceRouter from "../v1/invoice";
+import invoiceRouter from "./invoice";
 
 const router = express.Router();
 
