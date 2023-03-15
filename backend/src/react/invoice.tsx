@@ -65,8 +65,9 @@ const Invoice = (props: {
               PAGE_SIZES[extraStyles[props.styleContext]["meta"].pageSize]
                 .HEIGHT,
             ]}
+            style={userStyle["page"]}
           >
-            <View style={userStyle["page"]}>
+            <View style={userStyle["pageWrapper"]}>
               <Header
                 supplierParty={ubl["AccountingSupplierParty"]}
                 customerParty={ubl["AccountingCustomerParty"]}

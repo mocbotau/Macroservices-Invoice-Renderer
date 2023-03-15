@@ -26,7 +26,7 @@ export const InvoiceTableRow = (props: {
   const invoiceLine = props.invoiceLine;
 
   return (
-    <View style={userStyle["row"]}>
+    <View style={userStyle["row"]} wrap={false}>
       {widths["ID"] && (
         <View style={[userStyle["col"], widths["ID"]]}>
           <Text>{invoiceLine["ID"]}</Text>

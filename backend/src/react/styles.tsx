@@ -15,7 +15,7 @@ Font.register({
 });
 
 Font.register({
-  family: "arial",
+  family: "arial-oblique",
   src: "fonts/Arial-Unicode-Italic.ttf",
 });
 
@@ -30,8 +30,9 @@ const defaultStyle = {
     pageSize: "A4P",
     detail: Detail.DEFAULT,
   },
-  page: {
-    margin: PAGE_SIZES.A4P.MARGIN,
+  page: {},
+  pageWrapper: {
+    // margin: PAGE_SIZES.A4P.MARGIN,
     fontSize: 14,
     fontFamily: "arial-regular",
   },

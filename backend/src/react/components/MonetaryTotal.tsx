@@ -44,6 +44,7 @@ export const MonetaryTotal = (props: {
         userStyle["borderless"],
         userStyle["totalTable"],
       ]}
+      wrap={false}
     >
       {renderOrder
         .filter((item) => item[0] in (totals as Object))
