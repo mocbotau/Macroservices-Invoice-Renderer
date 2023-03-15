@@ -14,14 +14,14 @@ beforeAll(async () => {
 describe("Invoice route", () => {
   test("No API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/pdf")
+      .post("/api/v1/invoice/render/pdf")
       .send({ ubl: "123", language: "cn", style: 3 });
     expect(resp.statusCode).toBe(401);
   });
 
   test("Wrong API key provided", async () => {
     const resp = await request(app)
-      .post("/v1/invoice/render/pdf")
+      .post("/api/v1/invoice/render/pdf")
       .set({ "api-key": "thisisawrongapikey" })
       .send({ ubl: "123", language: "cn", style: 3 });
     expect(resp.statusCode).toBe(403);
