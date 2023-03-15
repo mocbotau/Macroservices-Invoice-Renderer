@@ -4,6 +4,15 @@ info:
   description: |-
     This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
 
+    Please note that the following components must be present within the UBL invoice in order for an invoice to be generated:
+    * AccountingSupplierParty
+    * AccountingCustomerParty
+    * InvoiceLine
+    * ID
+    * IssueDate
+    * TaxTotal
+    * LegalMonetaryTotal
+
     v2 Changelog:
     - Added multipart request bodies to support form uploads.
     - Modified API route. /v1 becomes /api/v1 etc.

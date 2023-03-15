@@ -2,7 +2,16 @@ openapi: 3.0.0
 info:
   title: Macroservices Invoice Renderer API v1
   description: |-
-    This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
+    This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1.
+
+    Please note that the following components must be present within the UBL invoice in order for an invoice to be generated:
+    * AccountingSupplierParty
+    * AccountingCustomerParty
+    * InvoiceLine
+    * ID
+    * IssueDate
+    * TaxTotal
+    * LegalMonetaryTotal
 
     Some useful links:
     - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/F14A-Macroservices-Invoice-Renderer) repository
