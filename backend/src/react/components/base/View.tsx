@@ -11,7 +11,7 @@ const View = (props) => {
 
   if (renderType === RenderingContexts.Pdf) {
     return (
-      <RPDF.View style={props.style} wrap={props.wrap}>
+      <RPDF.View style={props.style} wrap={props.wrap} debug={props.debug}>
         {props.children}
       </RPDF.View>
     );

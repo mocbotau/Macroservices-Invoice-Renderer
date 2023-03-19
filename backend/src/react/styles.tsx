@@ -30,9 +30,8 @@ const defaultStyle = {
     pageSize: "A4P",
     detail: Detail.DEFAULT,
   },
-  page: {},
-  pageWrapper: {
-    // margin: PAGE_SIZES.A4P.MARGIN,
+  page: {
+    padding: PAGE_SIZES.A4P.MARGIN,
     fontSize: 14,
     fontFamily: "arial-regular",
   },
@@ -61,12 +60,15 @@ const defaultStyle = {
     flexDirection: "row",
   },
   flexbox: {
-    flex: 1,
+    display: "flex",
+  },
+  metadata: {
+    width: "25%",
+    paddingVertical: 4,
   },
   tableWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-    width: PAGE_SIZES.A4P.INNER_WIDTH,
     marginTop: 8,
     borderBottomWidth: 2,
     borderRightWidth: 2,
@@ -166,7 +168,6 @@ extraStyles.forEach((x) => {
     if (!x["tableWrapper"]) x["tableWrapper"] = {};
     if (!x["totalTable"]) x["totalTable"] = {};
 
-    x["page"].margin = PAGE_SIZES[pageSize].MARGIN;
     x["tableWrapper"].width = PAGE_SIZES[pageSize].INNER_WIDTH;
     x["totalTable"].width =
       PAGE_SIZES[pageSize].WIDTH / 2 - PAGE_SIZES[pageSize].MARGIN;

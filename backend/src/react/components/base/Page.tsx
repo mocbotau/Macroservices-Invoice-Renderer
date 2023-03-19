@@ -13,8 +13,9 @@ const Page = (props) => {
   const userStyle = extraStyles[useContext(styleContext)];
 
   if (renderType === RenderingContexts.Pdf) {
+    console.log(props.style);
     return (
-      <RPDF.Page size={props.size} style={props.style}>
+      <RPDF.Page size={props.size} style={props.style} debug={props.debug}>
         {props.children}
       </RPDF.Page>
     );

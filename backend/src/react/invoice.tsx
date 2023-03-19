@@ -53,7 +53,6 @@ const Invoice = (props: {
         .replace(/,\s*$/, "")}`,
     });
   }
-
   return (
     <renderingContext.Provider value={props.renderingContext}>
       <styleContext.Provider value={props.styleContext}>
@@ -67,45 +66,40 @@ const Invoice = (props: {
             ]}
             style={userStyle["page"]}
           >
-            <View style={userStyle["pageWrapper"]}>
-              <Header
-                supplierParty={ubl["AccountingSupplierParty"]}
-                customerParty={ubl["AccountingCustomerParty"]}
-                i18next={i18next}
-              />
-              <Show min={Detail.DEFAULT}>
-                <Break height={32} solid />
-              </Show>
-              <Show max={Detail.SUMMARY}>
-                <Break height={8} />
-              </Show>
-              <Metadata
-                id={ubl["ID"]}
-                invoicePeriod={ubl["InvoicePeriod"]}
-                issueDate={ubl["IssueDate"]}
-                dueDate={ubl["DueDate"]}
-                paymentTerms={ubl["PaymentTerms"]}
-                accountingCost={ubl["AccountingCost"]}
-                note={ubl["Note"]}
-                delivery={ubl["Delivery"]}
-                i18next={i18next}
-              />
-              <Break height={16} />
-              <Break height={8} solid />
-              <InvoiceTable
-                invoiceLines={ubl["InvoiceLine"]}
-                i18next={i18next}
-              />
-              <Show min={Detail.DEFAULT}>
-                <Break height={8} />
-                <TaxSection taxTotal={ubl["TaxTotal"]} i18next={i18next} />
-              </Show>
+            <Header
+              supplierParty={ubl["AccountingSupplierParty"]}
+              customerParty={ubl["AccountingCustomerParty"]}
+              i18next={i18next}
+            />
+            <Show min={Detail.DEFAULT}>
+              <Break height={32} solid />
+            </Show>
+            <Show max={Detail.SUMMARY}>
               <Break height={8} />
-              <MonetaryTotal
-                legalMonetaryTotal={ubl["LegalMonetaryTotal"]}
-                i18next={i18next}
-              />
-            </View>
+            </Show>
+            <Metadata
+              id={ubl["ID"]}
+              invoicePeriod={ubl["InvoicePeriod"]}
+              issueDate={ubl["IssueDate"]}
+              dueDate={ubl["DueDate"]}
+              paymentTerms={ubl["PaymentTerms"]}
+              accountingCost={ubl["AccountingCost"]}
+              note={ubl["Note"]}
+              delivery={ubl["Delivery"]}
+              i18next={i18next}
+            />
+            <Break height={16} />
+            <Break height={8} solid />
+            <InvoiceTable invoiceLines={ubl["InvoiceLine"]} i18next={i18next} />
+            <Show min={Detail.DEFAULT}>
+              <Break height={8} />
+              <TaxSection taxTotal={ubl["TaxTotal"]} i18next={i18next} />
+            </Show>
+            <Break height={8} />
+            <MonetaryTotal
+              legalMonetaryTotal={ubl["LegalMonetaryTotal"]}
+              i18next={i18next}
+            />
           </Page>
         </Document>
       </styleContext.Provider>

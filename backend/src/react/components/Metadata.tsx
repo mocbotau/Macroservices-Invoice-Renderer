@@ -60,32 +60,38 @@ export const Metadata = (props: {
   }
 
   return (
-    <View>
+    <View wrap={true}>
       <View style={[userStyle["horizontalFlex"], { flexWrap: "wrap" }]}>
-        <View style={userStyle["flexbox"]}>
+        <View style={[userStyle["flexbox"], userStyle["metadata"]]}>
           <Text style={userStyle["bold"]}>{translateHook("invoice_id")}</Text>
           <Text>{props.id.toString()}</Text>
         </View>
         {props.invoicePeriod && (
-          <Show min={Detail.DEFAULT} style={userStyle["flexbox"]}>
+          <Show
+            min={Detail.DEFAULT}
+            style={[userStyle["flexbox"], userStyle["metadata"]]}
+          >
             <Text style={userStyle["bold"]}>
               {translateHook("invoice_period")}
             </Text>
             <Text>{period}</Text>
           </Show>
         )}
-        <View style={userStyle["flexbox"]}>
+        <View style={[userStyle["flexbox"], userStyle["metadata"]]}>
           <Text style={userStyle["bold"]}>{translateHook("issue_date")}</Text>
           <Text>{props.issueDate.toString()}</Text>
         </View>
         {props.dueDate && (
-          <View style={userStyle["flexbox"]}>
+          <View style={[userStyle["flexbox"], userStyle["metadata"]]}>
             <Text style={userStyle["bold"]}>{translateHook("due_date")} </Text>
             <Text>{props.dueDate.toString()}</Text>
           </View>
         )}
         {props.delivery && (
-          <Show min={Detail.DEFAULT} style={userStyle["flexbox"]}>
+          <Show
+            min={Detail.DEFAULT}
+            style={[userStyle["flexbox"], userStyle["metadata"]]}
+          >
             <Text style={userStyle["bold"]}>
               {translateHook("delivery_details")}{" "}
             </Text>
@@ -132,7 +138,7 @@ export const Metadata = (props: {
           </Show>
         )}
         {props.accountingCost && (
-          <View style={userStyle["flexbox"]}>
+          <View style={[userStyle["flexbox"], userStyle["metadata"]]}>
             <Text style={userStyle["bold"]}>
               {translateHook("invoice_category")}
             </Text>

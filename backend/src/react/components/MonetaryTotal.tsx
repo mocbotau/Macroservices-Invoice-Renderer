@@ -56,6 +56,7 @@ export const MonetaryTotal = (props: {
                 : Detail.DEFAULT
             }
             key={i}
+            wrap={false}
           >
             <View
               style={[

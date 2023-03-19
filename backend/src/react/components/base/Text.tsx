@@ -12,7 +12,7 @@ const Text = (props) => {
 
   if (renderType === RenderingContexts.Pdf) {
     return (
-      <RPDF.Text style={props.style} wrap={props.wrap}>
+      <RPDF.Text style={props.style} wrap={props.wrap} debug={props.debug}>
         {props.children}
       </RPDF.Text>
     );
