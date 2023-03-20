@@ -156,7 +156,11 @@ async function createInvoiceComponent(
 export async function generateInvoicePDF(args: RouteRenderArgs) {
   return await ReactPDF.renderToStream(
     await createInvoiceComponent(
-      { ubl: args.ubl as string, style: parseInt(args.style), language: args.language as string },
+      {
+        ubl: args.ubl as string,
+        style: parseInt(args.style),
+        language: args.language as string,
+      },
       RenderingContexts.Pdf
     )
   );
@@ -171,7 +175,11 @@ export async function generateInvoiceHTML(
   args: RouteRenderArgs
 ): Promise<ReactDOM.PipeableStream> {
   const invoiceComponent = await createInvoiceComponent(
-    { ubl: args.ubl as string, style: parseInt(args.style), language: args.language as string },
+    {
+      ubl: args.ubl as string,
+      style: parseInt(args.style),
+      language: args.language as string,
+    },
     RenderingContexts.Html
   );
 
