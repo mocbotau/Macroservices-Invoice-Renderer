@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import ReactPDF from "@react-pdf/renderer";
-import { RenderArgs } from "@src/interfaces";
+import { RenderArgs, RouteRenderArgs } from "@src/interfaces";
 import { InvalidLanguage, InvalidStyle, InvalidUBL } from "@src/error";
 import ReactDOM from "react-dom/server";
 
@@ -128,6 +128,7 @@ async function createInvoiceComponent(
     throw new InvalidLanguage();
   } else if (
     args.style === undefined ||
+    isNaN(args.style) ||
     args.style < 0 ||
     args.style >= MAX_STYLES
   ) {
@@ -149,25 +150,28 @@ async function createInvoiceComponent(
 
 /**
  * Creates a PDF invoice using react-pdf
- * @param {RenderArgs} args - an object containing language, a styleID and the UBL string
+ * @param {RouteRenderArgs} args - an object containing language, a styleID and the UBL string
  * @returns {Promise<NodeJS.ReadableStream>} - The PDF file stream
  */
-export async function generateInvoicePDF(args: RenderArgs) {
+export async function generateInvoicePDF(args: RouteRenderArgs) {
   return await ReactPDF.renderToStream(
-    await createInvoiceComponent(args, RenderingContexts.Pdf)
+    await createInvoiceComponent(
+      { ubl: args.ubl as string, style: parseInt(args.style), language: args.language as string },
+      RenderingContexts.Pdf
+    )
   );
 }
 
 /**
  * Creates a HTML invoice using react-pdf
- * @param {RenderArgs} args - an object containing language, a styleID and the UBL string
+ * @param {RouteRenderArgs} args - an object containing language, a styleID and the UBL string
  * @returns {Promise<ReactDOM.PipeableStream>} - The PDF file stream
  */
 export async function generateInvoiceHTML(
-  args: RenderArgs
+  args: RouteRenderArgs
 ): Promise<ReactDOM.PipeableStream> {
   const invoiceComponent = await createInvoiceComponent(
-    args,
+    { ubl: args.ubl as string, style: parseInt(args.style), language: args.language as string },
     RenderingContexts.Html
   );
 

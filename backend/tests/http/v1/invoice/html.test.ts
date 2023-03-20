@@ -14,7 +14,7 @@ describe("Invoice route", () => {
   test("No API key provided", async () => {
     const resp = await request(app)
       .post("/api/v1/invoice/render/html")
-      .send({ ubl: "123", language: "cn", style: 3 });
+      .send({ ubl: "123", language: "cn", style: "3" });
     expect(resp.statusCode).toBe(401);
   });
 
@@ -22,7 +22,7 @@ describe("Invoice route", () => {
     const resp = await request(app)
       .post("/api/v1/invoice/render/html")
       .set({ "api-key": "thisisawrongapikey" })
-      .send({ ubl: "123", language: "cn", style: 3 });
+      .send({ ubl: "123", language: "cn", style: "3" });
     expect(resp.statusCode).toBe(403);
   });
 
@@ -35,7 +35,7 @@ describe("Invoice route", () => {
     const resp = await renderInvoiceRequestTest("v1", "html").send({
       ubl: "123",
       language: "kr",
-      style: 3,
+      style: "3",
     });
     expect(resp.statusCode).toBe(400);
   });
@@ -58,7 +58,7 @@ describe("Invoice route", () => {
         }
       ),
       language: "zh",
-      style: 3,
+      style: "3",
     });
 
     expect(resp.statusCode).toBe(200);
