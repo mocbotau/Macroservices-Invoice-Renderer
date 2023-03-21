@@ -11,7 +11,11 @@ const Text = (props) => {
   const renderType = useContext(renderingContext);
 
   if (renderType === RenderingContexts.Pdf) {
-    return <RPDF.Text style={props.style}>{props.children}</RPDF.Text>;
+    return (
+      <RPDF.Text style={props.style} wrap={props.wrap} debug={props.debug}>
+        {props.children}
+      </RPDF.Text>
+    );
   } else {
     let styles = Array.isArray(props.style)
       ? props.style.reduce((a, b) => ({ ...a, ...b }))

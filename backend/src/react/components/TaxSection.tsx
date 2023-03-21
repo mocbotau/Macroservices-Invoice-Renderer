@@ -19,10 +19,10 @@ export const TaxSection = (props: { taxTotal: JSONValue; i18next: i18n }) => {
   const { t: translateHook } = useTranslation();
 
   return (
-    <View>
+    <View wrap={false}>
       <Text style={userStyle["h1"]}> {translateHook("tax_summary")}</Text>
       <View style={[userStyle["tableWrapper"]]}>
-        <View style={userStyle["row"]}>
+        <View style={userStyle["row"]} wrap={false}>
           <Text style={[userStyle["col"], userStyle["bold"], { width: "40%" }]}>
             {translateHook("tax_item")}
           </Text>
@@ -37,7 +37,7 @@ export const TaxSection = (props: { taxTotal: JSONValue; i18next: i18n }) => {
           </Text>
         </View>
         {(taxTotal["TaxSubtotal"] as JSONValue[]).map((item, i) => (
-          <View style={[userStyle["row"]]} key={i}>
+          <View style={[userStyle["row"]]} key={i} wrap={false}>
             <Text style={[userStyle["col"], { width: "40%" }]}>
               {/* Some people think it's funny to not follow the spec. */}
               {item["TaxCategory"]["TaxScheme"]["ID"]["_text"] ||

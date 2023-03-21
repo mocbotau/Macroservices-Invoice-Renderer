@@ -28,12 +28,15 @@ export const Header = (props: {
     <View>
       <Text style={userStyle["title"]}>{translateHook("invoice")}</Text>
       <View style={userStyle["horizontalFlex"]}>
-        <Show min={Detail.DEFAULT} style={userStyle["flexbox"]}>
+        <Show
+          min={Detail.DEFAULT}
+          style={[userStyle["flexbox"], { width: "50%" }]}
+        >
           <Text style={userStyle["h1"]}>{translateHook("to")}</Text>
           <Break height={8} />
           <Party party={props.customerParty["Party"]} />
         </Show>
-        <View style={userStyle["flexbox"]}>
+        <View style={[userStyle["flexbox"], { width: "50%" }]}>
           <Text style={userStyle["h1"]}>{translateHook("from")}</Text>
           <Break height={8} />
           <Party party={props.supplierParty["Party"]} />

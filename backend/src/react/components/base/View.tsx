@@ -10,7 +10,11 @@ const View = (props) => {
   const renderType = useContext(renderingContext);
 
   if (renderType === RenderingContexts.Pdf) {
-    return <RPDF.View style={props.style}>{props.children}</RPDF.View>;
+    return (
+      <RPDF.View style={props.style} wrap={props.wrap} debug={props.debug}>
+        {props.children}
+      </RPDF.View>
+    );
   } else {
     let styles = Array.isArray(props.style)
       ? props.style.reduce((a, b) => ({ ...a, ...b }))

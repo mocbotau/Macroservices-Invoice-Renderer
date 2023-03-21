@@ -74,9 +74,11 @@ export const InvoiceTable = (props: {
 
   return (
     <View>
-      <Text style={userStyle["h1"]}>{translateHook("invoice_items")}</Text>
+      <Text style={userStyle["h1"]} wrap={false}>
+        {translateHook("invoice_items")}
+      </Text>
       <View style={userStyle["tableWrapper"]}>
-        <View style={userStyle["row"]}>
+        <View style={userStyle["row"]} wrap={false}>
           {renderOrder
             .filter((item) => usedWeights[item])
             .map((item, i) => (
