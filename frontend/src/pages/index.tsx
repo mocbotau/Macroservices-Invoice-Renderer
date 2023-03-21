@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Alert, Button, Container, Snackbar } from "@mui/material";
+import { Api } from "@src/api";
+import { Alert, Button, Snackbar } from "@mui/material";
 
 export default function Home() {
   const [health, setHealth] = useState(0);
@@ -10,14 +11,7 @@ export default function Home() {
       <Button
         variant="contained"
         onClick={async () => {
-          try {
-            const resp = await fetch("/api/healthcheck", {
-              method: "GET",
-            });
-            setHealth(1);
-          } catch {
-            setHealth(-1);
-          }
+          (await Api.healthStatus()) === 200 ? setHealth(1) : setHealth(-1);
           setStatusShow(true);
         }}
       >

@@ -1,20 +1,20 @@
 version: "3.9"
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "80:80"
-    restart: always
-    volumes:
-      - ./backend/.env:/app/backend/.env:ro
-      - db-data:/app/persistence
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    restart: always
-    volumes:
-      - ./frontend/.env:/app/frontend/.env:ro
+    backend:
+        build: ./backend
+        ports:
+            - "80:80"
+        restart: always
+        volumes:
+            - ./backend/.env.docker:/app/backend/.env:ro
+            - db-data:/app/persistence
+    frontend:
+        build: ./frontend
+        ports:
+            - "3000:3000"
+        restart: always
+        volumes:
+            - ./frontend/.env.docker.local:/app/.env.local:ro
 
 volumes:
-  db-data:
+    db-data:
