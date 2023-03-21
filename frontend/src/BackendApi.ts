@@ -23,7 +23,6 @@ const fetchBackend = async (
   route: string,
   init?: RequestInit | undefined
 ): Promise<Response> => {
-  console.log(`${BACKEND_URL}:${BACKEND_PORT}${route}/api/${API_VERSION}`);
   return fetch(
     `${BACKEND_URL}:${BACKEND_PORT}/api/${API_VERSION}/${route}`,
     init
