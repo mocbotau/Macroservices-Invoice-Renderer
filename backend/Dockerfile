@@ -1,10 +1,10 @@
 FROM node:16-alpine
 
-RUN mkdir /app
+RUN mkdir -p /app/backend
 
-WORKDIR /app
+WORKDIR /app/backend
 
-VOLUME /app/persistence
+VOLUME /app/backend/persistence
 
 COPY package.json package-lock.json ./
 

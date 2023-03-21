@@ -1,0 +1,6 @@
+.env.local.example
+coverage/
+logs/
+node_modules/
+persistence/
+.next/
