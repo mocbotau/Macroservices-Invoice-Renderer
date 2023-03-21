@@ -8,6 +8,12 @@ export type RenderArgs = {
   ubl: string;
 };
 
+export type RouteRenderArgs = {
+  language?: string;
+  style?: string;
+  ubl?: string;
+};
+
 export type JSONValue =
   | string
   | number
