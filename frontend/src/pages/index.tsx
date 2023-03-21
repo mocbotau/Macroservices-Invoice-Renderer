@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Api } from "@src/api";
+import { Api } from "@src/Api";
 import { Alert, Button, Snackbar } from "@mui/material";
 
+/**
+ * Temporary home page with health status check
+ */
 export default function Home() {
   const [health, setHealth] = useState(0);
   const [statusShow, setStatusShow] = useState(false);
