@@ -15,7 +15,7 @@ Font.register({
 });
 
 Font.register({
-  family: "arial",
+  family: "arial-oblique",
   src: "fonts/Arial-Unicode-Italic.ttf",
 });
 
