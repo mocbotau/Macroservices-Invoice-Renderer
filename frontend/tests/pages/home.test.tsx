@@ -25,5 +25,8 @@ describe("Home", () => {
 
     await userEvent.click(button);
     expect(healthSpy).toHaveBeenCalled();
+
+    const feedback = screen.getByText(/server ok/i);
+    expect(feedback).toBeInTheDocument();
   });
 });
