@@ -33,6 +33,12 @@ const View = (props) => {
 
     if (styles.flexDirection && !styles.display) {
       styles.display = "flex";
+    } else if (!styles.flexDirection) {
+      styles.flexDirection = "column";
+    }
+
+    if (!styles.width) {
+      styles.width = "100%";
     }
 
     return <div style={styles}>{props.children}</div>;
