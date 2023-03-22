@@ -11,7 +11,7 @@ services:
         build: ./backend
         restart: always
         volumes:
-            - ./backend/.env.docker:/app/backend/.env:ro
+            - ./backend/.env.docker:/app/.env:ro
             - db-data:/app/persistence
     frontend:
         build: ./frontend
