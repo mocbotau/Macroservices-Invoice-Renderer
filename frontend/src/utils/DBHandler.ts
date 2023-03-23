@@ -4,7 +4,7 @@ const DB = new sqlite3.Database("./persistence/database.db");
 
 DB.serialize(() => {
   DB.run(
-    "CREATE TABLE IF NOT EXISTS 'Users' ('ID' TEXT NOT NULL UNIQUE, 'Email' TEXT NOT NULL, 'Password' TEXT NOT NULL, PRIMARY KEY('ID' AUTOINCREMENT))"
+    "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER NOT NULL UNIQUE, 'Email' TEXT NOT NULL, 'Password' TEXT NOT NULL, PRIMARY KEY('ID' AUTOINCREMENT))"
   );
 });
 
