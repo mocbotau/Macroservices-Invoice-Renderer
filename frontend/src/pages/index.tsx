@@ -1,37 +1,28 @@
-import React, { useState } from "react";
-import { Api } from "@src/Api";
-import { Alert, Button, Snackbar } from "@mui/material";
+import { IronSessionData } from "iron-session";
+import { withIronSessionSsr } from "iron-session/next";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { IronOptions } from "@src/../iron_session.config";
+
+type PageProps = {
+  user?: IronSessionData["user"];
+};
+
+export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
+  return {
+    props: {
+      user: (req.session as IronSessionData).user || null,
+    },
+  };
+}, IronOptions);
 
 /**
- * Temporary home page with health status check
+ * Home (Index) page. Will redirect to /login if already signed in. Otherwise redirect to /editor
  */
-export default function Home() {
-  const [health, setHealth] = useState(0);
-  const [statusShow, setStatusShow] = useState(false);
-
-  return (
-    <>
-      <Button
-        variant="contained"
-        onClick={async () => {
-          (await Api.healthStatus()) === 200 ? setHealth(1) : setHealth(-1);
-          setStatusShow(true);
-        }}
-      >
-        Check health
-      </Button>
-      <Snackbar
-        open={statusShow}
-        autoHideDuration={3000}
-        onClose={() => setStatusShow(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        {health > 0 ? (
-          <Alert severity="success">Server OK</Alert>
-        ) : (
-          <Alert severity="error">Server down</Alert>
-        )}
-      </Snackbar>
-    </>
-  );
+export default function Home(props: PageProps) {
+  const { push } = useRouter();
+  useEffect(() => {
+    push(props.user ? "/editor" : "/login");
+  }, [props.user, push]);
+  return <></>;
 }

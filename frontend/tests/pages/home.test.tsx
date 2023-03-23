@@ -1,32 +1,33 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import Home from "@src/pages/index";
-import { Api } from "@src/Api";
+import mockRouter from "next-router-mock";
 
-let healthSpy: jest.SpyInstance;
+jest.mock("next/router", () => require("next-router-mock"));
 
 beforeAll(() => {
   jest.clearAllMocks();
 });
 
 describe("Home", () => {
-  it("renders a button", async () => {
-    healthSpy = jest.spyOn(Api, "healthStatus").mockImplementation(async () => {
-      return 200;
-    });
-
+  test("/ redirects to /login (if not signed in)", () => {
+    mockRouter.push("/");
     render(<Home />);
 
-    const button = screen.getByRole("button", {
-      name: /check health/i,
+    expect(mockRouter).toMatchObject({
+      asPath: "/login",
+      pathname: "/login",
     });
-    expect(button).toBeInTheDocument();
+  });
 
-    await userEvent.click(button);
-    expect(healthSpy).toHaveBeenCalled();
+  // This shouldn't be working as a cookie isn't mocked/set???
+  test("/ redirects to /editor (if signed in)", () => {
+    mockRouter.push("/");
+    render(<Home />);
 
-    const feedback = screen.getByText(/server ok/i);
-    expect(feedback).toBeInTheDocument();
+    expect(mockRouter).toMatchObject({
+      asPath: "/editor",
+      pathname: "/editor",
+    });
   });
 });
