@@ -2,11 +2,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { DBRun, DBGet } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import * as EmailValidator from "email-validator";
+import { IronSessionData } from "iron-session";
+import { withIronSessionApiRoute } from "iron-session/next";
+import { IronOptions } from "@src/../iron_session.config";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default withIronSessionApiRoute(register_handler, IronOptions);
+
+async function register_handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Only POST requests allowed" });
   const body = req.body;
@@ -33,6 +35,10 @@ export default async function handler(
       body.email,
       hashedPassword
     );
+    (req.session as IronSessionData).user = {
+      email: body.email,
+    };
+    await req.session.save();
     res.status(200).json({});
   }
 }
