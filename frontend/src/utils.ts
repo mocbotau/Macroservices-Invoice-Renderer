@@ -39,7 +39,7 @@ export async function readFileAsText(file: File): Promise<string> {
 
     reader.onload = (evt) => {
       if (!evt.target) return;
-      if (evt.target.readyState != 2) return;
+      if (evt.target.readyState !== 2) return;
       if (evt.target.error) {
         rej(evt.target.error);
         return;
