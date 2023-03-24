@@ -20,23 +20,21 @@ beforeEach(() => {
   mockUploadFile.mockClear();
 });
 
-describe("Editor", () => {
-  describe("Upload Screen", () => {
-    it("uploads a file when clicking the button", async () => {
-      mockUploadFile.mockImplementation(() =>
-        Promise.resolve(new File(["hello,there"], "test.csv"))
-      );
+describe("Upload Screen", () => {
+  it("uploads a file when clicking the button", async () => {
+    mockUploadFile.mockImplementation(() =>
+      Promise.resolve(new File(["hello,there"], "test.csv"))
+    );
 
-      render(<Editor />);
+    render(<Editor />);
 
-      const button = screen.getByRole("button", {
-        name: /upload csv file/i,
-      });
-      expect(button).toBeTruthy();
-
-      await userEvent.click(button);
-
-      expect(mockUploadFile).toHaveBeenCalled();
+    const button = screen.getByRole("button", {
+      name: /upload csv file/i,
     });
+    expect(button).toBeTruthy();
+
+    await userEvent.click(button);
+
+    expect(mockUploadFile).toHaveBeenCalled();
   });
 });
