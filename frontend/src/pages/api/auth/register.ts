@@ -7,6 +7,19 @@ import { IronOptions } from "@src/../iron_session.config";
 
 export default withIronSessionApiRoute(register_handler, IronOptions);
 
+/**
+ * This function attempts to register a user, creating a session.
+ * This function will return:
+ * 200 - When registration is successful
+ * 405 - If any request is not a POST request
+ * 400 - If the email is empty
+ * 400 - If the password is empty
+ * 400 - If the email is not a valid email
+ * 409 - If the email  already exists
+ * @param {NextApiRequest} - The Next API request
+ * @param {NextApiResponse} - The Next API response
+ * @returns {void}
+ */
 export async function register_handler(
   req: NextApiRequest,
   res: NextApiResponse

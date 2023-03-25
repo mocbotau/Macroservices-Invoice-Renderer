@@ -4,6 +4,15 @@ import { IronOptions } from "@src/../iron_session.config";
 
 export default withIronSessionApiRoute(logout_handler, IronOptions);
 
+/**
+ * This function attempts to log a user out, destroying a session.
+ * This function will return:
+ * 200 - When logout is successful
+ * 405 - If any request is not a GET request
+ * @param {NextApiRequest} - The Next API request
+ * @param {NextApiResponse} - The Next API response
+ * @returns {void}
+ */
 export async function logout_handler(
   req: NextApiRequest,
   res: NextApiResponse
