@@ -1,56 +1,58 @@
-import { withIronSessionSsr } from "iron-session/next";
-import { IronOptions } from "@src/../iron_session.config";
-import { Alert, Button, Snackbar } from "@mui/material";
-import { Api } from "@src/Api";
-import { useState } from "react";
-import { useRouter } from "next/router";
+import React from "react";
+import { Button, Grid, Typography } from "@mui/material";
+import { readFileAsText, uploadFile } from "@src/utils";
 import { IronSessionData } from "iron-session";
-import { User } from "../../additional";
 
 type PageProps = {
   user: IronSessionData["user"];
 };
 
-export const getServerSideProps = withIronSessionSsr(
-  async ({ req }) => await serverSideProps(req.session.user),
-  IronOptions
-);
-
-export async function serverSideProps(user?: User) {
-  return {
-    props: {
-      user: user || null,
-    },
-  };
-}
-
+/**
+ * Editor page. Holds all stages starting from upload => edit => render.
+ */
 export default function Editor(props: PageProps) {
-  const [textError, setTextError] = useState<string | null>(null);
-  const { push } = useRouter();
+  const upload = async () => {
+    const f = await uploadFile(".csv");
+    const fText = await readFileAsText(f);
 
-  const handleLogout = async () => {
-    const req = await Api.logout();
-    if (req.status !== 200) {
-      setTextError(req.json?.error || "");
-    } else {
-      push("/");
-    }
+    // TODO: Send the uploaded data to the next page
+    console.log(fText);
   };
 
   return (
     <>
-      <p>This is the editor page. You are logged in as {props.user?.email}</p>
-      <Button variant="contained" onClick={handleLogout}>
-        Logout
-      </Button>
-      <Snackbar
-        open={Boolean(textError)}
-        autoHideDuration={3000}
-        onClose={() => setTextError(null)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      {/* Create full height app */}
+      {/* https://gist.github.com/dmurawsky/d45f068097d181c733a53687edce1919 */}
+      <style global jsx>{`
+        html,
+        body,
+        body > div:first-child,
+        div#__next,
+        div#__next > div {
+          height: 100%;
+        }
+      `}</style>
+
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        spacing={4}
       >
-        <Alert severity="warning">{textError}</Alert>
-      </Snackbar>
+        <Grid item>
+          <Typography variant="h4">INVOICE RENDERER</Typography>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={upload}
+            data-testid="csv-upload-button"
+          >
+            Upload CSV file
+          </Button>
+        </Grid>
+      </Grid>
     </>
   );
 }
