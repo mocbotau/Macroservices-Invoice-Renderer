@@ -1,4 +1,4 @@
-import { uploadFile } from "@src/utils";
+import { readFileAsText, uploadFile } from "@src/utils";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -22,5 +22,15 @@ describe("uploadFile", () => {
 
     expect(createMock).toHaveBeenCalled();
     expect(uploaded).toEqual(testFile);
+  });
+});
+
+describe("readFileAsText", () => {
+  it("uploads files correctly", async () => {
+    const testFile = new File(["testdata"], "test.txt");
+
+    const read = await readFileAsText(testFile);
+
+    expect(read).toEqual("testdata");
   });
 });

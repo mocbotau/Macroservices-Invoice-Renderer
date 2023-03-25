@@ -1,4 +1,6 @@
 import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom/extend-expect";
+
 import Editor from "@src/pages/editor";
 import userEvent from "@testing-library/user-event";
 
@@ -31,7 +33,7 @@ describe("Upload Screen", () => {
     const button = screen.getByRole("button", {
       name: /upload csv file/i,
     });
-    expect(button).toBeTruthy();
+    expect(button).toBeInTheDocument();
 
     await userEvent.click(button);
 
