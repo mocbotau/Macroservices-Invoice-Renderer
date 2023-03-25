@@ -1,17 +1,22 @@
-import React from "react";
-import { Button, Grid, Typography } from "@mui/material";
-import { readFileAsText, uploadFile } from "@src/utils";
+import React, { useState } from "react";
+import { uploadFile } from "@src/utils";
+import Upload from "@src/components/upload";
+import CSVConfiguration from "@src/components/csvConfiguration";
 
-/**
- * Temporary home page with health status check
- */
 export default function Editor() {
-  const upload = async () => {
-    const f = await uploadFile(".csv");
-    const fText = await readFileAsText(f);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [file, setFile] = useState<File>();
 
-    // TODO: Send the uploaded data to the next page
-    console.log(fText);
+  const handleUpload = async () => {
+    const f = await uploadFile(".csv");
+
+    if (typeof f === "string") {
+      setSnackbarMessage(f);
+    } else {
+      setFile(f);
+      setUploadSuccess(true);
+    }
   };
 
   return (
@@ -27,27 +32,15 @@ export default function Editor() {
           height: 100%;
         }
       `}</style>
-
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        spacing={4}
-      >
-        <Grid item>
-          <Typography variant="h4">INVOICE RENDERER</Typography>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            onClick={upload}
-            data-testid="csv-upload-button"
-          >
-            Upload CSV file
-          </Button>
-        </Grid>
-      </Grid>
+      {uploadSuccess ? (
+        <CSVConfiguration file={file as File}></CSVConfiguration>
+      ) : (
+        <Upload
+          snackbarMessage={snackbarMessage}
+          setSnackbarMessage={setSnackbarMessage}
+          handleUpload={handleUpload}
+        ></Upload>
+      )}
     </>
   );
 }
