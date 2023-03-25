@@ -18,15 +18,13 @@ describe("Home", () => {
 
     render(<Home />);
 
-    const button = screen.getByRole("button", {
-      name: /check health/i,
-    });
+    const button = screen.getByTestId("health-check-button");
     expect(button).toBeInTheDocument();
 
     await userEvent.click(button);
     expect(healthSpy).toHaveBeenCalled();
 
-    const feedback = screen.getByText(/server ok/i);
+    const feedback = screen.getByTestId("health-check-success");
     expect(feedback).toBeInTheDocument();
   });
 });

@@ -17,6 +17,7 @@ export default function Home() {
           (await Api.healthStatus()) === 200 ? setHealth(1) : setHealth(-1);
           setStatusShow(true);
         }}
+        data-testid="health-check-button"
       >
         Check health
       </Button>
@@ -27,7 +28,9 @@ export default function Home() {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         {health > 0 ? (
-          <Alert severity="success">Server OK</Alert>
+          <Alert severity="success" data-testid="health-check-success">
+            Server OK
+          </Alert>
         ) : (
           <Alert severity="error">Server down</Alert>
         )}
