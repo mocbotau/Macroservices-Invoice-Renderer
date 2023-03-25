@@ -28,7 +28,9 @@ export default function Home() {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         {health > 0 ? (
-          <Alert severity="success">Server OK</Alert>
+          <Alert severity="success" data-testid="health-check-success">
+            Server OK
+          </Alert>
         ) : (
           <Alert severity="error">Server down</Alert>
         )}
