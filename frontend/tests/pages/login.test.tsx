@@ -41,12 +41,10 @@ describe("Login", () => {
   test("Login button click - User doesn't exist", async () => {
     render(<Login />);
 
-    const loginSpy = jest
-      .spyOn(Api, "login")
-      .mockResolvedValue({
-        status: 404,
-        json: { error: "User does not exist." },
-      });
+    const loginSpy = jest.spyOn(Api, "login").mockResolvedValue({
+      status: 404,
+      json: { error: "User does not exist." },
+    });
 
     const emailInput = screen.getByRole("textbox", { name: "Email" });
     fireEvent.change(emailInput, { target: { value: "test@mail.com" } });
@@ -68,12 +66,10 @@ describe("Login", () => {
   test("Login button click - Password incorrect", async () => {
     render(<Login />);
 
-    const loginSpy = jest
-      .spyOn(Api, "login")
-      .mockResolvedValue({
-        status: 403,
-        json: { error: "Password is incorrect." },
-      });
+    const loginSpy = jest.spyOn(Api, "login").mockResolvedValue({
+      status: 403,
+      json: { error: "Password is incorrect." },
+    });
 
     const user = {
       email: "test@mail.com",
@@ -149,12 +145,10 @@ describe("Register", () => {
   test("Register button click - no username and no password", async () => {
     render(<Login />);
 
-    const registerSpy = jest
-      .spyOn(Api, "register")
-      .mockResolvedValue({
-        status: 400,
-        json: { error: "Email/Password can not be empty." },
-      });
+    const registerSpy = jest.spyOn(Api, "register").mockResolvedValue({
+      status: 400,
+      json: { error: "Email/Password can not be empty." },
+    });
 
     const button = screen.getByRole("button", { name: /Register/ });
     await userEvent.click(button);
@@ -167,12 +161,10 @@ describe("Register", () => {
   test("Register button click - Invalid email", async () => {
     render(<Login />);
 
-    const registerSpy = jest
-      .spyOn(Api, "register")
-      .mockResolvedValue({
-        status: 400,
-        json: { error: "Email is not a valid form." },
-      });
+    const registerSpy = jest.spyOn(Api, "register").mockResolvedValue({
+      status: 400,
+      json: { error: "Email is not a valid form." },
+    });
 
     const user = {
       email: "invalid_email",
@@ -198,12 +190,10 @@ describe("Register", () => {
   test("Register button click - User already exists", async () => {
     render(<Login />);
 
-    const registerSpy = jest
-      .spyOn(Api, "register")
-      .mockResolvedValue({
-        status: 409,
-        json: { error: "User already exists." },
-      });
+    const registerSpy = jest.spyOn(Api, "register").mockResolvedValue({
+      status: 409,
+      json: { error: "User already exists." },
+    });
 
     const user = {
       email: "test@mail.com",
