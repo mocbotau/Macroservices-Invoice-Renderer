@@ -31,7 +31,7 @@ export default function Editor(props: PageProps) {
   const handleLogout = async () => {
     const req = await Api.logout();
     if (req.status !== 200) {
-      setTextError((await req.json()).error);
+      setTextError(req.json?.error || "");
     } else {
       push("/");
     }
