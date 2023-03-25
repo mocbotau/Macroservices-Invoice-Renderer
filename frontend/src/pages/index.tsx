@@ -17,6 +17,7 @@ export default function Home() {
           (await Api.healthStatus()) === 200 ? setHealth(1) : setHealth(-1);
           setStatusShow(true);
         }}
+        data-testid="health-check-button"
       >
         Check health
       </Button>

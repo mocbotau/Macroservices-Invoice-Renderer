@@ -18,9 +18,7 @@ describe("Home", () => {
 
     render(<Home />);
 
-    const button = screen.getByRole("button", {
-      name: /check health/i,
-    });
+    const button = screen.getByTestId("health-check-button");
     expect(button).toBeInTheDocument();
 
     await userEvent.click(button);

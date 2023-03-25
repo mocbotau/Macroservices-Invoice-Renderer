@@ -30,9 +30,7 @@ describe("Upload Screen", () => {
 
     render(<Editor />);
 
-    const button = screen.getByRole("button", {
-      name: /upload csv file/i,
-    });
+    const button = screen.getByTestId("csv-upload-button");
     expect(button).toBeInTheDocument();
 
     await userEvent.click(button);

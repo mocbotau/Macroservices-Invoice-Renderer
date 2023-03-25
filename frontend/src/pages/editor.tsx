@@ -39,7 +39,11 @@ export default function Editor() {
           <Typography variant="h4">INVOICE RENDERER</Typography>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={upload}>
+          <Button
+            variant="contained"
+            onClick={upload}
+            data-testid="csv-upload-button"
+          >
             Upload CSV file
           </Button>
         </Grid>
