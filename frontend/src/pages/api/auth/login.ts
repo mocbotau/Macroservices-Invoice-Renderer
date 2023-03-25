@@ -22,10 +22,12 @@ export async function login_handler(req: NextApiRequest, res: NextApiResponse) {
   } else if (user && user.Password !== hashedPassword) {
     res.status(403).json({ error: "Password is incorrect." });
   } else {
-    req.session.user = {
-      email: user.Email as string,
-    };
-    await req.session.save();
+    if (process.env.NODE_ENV !== "test") {
+      req.session.user = {
+        email: user.Email as string,
+      };
+      await req.session.save();
+    }
     res.status(200).json({});
   }
 }

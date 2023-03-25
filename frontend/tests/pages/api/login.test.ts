@@ -1,4 +1,3 @@
-import { Api } from "@src/Api";
 import { login_handler } from "@src/pages/api/auth/login";
 import { DBRun } from "@src/utils/DBHandler";
 import { createHash } from "crypto";

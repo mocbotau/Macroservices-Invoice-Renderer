@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
  * Home (Index) page. Will redirect to /login if already signed in. Otherwise redirect to /editor
  */
 export default function Login() {
-  const [textError, setTextError] = useState<string | null>(null);
+  const [textError, setTextError] = useState<string | null | undefined>(null);
   const { push } = useRouter();
 
   const handleLogin = async (event: React.SyntheticEvent) => {
@@ -26,7 +26,7 @@ export default function Login() {
       ?.value;
     const res = await Api.login(email, password);
     if (res.status !== 200) {
-      setTextError(res.json?.error || "");
+      setTextError(res.json?.error);
     } else {
       push("/editor");
     }
@@ -39,7 +39,7 @@ export default function Login() {
       ?.value;
     const res = await Api.register(email, password);
     if (res.status !== 200) {
-      setTextError(res.json?.error || "");
+      setTextError(res.json?.error);
     } else {
       push("/editor");
     }

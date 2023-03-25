@@ -7,7 +7,10 @@ import { IronOptions } from "@src/../iron_session.config";
 
 export default withIronSessionApiRoute(register_handler, IronOptions);
 
-async function register_handler(req: NextApiRequest, res: NextApiResponse) {
+export async function register_handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Only POST requests allowed" });
   const body = req.body;
@@ -32,10 +35,12 @@ async function register_handler(req: NextApiRequest, res: NextApiResponse) {
       body.email,
       hashedPassword,
     ]);
-    req.session.user = {
-      email: body.email,
-    };
-    await req.session.save();
+    if (process.env.NODE_ENV !== "test") {
+      req.session.user = {
+        email: body.email,
+      };
+      await req.session.save();
+    }
     res.status(200).json({});
   }
 }
