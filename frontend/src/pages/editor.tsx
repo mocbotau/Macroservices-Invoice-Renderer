@@ -10,6 +10,7 @@ type PageProps = {
 /**
  * Editor page. Holds all stages starting from upload => edit => render.
  */
+// eslint-disable-next-line
 export default function Editor(props: PageProps) {
   const upload = async () => {
     const f = await uploadFile(".csv");
