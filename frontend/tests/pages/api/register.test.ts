@@ -64,16 +64,21 @@ describe("/auth/register route", () => {
       password: "password",
     };
 
-    await DBRun("INSERT INTO Users (Email, Password) VALUES (?,?)", [
-      user.email,
-      createHash("sha256").update(user.password).digest("hex"),
-    ]);
+    // await DBRun("INSERT INTO Users (Email, Password) VALUES (?,?)", [
+    //   user.email,
+    //   createHash("sha256").update(user.password).digest("hex"),
+    // ]);
 
     const resp = await mockRequest(register_handler, {
       method: "POST",
       body: user,
     });
-    expect(resp.statusCode).toBe(409);
+    const resp2 = await mockRequest(register_handler, {
+      method: "POST",
+      body: user,
+    });
+    expect(resp.statusCode).toBe(200);
+    expect(resp2.statusCode).toBe(409);
   });
   test("It should provide a 405 bad method status when not POST", async () => {
     const user = {
