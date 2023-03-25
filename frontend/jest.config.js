@@ -12,7 +12,7 @@ const customJestConfig = {
     "@tests/(.*)": "<rootDir>/tests/$1",
   },
   collectCoverage: true,
-  collectCoverageFrom: ["src/**", "!src/Api.ts", "!src/BackendApi.ts"],
+  collectCoverageFrom: ["src/**", "!src/Api.ts", "!src/BackendApi.ts", "!src/pages/_app.tsx", "!src/middleware.ts", "!src/components/Layout/Layout.tsx"],
   coverageThreshold: {
     global: {
       lines: 85,

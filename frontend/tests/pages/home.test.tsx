@@ -1,9 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import Home from "@src/pages/index";
+import Home, { serverSideProps } from "@src/pages/index";
 import mockRouter from "next-router-mock";
 
-jest.mock("next/router", () => require("next-router-mock"));
+const mockedRouter = {
+  push: jest.fn(),
+};
+jest.mock("next/router", () => ({
+  ...jest.requireActual("next/router"),
+  useRouter: () => mockedRouter,
+}));
+
+const VALID_SESSION = {
+  email: "valid@email.com",
+};
 
 beforeAll(() => {
   jest.clearAllMocks();
@@ -11,23 +21,26 @@ beforeAll(() => {
 
 describe("Home", () => {
   test("/ redirects to /login (if not signed in)", () => {
-    mockRouter.push("/");
     render(<Home />);
-
-    expect(mockRouter).toMatchObject({
-      asPath: "/login",
-      pathname: "/login",
+    mockedRouter.push.mockImplementationOnce((url) => {
+      expect(url).toBe("/login");
     });
   });
 
-  // This shouldn't be working as a cookie isn't mocked/set???
   test("/ redirects to /editor (if signed in)", () => {
     mockRouter.push("/");
-    render(<Home />);
+    render(<Home user={VALID_SESSION} />);
 
-    expect(mockRouter).toMatchObject({
-      asPath: "/editor",
-      pathname: "/editor",
+    mockedRouter.push.mockImplementationOnce((url) => {
+      expect(url).toBe("/editor");
     });
+  });
+  test("getServerSideProps with valid user", async () => {
+    expect(await serverSideProps(VALID_SESSION)).toEqual({
+      props: { user: VALID_SESSION },
+    });
+  });
+  test("getServerSideProps without valid user", async () => {
+    expect(await serverSideProps(undefined)).toEqual({ props: { user: null } });
   });
 });

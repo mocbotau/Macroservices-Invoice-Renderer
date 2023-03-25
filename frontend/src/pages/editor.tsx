@@ -1,22 +1,28 @@
-import { IronSessionData } from "iron-session";
 import { withIronSessionSsr } from "iron-session/next";
 import { IronOptions } from "@src/../iron_session.config";
 import { Alert, Button, Snackbar } from "@mui/material";
 import { Api } from "@src/Api";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { IronSessionData } from "iron-session";
+import { User } from "../../additional";
 
 type PageProps = {
   user: IronSessionData["user"];
 };
 
-export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
+export const getServerSideProps = withIronSessionSsr(
+  async ({ req }) => await serverSideProps(req.session.user),
+  IronOptions
+);
+
+export async function serverSideProps(user?: User) {
   return {
     props: {
-      user: (req.session as IronSessionData).user || null,
+      user: user || null,
     },
   };
-}, IronOptions);
+}
 
 export default function Editor(props: PageProps) {
   const [textError, setTextError] = useState<string | null>(null);

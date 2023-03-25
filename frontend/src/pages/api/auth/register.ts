@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { DBRun, DBGet } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import * as EmailValidator from "email-validator";
-import { IronSessionData } from "iron-session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { IronOptions } from "@src/../iron_session.config";
 
@@ -23,19 +22,17 @@ async function register_handler(req: NextApiRequest, res: NextApiResponse) {
   const hashedPassword = createHash("sha256")
     .update(body.password)
     .digest("hex");
-  const user = await DBGet(
-    "SELECT Email FROM Users WHERE Email = ?",
-    body.email
-  );
+  const user = await DBGet("SELECT Email FROM Users WHERE Email = ?", [
+    body.email,
+  ]);
   if (user) {
     res.status(409).json({ error: "User already exists." });
   } else {
-    await DBRun(
-      "INSERT INTO Users (Email, Password) VALUES (?,?)",
+    await DBRun("INSERT INTO Users (Email, Password) VALUES (?,?)", [
       body.email,
-      hashedPassword
-    );
-    (req.session as IronSessionData).user = {
+      hashedPassword,
+    ]);
+    req.session.user = {
       email: body.email,
     };
     await req.session.save();

@@ -24,9 +24,9 @@ export default function Login() {
     const email = (document.getElementById("email") as HTMLInputElement)?.value;
     const password = (document.getElementById("password") as HTMLInputElement)
       ?.value;
-    const req = await Api.login(email, password);
-    if (req.status !== 200) {
-      setTextError((await req.json()).error);
+    const res = await Api.login(email, password);
+    if (res.status !== 200) {
+      setTextError(res.json?.error || "");
     } else {
       push("/editor");
     }
@@ -37,13 +37,9 @@ export default function Login() {
     const email = (document.getElementById("email") as HTMLInputElement)?.value;
     const password = (document.getElementById("password") as HTMLInputElement)
       ?.value;
-    if (!(email && password)) {
-      setTextError("The email and/or password field cannot be empty.");
-      return;
-    }
-    const req = await Api.register(email, password);
-    if (req.status !== 200) {
-      setTextError((await req.json()).error);
+    const res = await Api.register(email, password);
+    if (res.status !== 200) {
+      setTextError(res.json?.error || "");
     } else {
       push("/editor");
     }
@@ -68,7 +64,7 @@ export default function Login() {
             <Box component="form" onSubmit={handleLogin}>
               <TextField
                 label="Email"
-                data-testid="email_input"
+                data-testid="EmailField"
                 id="email"
                 name="email"
                 margin="normal"
@@ -77,7 +73,7 @@ export default function Login() {
               />
               <TextField
                 label="Password"
-                data-testid="password_input"
+                data-testid="PasswordField"
                 id="password"
                 name="password"
                 type="password"
@@ -88,13 +84,19 @@ export default function Login() {
               <Box sx={{ float: "right" }}>
                 <Button
                   type="button"
+                  data-testid="RegisterButton"
                   onClick={handleRegister}
                   variant="outlined"
                   sx={{ mt: 2, ml: 2 }}
                 >
                   Register
                 </Button>
-                <Button type="submit" variant="contained" sx={{ mt: 2, ml: 2 }}>
+                <Button
+                  type="submit"
+                  data-testid="LoginButton"
+                  variant="contained"
+                  sx={{ mt: 2, ml: 2 }}
+                >
                   Login
                 </Button>
               </Box>

@@ -1,6 +1,8 @@
 import sqlite3 from "sqlite3";
 
-const DB = new sqlite3.Database("./persistence/database.db");
+export const DB = new sqlite3.Database(
+  process.env.NODE_ENV === "test" ? ":memory:" : "./persistence/database.db"
+);
 
 DB.serialize(() => {
   DB.run(
@@ -8,7 +10,10 @@ DB.serialize(() => {
   );
 });
 
-export async function DBRun(query: string, ...params: any[]): Promise<void> {
+export async function DBRun(
+  query: string,
+  params?: (string | number | boolean)[]
+): Promise<void> {
   return new Promise((res) => {
     DB.run(query, params, (err) => {
       if (err) {
@@ -22,7 +27,7 @@ export async function DBRun(query: string, ...params: any[]): Promise<void> {
 
 export async function DBGet(
   query: string,
-  ...params: any[]
+  params?: (string | number | boolean)[]
 ): Promise<Record<string, unknown> | undefined> {
   return new Promise((res) => {
     DB.get(query, params, (err, row) => {

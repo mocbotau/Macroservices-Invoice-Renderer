@@ -1,3 +1,5 @@
+import { APIResponse } from "@src/interfaces";
+
 export class Api {
   /**
    * Checks the health status of the backend
@@ -12,33 +14,36 @@ export class Api {
   }
   /**
    * Logs a user into the app
-   * @returns {Response} - Fetch Response
+   * @returns { Promise<APIResponse>} - The status and JSON of the return
    */
-  static async login(email: string, password: string): Promise<Response> {
-    return await fetch("/api/auth/login", {
+  static async login(email: string, password: string): Promise<APIResponse> {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
+    return { status: res.status, json: await res.json() };
   }
   /**
    * Logs a user out (clears session)
-   * @returns {Response} - Fetch Response
+   * @returns { Promise<APIResponse>} - The status and JSON of the return
    */
-  static async logout(): Promise<Response> {
-    return await fetch("/api/auth/logout", {
+  static async logout(): Promise<APIResponse> {
+    const res = await fetch("/api/auth/logout", {
       method: "GET",
     });
+    return { status: res.status, json: await res.json() };
   }
   /**
    * Registers a user
-   * @returns {Response} - Fetch Response
+   * @returns { Promise<APIResponse>} - The status and JSON of the return
    */
-  static async register(email: string, password: string): Promise<Response> {
-    return await fetch("/api/auth/register", {
+  static async register(email: string, password: string): Promise<APIResponse> {
+    const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
+    return { status: res.status, json: await res.json() };
   }
 }
