@@ -14,7 +14,7 @@ export class Api {
   }
   /**
    * Logs a user into the app
-   * @returns { Promise<APIResponse>} - The status and JSON of the return
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
   static async login(email: string, password: string): Promise<APIResponse> {
     const res = await fetch("/api/auth/login", {
@@ -26,7 +26,7 @@ export class Api {
   }
   /**
    * Logs a user out (clears session)
-   * @returns { Promise<APIResponse>} - The status and JSON of the return
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
   static async logout(): Promise<APIResponse> {
     const res = await fetch("/api/auth/logout", {
@@ -36,7 +36,7 @@ export class Api {
   }
   /**
    * Registers a user
-   * @returns { Promise<APIResponse>} - The status and JSON of the return
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
   static async register(email: string, password: string): Promise<APIResponse> {
     const res = await fetch("/api/auth/register", {
