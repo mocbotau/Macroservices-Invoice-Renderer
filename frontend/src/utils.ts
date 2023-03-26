@@ -29,3 +29,20 @@ export async function uploadFile(fileType: string): Promise<File | string> {
     input.click();
   });
 }
+
+/**
+ * Downloads a file on the client
+ * @param data - data to download within file
+ * @param fname - file name
+ */
+export function downloadFile(data: Blob, fname: string) {
+  const a = document.createElement("a");
+
+  const url = URL.createObjectURL(data);
+
+  a.href = url;
+  a.download = fname;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}

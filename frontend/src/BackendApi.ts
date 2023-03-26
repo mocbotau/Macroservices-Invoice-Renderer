@@ -10,6 +10,39 @@ export class BackendApi {
       })
     ).status;
   }
+
+  static async renderpdf(body: any): Promise<Response> {
+    return await fetchBackend("invoice/render/pdf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": process.env.BACKEND_API_KEY,
+      } as any,
+      body: JSON.stringify(body),
+    });
+  }
+
+  static async renderhtml(body: any): Promise<Response> {
+    return await fetchBackend("invoice/render/html", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": process.env.BACKEND_API_KEY,
+      } as any,
+      body: JSON.stringify(body),
+    });
+  }
+
+  static async renderjson(body: any): Promise<Response> {
+    return await fetchBackend("invoice/render/json", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": process.env.BACKEND_API_KEY,
+      } as any,
+      body: JSON.stringify(body),
+    });
+  }
 }
 
 /**
