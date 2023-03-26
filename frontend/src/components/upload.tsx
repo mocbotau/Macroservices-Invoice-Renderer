@@ -9,6 +9,16 @@ interface ComponentProps {
 export default function Upload(props: ComponentProps) {
   return (
     <>
+      <Snackbar
+        open={props.snackbarMessage.length !== 0}
+        autoHideDuration={3000}
+        onClose={() => props.setSnackbarMessage("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" data-testid="health-check-success">
+          {props.snackbarMessage}
+        </Alert>
+      </Snackbar>
       <Grid
         container
         direction="column"
@@ -29,16 +39,6 @@ export default function Upload(props: ComponentProps) {
           </Button>
         </Grid>
       </Grid>
-      <Snackbar
-        open={props.snackbarMessage.length !== 0}
-        autoHideDuration={3000}
-        onClose={() => props.setSnackbarMessage("")}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" data-testid="health-check-success">
-          {props.snackbarMessage}
-        </Alert>
-      </Snackbar>
     </>
   );
 }
