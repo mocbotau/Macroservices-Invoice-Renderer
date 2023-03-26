@@ -19,13 +19,13 @@ describe("Login", () => {
   test("Renders login button", async () => {
     render(<Login />);
 
-    const button = screen.getByRole("button", { name: /Login/ });
+    const button = screen.getByTestId("LoginButton");
     expect(button).toBeInTheDocument();
   });
   test("Login button click - no username and no password", async () => {
     render(<Login />);
 
-    const button = screen.getByRole("button", { name: /Login/ });
+    const button = screen.getByTestId("LoginButton");
 
     await userEvent.click(button);
     expect(mockRouter).toMatchObject({
@@ -50,7 +50,7 @@ describe("Login", () => {
       target: { value: "password", type: "password" },
     });
 
-    const loginButton = screen.getByRole("button", { name: /Login/ });
+    const loginButton = screen.getByTestId("LoginButton");
 
     await userEvent.click(loginButton);
     expect(loginSpy).toHaveBeenCalledTimes(1);
@@ -85,7 +85,7 @@ describe("Login", () => {
       target: { value: user.password, type: "password" },
     });
 
-    const loginButton = screen.getByRole("button", { name: /Login/ });
+    const loginButton = screen.getByTestId("LoginButton");
     await userEvent.click(loginButton);
     expect(loginSpy).toHaveBeenCalledTimes(1);
 
@@ -118,7 +118,7 @@ describe("Login", () => {
       target: { value: user.password, type: "password" },
     });
 
-    const loginButton = screen.getByRole("button", { name: /Login/ });
+    const loginButton = screen.getByTestId("LoginButton");
     await userEvent.click(loginButton);
 
     expect(loginSpy).toHaveBeenCalledTimes(1);
@@ -134,7 +134,7 @@ describe("Register", () => {
   test("Renders register button", async () => {
     render(<Login />);
 
-    const button = screen.getByRole("button", { name: /Register/ });
+    const button = screen.getByTestId("RegisterButton");
     expect(button).toBeInTheDocument();
   });
 
@@ -146,7 +146,7 @@ describe("Register", () => {
       json: { error: "Email/Password can not be empty." },
     });
 
-    const button = screen.getByRole("button", { name: /Register/ });
+    const button = screen.getByTestId("RegisterButton");
     await userEvent.click(button);
     expect(registerSpy).toHaveBeenCalledTimes(1);
 
@@ -175,7 +175,7 @@ describe("Register", () => {
       target: { value: user.password, type: "password" },
     });
 
-    const registerButton = screen.getByRole("button", { name: /Register/ });
+    const registerButton = screen.getByTestId("RegisterButton");
     await userEvent.click(registerButton);
     expect(registerSpy).toBeCalledTimes(1);
 
@@ -209,7 +209,7 @@ describe("Register", () => {
       target: { value: user.password, type: "password" },
     });
 
-    const registerButton = screen.getByRole("button", { name: /Register/ });
+    const registerButton = screen.getByTestId("RegisterButton");
     await userEvent.click(registerButton);
     expect(registerSpy).toBeCalledTimes(1);
 
@@ -242,7 +242,7 @@ describe("Register", () => {
       target: { value: user.password, type: "password" },
     });
 
-    const registerButton = screen.getByRole("button", { name: /Register/ });
+    const registerButton = screen.getByTestId("RegisterButton");
     await userEvent.click(registerButton);
     expect(registerSpy).toHaveBeenCalledTimes(1);
 

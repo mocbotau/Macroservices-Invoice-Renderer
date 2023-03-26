@@ -64,11 +64,6 @@ describe("/auth/register route", () => {
       password: "password",
     };
 
-    // await DBRun("INSERT INTO Users (Email, Password) VALUES (?,?)", [
-    //   user.email,
-    //   createHash("sha256").update(user.password).digest("hex"),
-    // ]);
-
     const resp = await mockRequest(register_handler, {
       method: "POST",
       body: user,
