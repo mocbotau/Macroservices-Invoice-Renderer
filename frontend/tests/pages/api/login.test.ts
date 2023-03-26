@@ -3,9 +3,9 @@ import { DBRun } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import { mockRequest } from "./apiTestHelper";
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks();
-  DBRun("DELETE From Users");
+  await DBRun("DELETE From Users");
 });
 
 describe("/auth/login route", () => {

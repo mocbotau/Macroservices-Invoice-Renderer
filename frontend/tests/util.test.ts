@@ -1,7 +1,7 @@
 import { DB, DBGet, DBRun } from "@src/utils/DBHandler";
 
-beforeEach(() => {
-  DBRun("DELETE FROM Users");
+beforeEach(async () => {
+  await DBRun("DELETE FROM Users");
 });
 
 describe("DB Util functions", () => {

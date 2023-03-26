@@ -9,13 +9,9 @@ import { Api } from "@src/Api";
 
 jest.mock("next/router", () => require("next-router-mock"));
 
-const VALID_SESSION = {
-  email: "valid@email.com",
-};
-
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks();
-  DBRun("DELETE FROM Users");
+  await DBRun("DELETE FROM Users");
   mockRouter.push("/");
 });
 
