@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { uploadFile } from "@src/utils";
 import Upload from "@src/components/upload";
 import CSVConfiguration from "@src/components/csvConfiguration";
+import { IronSessionData } from "iron-session";
+
+type PageProps = {
+  user: IronSessionData["user"];
+};
 
 export default function Editor() {
   const [snackbarMessage, setSnackbarMessage] = useState("");

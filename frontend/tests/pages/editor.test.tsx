@@ -1,10 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-
 import Editor from "@src/pages/editor";
 import userEvent from "@testing-library/user-event";
 
 const mockUploadFile = jest.fn();
+
+const VALID_SESSION = {
+  email: "valid@email.com",
+};
 
 jest.mock("@src/utils", () => {
   const orig = jest.requireActual("@src/utils");
@@ -18,7 +21,6 @@ jest.mock("@src/utils", () => {
 
 beforeEach(() => {
   jest.restoreAllMocks();
-
   mockUploadFile.mockClear();
 });
 
@@ -28,7 +30,7 @@ describe("Upload Screen", () => {
       Promise.resolve(new File(["hello,there"], "test.csv"))
     );
 
-    render(<Editor />);
+    render(<Editor user={VALID_SESSION} />);
 
     const button = screen.getByTestId("csv-upload-button");
     expect(button).toBeInTheDocument();
