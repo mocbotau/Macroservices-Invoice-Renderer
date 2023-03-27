@@ -1,6 +1,7 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { IronOptions } from "@src/../iron_session.config";
+import { getSession } from "@src/utils";
 
 export default withIronSessionApiRoute(logout_handler, IronOptions);
 
@@ -19,6 +20,6 @@ export async function logout_handler(
 ) {
   if (req.method !== "GET")
     return res.status(405).json({ error: "Only GET requests allowed" });
-  if (process.env.NODE_ENV !== "test") await req.session.destroy();
+  await getSession(req).destroy();
   res.status(200).json({});
 }

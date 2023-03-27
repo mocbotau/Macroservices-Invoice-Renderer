@@ -1,7 +1,9 @@
 import { readFileAsText, uploadFile } from "@src/utils";
+import { DB, DBGet, DBRun } from "@src/utils/DBHandler";
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks();
+  await DBRun("DELETE FROM Users");
 });
 
 describe("uploadFile", () => {

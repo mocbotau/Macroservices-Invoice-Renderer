@@ -4,6 +4,7 @@ import { createHash } from "crypto";
 import * as EmailValidator from "email-validator";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { IronOptions } from "@src/../iron_session.config";
+import { getSession } from "@src/utils";
 
 export default withIronSessionApiRoute(register_handler, IronOptions);
 
@@ -48,12 +49,11 @@ export async function register_handler(
       body.email,
       hashedPassword,
     ]);
-    if (process.env.NODE_ENV !== "test") {
-      req.session.user = {
-        email: body.email,
-      };
-      await req.session.save();
-    }
+    const session = getSession(req);
+    session.user = {
+      email: body.email,
+    };
+    await session.save();
     res.status(200).json({});
   }
 }

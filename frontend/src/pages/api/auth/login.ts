@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { DBGet } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import { IronOptions } from "@src/../iron_session.config";
+import { getSession } from "@src/utils";
 
 export default withIronSessionApiRoute(login_handler, IronOptions);
 
@@ -33,12 +34,11 @@ export async function login_handler(req: NextApiRequest, res: NextApiResponse) {
   } else if (user && user.Password !== hashedPassword) {
     res.status(403).json({ error: "Password is incorrect." });
   } else {
-    if (process.env.NODE_ENV !== "test") {
-      req.session.user = {
-        email: user.Email as string,
-      };
-      await req.session.save();
-    }
+    const session = getSession(req);
+    session.user = {
+      email: user.Email as string,
+    };
+    await session.save();
     res.status(200).json({});
   }
 }
