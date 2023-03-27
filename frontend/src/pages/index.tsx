@@ -1,40 +1,29 @@
-import React, { useState } from "react";
-import { Api } from "@src/Api";
-import { Alert, Button, Snackbar } from "@mui/material";
+import { withIronSessionSsr } from "iron-session/next";
+import { IronOptions } from "@src/../iron_session.config";
+import { User } from "../../additional";
+import { IronSessionData } from "iron-session";
+
+type PageProps = {
+  user?: IronSessionData["user"];
+};
+
+export const getServerSideProps = withIronSessionSsr(
+  async ({ req }) => await serverSideProps(req.session.user),
+  IronOptions
+);
+
+export async function serverSideProps(user?: User) {
+  return {
+    props: {
+      user: user || null,
+    },
+  };
+}
 
 /**
- * Temporary home page with health status check
+ * Home (Index) page. Will redirect to /login if already signed in. Otherwise redirect to /editor
  */
-export default function Home() {
-  const [health, setHealth] = useState(0);
-  const [statusShow, setStatusShow] = useState(false);
-
-  return (
-    <>
-      <Button
-        variant="contained"
-        onClick={async () => {
-          (await Api.healthStatus()) === 200 ? setHealth(1) : setHealth(-1);
-          setStatusShow(true);
-        }}
-        data-testid="health-check-button"
-      >
-        Check health
-      </Button>
-      <Snackbar
-        open={statusShow}
-        autoHideDuration={3000}
-        onClose={() => setStatusShow(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        {health > 0 ? (
-          <Alert severity="success" data-testid="health-check-success">
-            Server OK
-          </Alert>
-        ) : (
-          <Alert severity="error">Server down</Alert>
-        )}
-      </Snackbar>
-    </>
-  );
+// eslint-disable-next-line
+export default function Home(props: PageProps) {
+  return <></>;
 }

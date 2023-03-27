@@ -1,3 +1,5 @@
+import { NextApiRequest } from "next";
+
 /**
  * Prompts the user to upload a file
  *
@@ -50,4 +52,14 @@ export async function readFileAsText(file: File): Promise<string> {
 
     reader.readAsText(file);
   });
+}
+
+export function getSession(req: NextApiRequest) {
+  return process.env.NODE_ENV !== "test"
+    ? req.session
+    : {
+        user: {},
+        destroy: () => Promise.resolve(),
+        save: () => Promise.resolve(),
+      };
 }
