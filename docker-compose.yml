@@ -18,6 +18,8 @@ services:
         restart: always
         volumes:
             - ./frontend/.env.docker.local:/app/.env.local:ro
+            - db-data-frontend:/app/persistence
 
 volumes:
     db-data:
+    db-data-frontend:
