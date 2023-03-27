@@ -51,3 +51,8 @@ export interface InvoiceParty {
   contactPhone?: string;
   contactEmail?: string;
 }
+
+export type APIResponse = {
+  status: number;
+  json?: { error?: string };
+};

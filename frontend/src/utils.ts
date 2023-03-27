@@ -1,5 +1,6 @@
 import { InvoiceItem, JSONValue, InvoiceMetadata } from "./interfaces";
 import { json2xml } from "xml-js";
+import { NextApiRequest } from "next";
 
 /**
  * Prompts the user to upload a file
@@ -60,7 +61,7 @@ export function generateXML(items: InvoiceItem[], meta: InvoiceMetadata) {
 
   meta.currencyCode = meta.currencyCode || "AUD";
 
-  const applyMap = (
+  /*const applyMap = (
     item: JSONValue,
     map: Map<string, Array<string>>,
     init: JSONValue
@@ -78,9 +79,9 @@ export function generateXML(items: InvoiceItem[], meta: InvoiceMetadata) {
           }
         }, init);
       });
-  };
+  };*/
 
-  const invoiceItemMap = new Map<string, Array<string>>([
+  /*const invoiceItemMap = new Map<string, Array<string>>([
     ["qty", ["cbc:InvoicedQuantity"]],
     ["code", ["cbc:AccountCost"]],
     ["startDate", ["cac:InvoicePeriod", "cbc:StartDate"]],
@@ -102,7 +103,7 @@ export function generateXML(items: InvoiceItem[], meta: InvoiceMetadata) {
     ["buyerId", ["cac:Item", "cac:BuyersItemIdentification"]],
     ["sellerId", ["cac:Item", "cac:SellersItemIdentification"]],
     ["unitPrice", ["cac:Price", "cbc:PriceAmount"]],
-  ]);
+  ]);*/
 
   xmlObject["cbc:CustomizationID"] =
     "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0";
@@ -127,4 +128,14 @@ export function generateXML(items: InvoiceItem[], meta: InvoiceMetadata) {
   });
 
   return json2xml(JSON.stringify(xmlObject), { compact: true, spaces: 2 });
+}
+
+export function getSession(req: NextApiRequest) {
+  return process.env.NODE_ENV !== "test"
+    ? req.session
+    : {
+        user: {},
+        destroy: () => Promise.resolve(),
+        save: () => Promise.resolve(),
+      };
 }

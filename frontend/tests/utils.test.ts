@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 import { generateXML, readFileAsText, uploadFile } from "@src/utils";
+=======
+import { readFileAsText, uploadFile } from "@src/utils";
+import { DB, DBGet, DBRun } from "@src/utils/DBHandler";
+>>>>>>> 59d0c37db36447bba167fa622dfb36fedad6a9f4
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks();
+  await DBRun("DELETE FROM Users");
 });
 
 describe("uploadFile", () => {

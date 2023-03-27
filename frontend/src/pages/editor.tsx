@@ -1,11 +1,17 @@
 import React from "react";
 import { Button, Grid, Typography } from "@mui/material";
 import { readFileAsText, uploadFile } from "@src/utils";
+import { IronSessionData } from "iron-session";
+
+type PageProps = {
+  user: IronSessionData["user"];
+};
 
 /**
- * Temporary home page with health status check
+ * Editor page. Holds all stages starting from upload => edit => render.
  */
-export default function Editor() {
+// eslint-disable-next-line
+export default function Editor(props: PageProps) {
   const upload = async () => {
     const f = await uploadFile(".csv");
     const fText = await readFileAsText(f);
