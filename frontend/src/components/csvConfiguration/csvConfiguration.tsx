@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import dynamic from "next/dynamic";
-// import "handsontable/dist/handsontable.full.min.css";
 import { Box, Drawer, useTheme } from "@mui/material";
 import CSVConfigurationPane from "./csvConfigurationPane";
 import { charFromNumber, checkBoundaries } from "@src/utils";
@@ -86,7 +84,7 @@ export default function CSVConfiguration(props: ComponentProps) {
         >
           <HotTable
             data={rows}
-            colHeaders={(index) => {
+            colHeaders={(index: number) => {
               return charFromNumber(index);
             }}
             editor={false}
