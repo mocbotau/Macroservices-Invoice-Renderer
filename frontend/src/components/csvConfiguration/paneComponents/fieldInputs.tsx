@@ -1,88 +1,108 @@
 import {
   Grid,
   Box,
-  Typography,
-  TextFieldProps,
   TextField,
   InputAdornment,
   Tooltip,
-  Select,
   MenuItem,
-  InputLabel,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { InvoiceOptionItems } from "../csvConfigurationFields";
 import TableViewIcon from "@mui/icons-material/TableView";
+import { SelectedData } from "@src/interfaces";
 
-type NewTextFieldProps = TextFieldProps & {
-  selection: string;
+type NewTextFieldProps = {
+  selection: SelectedData;
   id: string;
+  dropdownOptions: string[];
   selectedField: string;
   setSelectedField: (value: string) => void;
+  setData: (value: string) => void;
   required: boolean;
   label: string;
   useDropdown: boolean;
+  showRequired: boolean;
+  textFieldValue: string;
 };
 
-function newTextField(props: NewTextFieldProps) {
-  const [previousValue, setPreviousValue] = useState<string>("");
-  const [selectedValue, setSelectedValue] = useState<string>("");
+function NewTextField(props: NewTextFieldProps) {
+  const selectedFirstCell =
+    props.selection.data.length !== 0 ? props.selection.data[0][0] : "";
 
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setPreviousValue(event.target.value);
-  };
-
-  const handleBlur = () => {
-    setSelectedValue("");
+    props.setData(event.target.value);
   };
 
   useEffect(() => {
     if (props.selectedField === props.id) {
-      setSelectedValue(props.selection);
-      setPreviousValue(props.selection);
+      props.setData(selectedFirstCell);
       props.setSelectedField("");
     }
-  }, [props.selection]);
+  }, [selectedFirstCell]);
 
-  return props.useDropdown ? (
-    <Select label={props.label} value={0} fullWidth>
-      <MenuItem value={0}>Column A</MenuItem>
-    </Select>
-  ) : (
+  return (
     <TextField
       fullWidth={true}
-      value={selectedValue || previousValue}
+      value={props.textFieldValue}
+      error={
+        props.showRequired &&
+        props.required &&
+        props.textFieldValue.length === 0
+      }
       onFocus={() => props.setSelectedField(props.id)}
       onChange={handleTextFieldChange}
-      onBlur={handleBlur}
       id={props.id}
       required={props.required}
       label={props.label}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment
-            position="start"
-            sx={{ opacity: props.selectedField === props.id ? "100%" : "50%" }}
+      select={props.useDropdown}
+      disabled={props.useDropdown && props.dropdownOptions.length === 0}
+      InputProps={
+        props.useDropdown
+          ? {}
+          : {
+              startAdornment: (
+                <InputAdornment
+                  position="start"
+                  sx={{
+                    opacity: props.selectedField === props.id ? "100%" : "50%",
+                  }}
+                >
+                  <Tooltip title="Select from table">
+                    <TableViewIcon />
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }
+      }
+    >
+      {props.dropdownOptions.map((option) => {
+        return (
+          <MenuItem
+            key={option}
+            value={option}
+            onChange={() => handleTextFieldChange}
           >
-            <Tooltip title="Select from table">
-              <TableViewIcon />
-            </Tooltip>
-          </InputAdornment>
-        ),
-      }}
-    />
+            {option}
+          </MenuItem>
+        );
+      })}
+    </TextField>
   );
 }
 
 export const mapFieldItems = (
   items: InvoiceOptionItems[],
-  selection: string[][],
+  selection: SelectedData,
+  dropdownOptions: string[],
   selectedField: string,
   setSelectedField: (value: string) => void,
+  textFieldState: Record<string, string>,
+  setTextFieldState: (value: Record<string, string>) => void,
+  showRequired: boolean,
   useDropdown: boolean,
-  idPrefix?: string
+  idPrefix: string = ""
 ): JSX.Element => {
   return (
     <>
@@ -100,15 +120,24 @@ export const mapFieldItems = (
                   width: "100%",
                 }}
               >
-                {newTextField({
-                  selection: selection.length !== 0 ? selection[0][0] : "",
-                  id: idPrefix + item.id,
-                  selectedField: selectedField,
-                  setSelectedField: setSelectedField,
-                  required: item.required,
-                  label: item.name,
-                  useDropdown: useDropdown,
-                })}
+                <NewTextField
+                  selection={selection}
+                  id={idPrefix + item.id}
+                  dropdownOptions={dropdownOptions}
+                  selectedField={selectedField}
+                  setSelectedField={setSelectedField}
+                  setData={(value: string) => {
+                    setTextFieldState({
+                      ...textFieldState,
+                      [idPrefix + item.id]: value,
+                    });
+                  }}
+                  required={item.required}
+                  label={item.name}
+                  showRequired={showRequired}
+                  useDropdown={useDropdown}
+                  textFieldValue={textFieldState[idPrefix + item.id]}
+                />
               </Box>
             </Grid>
           </>

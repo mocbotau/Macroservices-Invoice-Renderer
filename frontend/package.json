@@ -13,8 +13,6 @@
     "prettify": "prettier -w src tests"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
     "@handsontable/react": "^12.3.1",
     "@mui/material": "^5.11.13",
     "@types/node": "18.15.3",

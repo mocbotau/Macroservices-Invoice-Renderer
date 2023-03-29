@@ -2,6 +2,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline, useMediaQuery } from "@mui/material";
 import React from "react";
 import { AppProps } from "next/app";
+import "@src/styles/handsontableStyles.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   const darkMode = useMediaQuery("(prefers-color-scheme: dark)");

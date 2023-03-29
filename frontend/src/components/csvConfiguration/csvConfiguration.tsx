@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
 import dynamic from "next/dynamic";
-import "handsontable/dist/handsontable.full.min.css";
+// import "handsontable/dist/handsontable.full.min.css";
 import { Box, Drawer, useTheme } from "@mui/material";
 import CSVConfigurationPane from "./csvConfigurationPane";
+import { charFromNumber, checkBoundaries } from "@src/utils";
+import { SelectedData } from "@src/interfaces";
 
 const HotTable = dynamic(
   () =>
@@ -20,12 +22,20 @@ interface ComponentProps {
 type Row = string[];
 
 export default function CSVConfiguration(props: ComponentProps) {
+  const emptySelection = {
+    data: [],
+    startRow: -1,
+    startCol: -1,
+    endRow: -1,
+    endCol: -1,
+  };
+
   const theme = useTheme();
   const drawerWidth = theme.spacing(50);
 
   const [rows, setRows] = useState<Row[]>([]);
-
-  const [selection, setSelection] = useState<string[][]>([]);
+  const [selection, setSelection] = useState<SelectedData>(emptySelection);
+  const [multipleSelection, setMultipleSelection] = useState(false);
 
   useEffect(() => {
     Papa.parse(props.file, {
@@ -37,17 +47,30 @@ export default function CSVConfiguration(props: ComponentProps) {
     });
   }, [props.file]);
 
+  useEffect(() => {
+    setSelection(emptySelection);
+  }, [multipleSelection]);
+
   const onAfterSelectionEnd = (
     startRow: number,
     startCol: number,
     endRow: number,
     endCol: number
   ) => {
-    setSelection(
-      rows.slice(startRow, endRow + 1).map((row) => {
+    startRow = checkBoundaries(startRow, rows.length - 1);
+    endRow = checkBoundaries(endRow, rows.length - 1);
+    startCol = checkBoundaries(startCol, rows[0].length - 1);
+    endCol = checkBoundaries(endCol, rows[0].length - 1);
+
+    setSelection({
+      data: rows.slice(startRow, endRow + 1).map((row) => {
         return row.slice(startCol, endCol + 1);
-      })
-    );
+      }),
+      startRow: startRow,
+      startCol: startCol,
+      endRow: endRow,
+      endCol: endCol,
+    });
   };
 
   return (
@@ -64,17 +87,20 @@ export default function CSVConfiguration(props: ComponentProps) {
           <HotTable
             data={rows}
             colHeaders={(index) => {
-              return String.fromCharCode("A".charCodeAt(0) + index);
+              return charFromNumber(index);
             }}
+            editor={false}
             rowHeaders={true}
             height="100%"
             width="100%"
             licenseKey="non-commercial-and-evaluation"
             stretchH="all"
             minRows={200}
-            selectionMode="multiple"
+            selectionMode={multipleSelection ? "range" : "single"}
             afterSelectionEnd={onAfterSelectionEnd}
+            outsideClickDeselects={false}
             className={"handsontable.dark"}
+            manualColumnResize={true}
           />
         </Box>
         <Drawer
@@ -89,7 +115,11 @@ export default function CSVConfiguration(props: ComponentProps) {
           variant="permanent"
           anchor="right"
         >
-          <CSVConfigurationPane selection={selection} />
+          <CSVConfigurationPane
+            selection={selection}
+            multipleSelection={multipleSelection}
+            setMultipleSelection={setMultipleSelection}
+          />
         </Drawer>
       </Box>
     </>

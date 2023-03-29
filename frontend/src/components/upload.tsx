@@ -1,4 +1,4 @@
-import { Button, Grid, Typography, Alert, Snackbar } from "@mui/material";
+import { Button, Grid, Typography, Alert, Snackbar, Box } from "@mui/material";
 
 interface ComponentProps {
   setSnackbarMessage: (value: string) => void;
@@ -8,25 +8,27 @@ interface ComponentProps {
 
 export default function Upload(props: ComponentProps) {
   return (
-    <>
+    <Box sx={{ width: "100vw", height: "100vh" }}>
       <Snackbar
         open={props.snackbarMessage.length !== 0}
         autoHideDuration={3000}
         onClose={() => props.setSnackbarMessage("")}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert severity="error" data-testid="health-check-success">
+        <Alert severity="error" data-testid="wrong-file-type">
           {props.snackbarMessage}
         </Alert>
       </Snackbar>
+
       <Grid
         container
         direction="column"
         justifyContent="center"
         alignItems="center"
+        style={{ minHeight: "100vh" }}
         spacing={4}
       >
-        <Grid item>
+        <Grid item xs={3}>
           <Typography variant="h4">INVOICE RENDERER</Typography>
         </Grid>
         <Grid item>
@@ -39,6 +41,6 @@ export default function Upload(props: ComponentProps) {
           </Button>
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 }
