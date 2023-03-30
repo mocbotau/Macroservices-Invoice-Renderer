@@ -40,14 +40,18 @@ export const invoiceOptions: InvoiceOptionType[] = [
       },
       {
         name: "Issue Date",
-        description: "The date that this invoice was issued.",
+        description:
+          "The date that this invoice was issued. If not entered, this will default to today.",
+        important: true,
         required: false,
         colour: "#ffffba",
         id: "invoice_issue_date",
       },
       {
         name: "Due Date",
-        description: "The date that this invoice is due, if applicable.",
+        description:
+          "The date that this invoice is due. If not entered, this will default to two weeks from today.",
+        important: true,
         required: false,
         colour: "#baffc9",
         id: "invoice_due_date",
@@ -82,7 +86,9 @@ export const invoiceOptions: InvoiceOptionType[] = [
       },
       {
         name: "Reference",
-        description: "The invoice's customer reference.",
+        description:
+          "The invoice's customer reference. If not entered, this will default to 'Generic'.",
+        important: true,
         required: false,
         colour: "#eeeeee",
         id: "invoice_reference",

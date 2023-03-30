@@ -133,6 +133,7 @@ describe("generateXML", () => {
         {
           name: "Invoice 1",
           issueDate: "2023-03-31",
+          id: "12345",
           dueDate: "2023-04-14",
           delivery: {
             name: "John Smith",

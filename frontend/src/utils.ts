@@ -13,6 +13,12 @@ import {
   DEF_UNIT,
   GST_RATE,
   INVOICE_CODE,
+  MAX_IDS,
+  INVOICE_DURATION,
+  MAX_ID_LENGTH,
+  DEFAULT_CURRENCY,
+  DEFAULT_REFERENCE,
+  DEFAULT_COUNTRY,
 } from "./constants";
 
 /**
@@ -94,23 +100,27 @@ export function generateXML(
       "0"
     )}-${String(date.getDate()).padStart(2, "0")}`;
 
-  meta.currencyCode ||= "AUD";
+  meta.currencyCode ||= DEFAULT_CURRENCY;
   const today = new Date();
   const defaultDue = new Date();
-  defaultDue.setDate(today.getDate() + 14);
+  defaultDue.setDate(today.getDate() + INVOICE_DURATION);
   meta.issueDate ||= formatDate(today);
   meta.dueDate ||= formatDate(defaultDue);
-  meta.reference ||= "Generic";
+  meta.reference ||= DEFAULT_REFERENCE;
+  meta.id ||= `${Math.floor(Math.random() * MAX_IDS)}`.padStart(
+    MAX_ID_LENGTH,
+    "0"
+  );
   supplier.address ||= {};
   customer.address ||= {};
-  supplier.address.country ||= "AU";
-  customer.address.country ||= "AU";
+  supplier.address.country ||= DEFAULT_COUNTRY;
+  customer.address.country ||= DEFAULT_COUNTRY;
 
   if (meta.delivery) {
     if (meta.delivery.address === undefined) {
       meta.delivery.address = { ...customer.address };
     }
-    meta.delivery.address.country ||= "AU";
+    meta.delivery.address.country ||= DEFAULT_COUNTRY;
   }
 
   const formatCurrency = (amt: number) => [
@@ -201,7 +211,7 @@ export function generateXML(
             "urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0",
         },
         { "cbc:ProfileID": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0" },
-        { "cbc:ID": meta.id || 12345 },
+        { "cbc:ID": meta.id },
         { "cbc:IssueDate": meta.issueDate },
         { "cbc:DueDate": meta.dueDate },
         { "cbc:InvoiceTypeCode": INVOICE_CODE },
