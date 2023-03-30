@@ -1,14 +1,13 @@
 import { logout_handler } from "@src/pages/api/auth/logout";
 import { DBRun } from "@src/utils/DBHandler";
-import { createHash } from "crypto";
-import { mockRequest } from "./apiTestHelper";
+import { mockRequest } from "../apiTestHelper";
 
 beforeEach(async () => {
   jest.clearAllMocks();
   await DBRun("DELETE From Users");
 });
 describe("/auth/logout route", () => {
-  test("It should provide a 405 bad method status when not GET", async () => {
+  test("It should provide a 405 bad method status when not POST", async () => {
     const resp = await mockRequest(logout_handler, {
       method: "POST",
       data: {},
