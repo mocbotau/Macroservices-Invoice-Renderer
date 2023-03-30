@@ -21,11 +21,10 @@ export const CustomAccordion = (props: ComponentProps): JSX.Element => {
   const { id, title, setMultipleSelection } = props;
   const [expanded, setExpanded] = useState(false);
 
-  const handleAccordionChange =
-    () => (event: SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(!isExpanded);
-      setMultipleSelection(false);
-    };
+  const handleAccordionChange = () => () => {
+    setExpanded(!expanded);
+    setMultipleSelection(false);
+  };
 
   return (
     <Accordion expanded={expanded} onChange={handleAccordionChange()} key={id}>
