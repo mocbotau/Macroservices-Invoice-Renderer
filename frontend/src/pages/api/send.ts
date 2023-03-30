@@ -24,6 +24,8 @@ const handler = async (
   req: NextApiRequest & { [key: string]: any },
   res: NextApiResponse
 ): Promise<void> => {
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Only POST requests allowed" });
   const multerStorage = multer.memoryStorage();
   const multerUpload = multer({ storage: multerStorage });
 

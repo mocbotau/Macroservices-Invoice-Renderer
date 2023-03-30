@@ -1,4 +1,8 @@
-import { APIResponse, InvoiceSendExtOptions, InvoiceSendOptions } from "@src/interfaces";
+import {
+  APIResponse,
+  InvoiceSendExtOptions,
+  InvoiceSendOptions,
+} from "@src/interfaces";
 
 export class Api {
   /**
