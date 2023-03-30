@@ -1,4 +1,4 @@
-import { APIResponse } from "@src/interfaces";
+import { APIResponse, InvoiceSendExtOptions, InvoiceSendOptions } from "@src/interfaces";
 
 export class Api {
   /**
@@ -43,6 +43,32 @@ export class Api {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
+    });
+    return { status: res.status, json: await res.json() };
+  }
+
+  /**
+   * Sends an invoice to an external source
+   * @param {string} contact - the recipient's identifier
+   * @param {InvoiceSendOptions} type - The medium in which to send the invoice
+   * @param {"json"|"pdf"|"html"|"xml"} ext - the extension of the file to send
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async sendInvoice(
+    contact: string,
+    type: InvoiceSendOptions,
+    ext: InvoiceSendExtOptions,
+    file: Blob
+  ): Promise<APIResponse> {
+    const formData = new FormData();
+    formData.append("type", type);
+    formData.append("contact", contact);
+    formData.append("ext", ext);
+    formData.append("file", file);
+    const res = await fetch("/api/send", {
+      method: "POST",
+      headers: { "Content-Type": "multipart/form-data" },
+      body: formData,
     });
     return { status: res.status, json: await res.json() };
   }
