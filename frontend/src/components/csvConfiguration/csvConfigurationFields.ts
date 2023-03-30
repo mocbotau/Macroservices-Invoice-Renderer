@@ -33,7 +33,9 @@ export const invoiceOptions: InvoiceOptionType[] = [
       },
       {
         name: "ID",
-        description: "The ID of the invoice.",
+        description:
+          "The ID of the invoice. If this is not provided, a random ID will be generated",
+        important: true,
         required: false,
         colour: "#ffdfba",
         id: "invoice_id",
