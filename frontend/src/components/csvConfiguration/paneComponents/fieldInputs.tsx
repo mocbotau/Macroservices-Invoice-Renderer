@@ -5,11 +5,13 @@ import {
   InputAdornment,
   Tooltip,
   MenuItem,
+  IconButton,
 } from "@mui/material";
 import { useEffect } from "react";
 import { InvoiceOptionItems } from "../csvConfigurationFields";
 import TableViewIcon from "@mui/icons-material/TableView";
 import { SelectedData, SetStateType } from "@src/interfaces";
+import { InfoRounded, WarningRounded } from "@mui/icons-material";
 
 type NewTextFieldProps = {
   selection: SelectedData;
@@ -52,9 +54,11 @@ function NewTextField(props: NewTextFieldProps) {
       fullWidth={true}
       value={!props.multipleSelect ? props.textFieldValue : ""}
       error={
-        props.showRequired && props.id === "delivery_name"
-          ? props.deliveryRequired
-          : props.required && props.textFieldValue.length === 0
+        props.id === "delivery_name"
+          ? props.deliveryRequired && props.textFieldValue.length === 0
+          : props.showRequired &&
+            props.required &&
+            props.textFieldValue.length === 0
       }
       onFocus={() => setSelectedField(id)}
       onChange={handleTextFieldChange}
@@ -151,6 +155,15 @@ export const mapFieldItems = (
                 textFieldValue={textFieldState[idPrefix + item.id]}
                 multipleSelect={multipleSelect}
               />
+              <Tooltip title={item.description}>
+                <IconButton>
+                  {item.important ? (
+                    <WarningRounded color="warning" />
+                  ) : (
+                    <InfoRounded />
+                  )}
+                </IconButton>
+              </Tooltip>
             </Box>
           </Grid>
         );

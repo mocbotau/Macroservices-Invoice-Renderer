@@ -59,22 +59,19 @@ export function handleSubmit(
   selection: SelectedData,
   hasHeaders: boolean
 ): void {
-  if (
-    requiredFields.some((field) => {
-      return textFieldsState[field].length === 0;
-    })
-  ) {
-    setShowRequired(true);
+  const emptyFields = requiredFields.some((field) => {
+    return textFieldsState[field].length === 0;
+  });
+
+  const deliveryNameEmpty =
+    deliveryDependentFields.some((field) => {
+      return textFieldsState[field].length !== 0;
+    }) && textFieldsState["delivery_name"].length === 0;
+
+  if (emptyFields || deliveryNameEmpty) {
+    setShowRequired(emptyFields);
+    setDeliveryRequired(deliveryNameEmpty);
     return setShowSnackbar(true);
-    // } else if (
-    //   deliveryDependentFields.some((field) => {
-    //     return textFieldsState[field].length !== 0;
-    //   }) &&
-    //   textFieldsState["delivery_name"].length === 0
-    // ) {
-    //   setDeliveryRequired(true);
-    //   return setShowSnackbar(true);
-    // } else {
   } else {
     setShowLoading(true);
 
@@ -111,7 +108,7 @@ function convertMetadata(
     endDate: textFieldsState["invoice_end_date"],
     currencyCode: textFieldsState["invoice_currency_code"],
     note: textFieldsState["invoice_notes"],
-    delivery: Object.keys(delivery).length === 0 ? undefined : delivery,
+    delivery: !("name" in delivery) ? undefined : delivery,
   }) as InvoiceMetadata;
 }
 
@@ -195,8 +192,10 @@ function convertItems(
   });
   let selectedColumnIndexes: number[];
 
+  const dataClone = [...selection.data];
+
   if (hasHeaders) {
-    const headerRow = selection.data.shift();
+    const headerRow = dataClone.shift();
     selectedColumnIndexes = selectedColumnNames.map((name) => {
       return (headerRow as string[]).indexOf(name);
     });
@@ -206,9 +205,7 @@ function convertItems(
     });
   }
 
-  console.log(selectedColumnIndexes);
-
-  return selection.data.map((row) => {
+  return dataClone.map((row) => {
     return removeEmptyValues({
       name: row[selectedColumnIndexes[0]],
       qty: extractNumber(row[selectedColumnIndexes[1]]),
@@ -247,6 +244,7 @@ function checkIfNotSelected(
  */
 function removeEmptyValues(obj: AllInvoiceObjectTypes): AllInvoiceObjectTypes {
   return Object.fromEntries(
+    // eslint-disable-next-line
     Object.entries(obj).filter(([_, v]) => v !== "" && v !== undefined)
   );
 }

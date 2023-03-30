@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { Box, Drawer, useTheme } from "@mui/material";
-import CSVConfigurationPane from "./csvConfigurationPane";
+import CSVConfigurationPane from "@src/components/csvConfiguration/csvConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
 import { Row, SelectedData } from "@src/interfaces";
-import dynamic from "next/dynamic";
 import { MIN_ROW_COUNT } from "@src/constants";
+import dynamic from "next/dynamic";
 
 const HotTable = dynamic(
   () =>
@@ -42,7 +42,7 @@ export default function CSVConfiguration(props: ComponentProps) {
       complete: (results: Papa.ParseResult<Row>) => {
         const fileData = results.data;
 
-        let tempArr: string[][] = [
+        const tempArr: string[][] = [
           ...Array(Math.max(fileData.length, MIN_ROW_COUNT)),
         ].map(() => Array(results.data[0].length).fill(""));
         for (const row in fileData) {
@@ -105,13 +105,13 @@ export default function CSVConfiguration(props: ComponentProps) {
             afterSelectionEnd={onAfterSelectionEnd}
             outsideClickDeselects={false}
             afterChange={(changes) => {
-              changes?.forEach(([row, col, oldValue, newValue]) => {
-                let copy = JSON.parse(JSON.stringify(rows));
+              // eslint-disable-next-line
+              changes?.forEach(([row, col, _, newValue]) => {
+                const copy = JSON.parse(JSON.stringify(rows));
                 copy[row][col] = newValue;
                 setRows(copy);
               });
             }}
-            manualColumnResize={true}
           />
         </Box>
         <Drawer

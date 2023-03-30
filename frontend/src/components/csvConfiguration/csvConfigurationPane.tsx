@@ -16,15 +16,17 @@ import {
   InputBase,
   Paper,
   Snackbar,
-  Switch,
   Tab,
   Tabs,
   ToggleButton,
   Tooltip,
 } from "@mui/material";
-import { invoiceOptions } from "./csvConfigurationFields";
-import { mapFieldItems } from "./paneComponents/fieldInputs";
-import { TabPanel } from "./paneComponents/tabPanel";
+import {
+  instructionsForUse,
+  invoiceOptions,
+} from "@src/components/csvConfiguration/csvConfigurationFields";
+import { mapFieldItems } from "@src/components/csvConfiguration/paneComponents/fieldInputs";
+import { TabPanel } from "@src/components/csvConfiguration/paneComponents/tabPanel";
 import {
   colFromNumber,
   convertToCellRefs,
@@ -124,6 +126,20 @@ export default function CSVConfigurationPane(props: ComponentProps) {
           >
             CSV Configurator
           </Typography>
+          <Accordion
+            expanded={expanded === "instructions"}
+            onChange={handleAccordionChange("instructions")}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              id="instructions_bh_header"
+            >
+              <Typography>Instructions</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>{instructionsForUse}</Typography>
+            </AccordionDetails>
+          </Accordion>
           {invoiceOptions.map((category) => {
             return (
               <Accordion
@@ -140,7 +156,7 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                 <AccordionDetails>
                   <Typography>{category.description}</Typography>
                   {category.description && <Divider sx={{ marginY: 2 }} />}
-                  {category.id === "invoice_item" ? (
+                  {category.id === "invoice_items" ? (
                     <>
                       <Paper
                         component="form"
@@ -236,7 +252,7 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                               setTextFieldState,
                               showRequired,
                               deliveryRequired,
-                              category.id === "invoice_item",
+                              category.id === "invoice_items",
                               props.multipleSelection,
                               v
                             )}
@@ -255,7 +271,7 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                       setTextFieldState,
                       showRequired,
                       deliveryRequired,
-                      category.id === "invoice_item",
+                      category.id === "invoice_items",
                       props.multipleSelection
                     )
                   )}
