@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { Box, Drawer, useTheme } from "@mui/material";
 import CSVConfigurationPane from "./csvConfigurationPane";
-import { charFromNumber, checkBoundaries } from "@src/utils";
-import { SelectedData } from "@src/interfaces";
+import { colFromNumber, checkBoundaries } from "@src/utils";
+import { Row, SelectedData } from "@src/interfaces";
+import dynamic from "next/dynamic";
+import { MIN_ROW_COUNT } from "@src/constants";
 
 const HotTable = dynamic(
   () =>
@@ -17,17 +19,15 @@ interface ComponentProps {
   file: File;
 }
 
-type Row = string[];
+const emptySelection = {
+  data: [],
+  startRow: -1,
+  startCol: -1,
+  endRow: -1,
+  endCol: -1,
+};
 
 export default function CSVConfiguration(props: ComponentProps) {
-  const emptySelection = {
-    data: [],
-    startRow: -1,
-    startCol: -1,
-    endRow: -1,
-    endCol: -1,
-  };
-
   const theme = useTheme();
   const drawerWidth = theme.spacing(50);
 
@@ -40,14 +40,20 @@ export default function CSVConfiguration(props: ComponentProps) {
       header: false,
       skipEmptyLines: true,
       complete: (results: Papa.ParseResult<Row>) => {
-        setRows(results.data);
+        const fileData = results.data;
+
+        let tempArr: string[][] = [
+          ...Array(Math.max(fileData.length, MIN_ROW_COUNT)),
+        ].map(() => Array(results.data[0].length).fill(""));
+        for (const row in fileData) {
+          for (const col in fileData[row]) {
+            tempArr[row][col] = fileData[row][col];
+          }
+        }
+        setRows(tempArr);
       },
     });
   }, [props.file]);
-
-  useEffect(() => {
-    setSelection(emptySelection);
-  }, [multipleSelection]);
 
   const onAfterSelectionEnd = (
     startRow: number,
@@ -76,6 +82,7 @@ export default function CSVConfiguration(props: ComponentProps) {
       <Box sx={{ display: "block", height: "100vh", width: "100vw" }}>
         <Box
           component="main"
+          id={"hot-table-box"}
           sx={{
             display: "block",
             height: "100%",
@@ -85,7 +92,7 @@ export default function CSVConfiguration(props: ComponentProps) {
           <HotTable
             data={rows}
             colHeaders={(index: number) => {
-              return charFromNumber(index);
+              return colFromNumber(index);
             }}
             editor={false}
             rowHeaders={true}
@@ -93,11 +100,17 @@ export default function CSVConfiguration(props: ComponentProps) {
             width="100%"
             licenseKey="non-commercial-and-evaluation"
             stretchH="all"
-            minRows={200}
+            minRows={MIN_ROW_COUNT}
             selectionMode={multipleSelection ? "range" : "single"}
             afterSelectionEnd={onAfterSelectionEnd}
             outsideClickDeselects={false}
-            className={"handsontable.dark"}
+            afterChange={(changes) => {
+              changes?.forEach(([row, col, oldValue, newValue]) => {
+                let copy = JSON.parse(JSON.stringify(rows));
+                copy[row][col] = newValue;
+                setRows(copy);
+              });
+            }}
             manualColumnResize={true}
           />
         </Box>

@@ -1,7 +1,8 @@
 import { Button, Grid, Typography, Alert, Snackbar, Box } from "@mui/material";
+import { SetStateType } from "@src/interfaces";
 
 interface ComponentProps {
-  setSnackbarMessage: (value: string) => void;
+  setSnackbarMessage: SetStateType<string>;
   snackbarMessage: string;
   handleUpload: () => Promise<void>;
 }

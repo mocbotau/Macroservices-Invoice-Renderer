@@ -10,6 +10,8 @@ export type APIResponse = {
   json?: { error?: string };
 };
 
+export type Row = string[];
+
 export interface SelectedData {
   data: string[][];
   startRow: number;
@@ -17,3 +19,73 @@ export interface SelectedData {
   endRow: number;
   endCol: number;
 }
+
+export interface MultiSelectRange {
+  rangeString: string;
+  data: string[][];
+}
+
+export type SetStateType<T> = React.Dispatch<React.SetStateAction<T>>;
+
+export interface InvoiceItem {
+  name: string;
+  qty: number;
+  unitPrice: number;
+  code?: string;
+  buyerId?: string;
+  sellerId?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  unit?: string;
+}
+
+export interface InvoiceAddress {
+  extraLine?: string;
+  streetAddress?: string;
+  suburb?: string;
+  postcode?: string;
+  state?: string;
+  country?: string;
+}
+
+export interface InvoiceDelivery {
+  name: string;
+  deliveryDate?: string;
+  address: InvoiceAddress;
+}
+
+export interface InvoiceMetadata {
+  invoiceName: string;
+  id?: string;
+  issueDate?: string;
+  dueDate?: string;
+  startDate?: string;
+  endDate?: string;
+  currencyCode?: string;
+  note?: string;
+  delivery?: InvoiceDelivery;
+}
+
+export interface InvoiceParty {
+  abn: string;
+  name: string;
+  address?: InvoiceAddress;
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+}
+
+export interface FullXMLOptions {
+  items: InvoiceItem[];
+  meta: InvoiceMetadata;
+  supplier: InvoiceParty;
+  customer: InvoiceParty;
+}
+
+export type AllInvoiceObjectTypes =
+  | InvoiceMetadata
+  | InvoiceParty
+  | InvoiceDelivery
+  | InvoiceAddress
+  | InvoiceItem;

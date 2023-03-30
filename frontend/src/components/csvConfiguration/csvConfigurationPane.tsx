@@ -4,56 +4,66 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Box, Container } from "@mui/system";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { Box } from "@mui/system";
 import {
   Alert,
   Button,
   Checkbox,
   Divider,
-  Drawer,
   FormControlLabel,
-  Grid,
   IconButton,
   InputBase,
   Paper,
   Snackbar,
+  Switch,
   Tab,
   Tabs,
   ToggleButton,
   Tooltip,
-  useTheme,
 } from "@mui/material";
 import { invoiceOptions } from "./csvConfigurationFields";
 import { mapFieldItems } from "./paneComponents/fieldInputs";
 import { TabPanel } from "./paneComponents/tabPanel";
 import {
-  charFromNumber,
-  checkRequiredFields,
+  colFromNumber,
   convertToCellRefs,
   createTextStateObject,
+  getInvoiceItemIDs,
 } from "@src/utils";
-import { SelectedData } from "@src/interfaces";
+import { MultiSelectRange, SelectedData, SetStateType } from "@src/interfaces";
 import { Info } from "@mui/icons-material";
+import lodash from "lodash";
+import { handleSubmit } from "@src/utils/handleSubmit";
 
 interface ComponentProps {
   selection: SelectedData;
   multipleSelection: boolean;
-  setMultipleSelection: (value: boolean) => void;
+  setMultipleSelection: SetStateType<boolean>;
 }
+
+const emptySelectedRange: MultiSelectRange = {
+  rangeString: "",
+  data: [],
+};
 
 export default function CSVConfigurationPane(props: ComponentProps) {
   const { startRow, startCol, endRow, endCol, data } = props.selection;
   const [expanded, setExpanded] = useState<string | false>(false);
   const [tabValue, setTabValue] = useState(0);
   const [selectedField, setSelectedField] = useState("");
-  const [selectedRange, setSelectedRange] = useState("");
+  const [selectedRange, setSelectedRange] = useState(emptySelectedRange);
   const [dropdownOptions, setDropdownOptions] = useState<string[]>([]);
   const [showRequired, setShowRequired] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [hasHeaders, setHasHeaders] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
+  const [deliveryRequired, setDeliveryRequired] = useState(false);
 
   const initialState = createTextStateObject();
   const [textFieldState, setTextFieldState] = useState(initialState);
+
+  const resettedInvoiceItems = Object.fromEntries(getInvoiceItemIDs());
 
   const handleAccordionChange =
     (panel: string) => (event: SyntheticEvent, isExpanded: boolean) => {
@@ -66,21 +76,24 @@ export default function CSVConfigurationPane(props: ComponentProps) {
   };
 
   useEffect(() => {
-    if (startRow !== -1 && startCol !== -1 && endRow !== -1 && endCol !== -1) {
-      setSelectedRange(convertToCellRefs(startRow, startCol, endRow, endCol));
-      setDropdownOptions(
-        hasHeaders
-          ? data[0]
-          : Array.from(
-              { length: endCol - startCol + 1 },
-              (value, index) => index
-            ).map((v, i) => {
-              return `Column ${charFromNumber(i + startCol)}`;
-            })
-      );
-    }
+    if (startRow === -1 || startCol === -1 || endRow === -1 || endCol === -1)
+      return;
+    setSelectedRange({
+      rangeString: convertToCellRefs(startRow, startCol, endRow, endCol),
+      data: data,
+    });
+    setDropdownOptions(
+      hasHeaders
+        ? data[0]
+        : Array.from(
+            { length: endCol - startCol + 1 },
+            (value, index) => index
+          ).map((v, i) => {
+            return `Column ${colFromNumber(i + startCol)}`;
+          })
+    );
+    // eslint-disable-next-line
   }, [props.multipleSelection, hasHeaders]);
-
   return (
     <>
       <Snackbar
@@ -105,7 +118,7 @@ export default function CSVConfigurationPane(props: ComponentProps) {
         <Box>
           <Typography
             variant="h6"
-            color="secondary"
+            color="primary"
             gutterBottom={true}
             sx={{ textEmphasis: 20 }}
           >
@@ -116,6 +129,7 @@ export default function CSVConfigurationPane(props: ComponentProps) {
               <Accordion
                 expanded={expanded === `${category.id}`}
                 onChange={handleAccordionChange(`${category.id}`)}
+                key={category.id}
               >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -149,7 +163,7 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                                   endRow,
                                   endCol
                                 )
-                              : selectedRange
+                              : selectedRange.rangeString
                           }
                           disabled
                         />
@@ -159,6 +173,9 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                           onClick={() => {
                             props.setMultipleSelection(
                               !props.multipleSelection
+                            );
+                            setTextFieldState(
+                              lodash.merge(textFieldState, resettedInvoiceItems)
                             );
                           }}
                           color={
@@ -199,8 +216,8 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                           value={tabValue}
                           onChange={handleTabChange}
                           variant="fullWidth"
-                          textColor="secondary"
-                          indicatorColor="secondary"
+                          textColor="primary"
+                          indicatorColor="primary"
                         >
                           <Tab label="From" />
                           <Tab label="To" />
@@ -208,7 +225,7 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                       </Box>
                       {["from_", "to_"].map((v, i) => {
                         return (
-                          <TabPanel value={tabValue} index={i}>
+                          <TabPanel value={tabValue} index={i} key={i}>
                             {mapFieldItems(
                               category.items,
                               props.selection,
@@ -218,7 +235,9 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                               textFieldState,
                               setTextFieldState,
                               showRequired,
+                              deliveryRequired,
                               category.id === "invoice_item",
+                              props.multipleSelection,
                               v
                             )}
                           </TabPanel>
@@ -235,7 +254,9 @@ export default function CSVConfigurationPane(props: ComponentProps) {
                       textFieldState,
                       setTextFieldState,
                       showRequired,
-                      category.id === "invoice_item"
+                      deliveryRequired,
+                      category.id === "invoice_item",
+                      props.multipleSelection
                     )
                   )}
                 </AccordionDetails>
@@ -249,26 +270,33 @@ export default function CSVConfigurationPane(props: ComponentProps) {
             sx={{ margin: 1, flexGrow: 1 }}
             onClick={() => {
               setTextFieldState(initialState);
-              setSelectedRange("");
+              setSelectedRange(emptySelectedRange);
               setDropdownOptions([]);
+              setDeliveryRequired(false);
               setShowRequired(false);
+              setShowLoading(false);
             }}
           >
             RESET
           </Button>
-          <Button
-            variant="contained"
-            sx={{ margin: 1, flexGrow: 1 }}
+          <LoadingButton
             onClick={() =>
-              checkRequiredFields(
+              handleSubmit(
                 textFieldState,
                 setShowRequired,
-                setShowSnackbar
+                setDeliveryRequired,
+                setShowSnackbar,
+                setShowLoading,
+                props.selection,
+                hasHeaders
               )
             }
+            loading={showLoading}
+            variant="contained"
+            sx={{ margin: 1, flexGrow: 1 }}
           >
-            NEXT
-          </Button>
+            <Box>NEXT</Box>
+          </LoadingButton>
         </Box>
       </Box>
     </>

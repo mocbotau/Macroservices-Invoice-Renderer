@@ -1,19 +1,6 @@
 import { NextApiRequest } from "next";
 import { invoiceOptions } from "./components/csvConfiguration/csvConfigurationFields";
-
-const requiredFields: string[] = [];
-
-invoiceOptions.forEach((category) => {
-  category.items.forEach((item) => {
-    if (item.required) {
-      if (category.id === "invoice_parties") {
-        requiredFields.push(`from_${item.id}`, `to_${item.id}`);
-      } else {
-        requiredFields.push(item.id);
-      }
-    }
-  });
-});
+import { INVOICE_ITEMS } from "./constants";
 
 /**
  * Prompts the user to upload a file
@@ -83,13 +70,31 @@ export function getSession(req: NextApiRequest) {
 }
 
 /**
- * Returns the corresponding letter of the alphabet given a number, starting from 0
+ * Returns the corresponding spreadsheet column name based on an inputted number
+ * Code retrieved from https://stackoverflow.com/questions/8240637/convert-numbers-to-letters-beyond-the-26-character-alphabet
+ * Written by Christopher Young
  *
  * @param {number} num - the number to convert
  * @returns {string} - the returned letter
  */
-export function charFromNumber(num: number): string {
-  return String.fromCharCode("A".charCodeAt(0) + num);
+export function colFromNumber(num: number): string {
+  const m = num % 26;
+  const c = String.fromCharCode(65 + m);
+  const r = num - m;
+  return r > 0 ? `${colFromNumber((r - 1) / 26)}${c}` : c;
+}
+
+/**
+ * Returns the column number from a corresponding spreadsheet column name
+ * Code retrieved from https://stackoverflow.com/questions/9905533/convert-excel-column-alphabet-e-g-aa-to-number-e-g-25
+ * Written by cuixiping
+ *
+ * @param {string} colName - the string to convert
+ * @returns {number} - the returned column, returns 0 if there is no string
+ */
+export function lettersToNumber(colName: string): number {
+  if (colName.length === 0) return 0;
+  return colName.split("").reduce((r, a) => r * 26 + parseInt(a, 36) - 9, 0);
 }
 
 /**
@@ -108,7 +113,7 @@ export function convertToCellRefs(
 ): string {
   if (startRow === -1 || startCol === -1 || endRow === -1 || endCol === -1)
     return "";
-  return `${charFromNumber(startCol)}${startRow + 1}:${charFromNumber(endCol)}${
+  return `${colFromNumber(startCol)}${startRow + 1}:${colFromNumber(endCol)}${
     endRow + 1
   }`;
 }
@@ -150,20 +155,43 @@ export function createTextStateObject(): Record<string, string> {
 }
 
 /**
- * Sets the required fields state to true if there are some required fields that are empty
+ * Returns all the IDs of the item fields with blank values for resetting
  *
- * @param {Record<string, string>} stateObject - the object holding the values of all text field components
- * @param {Function} setShowRequired - the set state for required fields
- * @param {Function} setShowSnackbar - the set state for the snackbar
+ * @returns {string[][]} - all the IDs
  */
-export function checkRequiredFields(
-  stateObject: Record<string, string>,
-  setShowRequired: (value: boolean) => void,
-  setShowSnackbar: (value: boolean) => void
-): void {
-  const res = requiredFields.some((field) => {
-    return stateObject[field].length === 0;
+export function getInvoiceItemIDs(): string[][] {
+  return invoiceOptions[INVOICE_ITEMS].items.map((item) => {
+    return [item.id, ""];
   });
-  setShowRequired(res);
-  setShowSnackbar(res);
+}
+
+/**
+ * Returns all the IDs of the item fields that will cause another field to be required
+ * @param {string} field - the field to check
+ * @param {number} category - the category to pull data from
+ * @returns {string[]} - all the IDs
+ */
+export function getDependentRequiredFields(
+  field: string,
+  category: number
+): string[] {
+  const res: string[] = [];
+  invoiceOptions[category].items.forEach((item) => {
+    if (item.dependent === field) {
+      res.push(item.id);
+    }
+  });
+
+  return res;
+}
+
+/**
+ * Given a string, it extracts any dollar signs, and checks if the string is a number
+ *
+ * @param {string} input - the string to return a number from
+ * @returns {number} - returns 0 if not a number, otherwise returns the number
+ */
+export function extractNumber(input: string): number {
+  const tmp = Number(input.replace("$", ""));
+  return isNaN(tmp) ? 0 : tmp;
 }

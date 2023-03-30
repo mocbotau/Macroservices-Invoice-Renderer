@@ -1,6 +1,7 @@
 export interface InvoiceOptionType {
   name: string;
   id: string;
+  toggleable?: boolean;
   description?: string;
   items: InvoiceOptionItems[];
 }
@@ -11,6 +12,7 @@ export interface InvoiceOptionItems {
   required: boolean;
   colour: string;
   id: string;
+  dependent?: string;
 }
 
 export const invoiceOptions: InvoiceOptionType[] = [
@@ -35,7 +37,7 @@ export const invoiceOptions: InvoiceOptionType[] = [
       {
         name: "Issue Date",
         description: "Lorem ipsum",
-        required: true,
+        required: false,
         colour: "#ffffba",
         id: "invoice_issue_date",
       },
@@ -84,42 +86,77 @@ export const invoiceOptions: InvoiceOptionType[] = [
         name: "ABN",
         description: "Lorem ipsum",
         required: true,
-        colour: "#ffb3ba",
+        colour: "#ffadad",
         id: "party_abn",
       },
       {
         name: "Name",
         description: "Lorem ipsum",
-        required: false,
-        colour: "#ffdfba",
+        required: true,
+        colour: "#ffd6a5",
         id: "party_name",
       },
       {
         name: "Address",
         description: "Lorem ipsum",
-        required: true,
-        colour: "#ffffba",
+        required: false,
+        colour: "#fdffb6",
         id: "party_address",
+      },
+      {
+        name: "Address 2",
+        description: "Lorem ipsum",
+        required: false,
+        colour: "#caffbf",
+        id: "party_address_2",
+      },
+      {
+        name: "Suburb",
+        description: "Lorem ipsum",
+        required: false,
+        colour: "#9bf6ff",
+        id: "party_suburb",
+      },
+      {
+        name: "Postcode",
+        description: "Lorem ipsum",
+        required: false,
+        colour: "#a0c4ff",
+        id: "party_postcode",
+      },
+      {
+        name: "State",
+        description: "Lorem ipsum",
+        required: false,
+        colour: "#bdb2ff",
+        id: "party_state",
+      },
+      {
+        name: "Country",
+        description: "Lorem ipsum",
+        required: false,
+        colour: "#ffc6ff",
+        id: "party_country",
       },
       {
         name: "Contact Name",
         description: "Lorem ipsum",
         required: false,
-        colour: "#baffc9",
+        colour: "#eeeeee",
         id: "party_contact_name",
       },
       {
         name: "Contact Phone",
         description: "Lorem ipsum",
         required: false,
-        colour: "#bae1ff",
+        colour: "#444444",
         id: "party_contact_phone",
       },
       {
         name: "Contact Email",
         description: "Lorem ipsum",
         required: false,
-        colour: "#C3B1E1",
+        colour: "#d5bdaf",
         id: "party_contact_email",
       },
     ],
@@ -127,68 +164,69 @@ export const invoiceOptions: InvoiceOptionType[] = [
   {
     name: "Invoice Delivery",
     id: "invoice_delivery",
+    toggleable: true,
     items: [
       {
         name: "Name",
         description: "Lorem ipsum",
         required: true,
-        colour: "#ffb3ba",
+        colour: "#ffadad",
         id: "delivery_name",
       },
       {
         name: "Delivery Date",
         description: "Lorem ipsum",
         required: false,
-        colour: "#ffdfba",
+        colour: "#ffd6a5",
         id: "delivery_date",
       },
-    ],
-  },
-  {
-    name: "Invoice Address",
-    id: "invoice_address",
-    items: [
       {
         name: "Address",
         description: "Lorem ipsum",
         required: false,
-        colour: "#ffb3ba",
-        id: "street_address",
+        colour: "#fdffb6",
+        id: "delivery_address",
+        dependent: "delivery_name",
       },
       {
         name: "Address 2",
         description: "Lorem ipsum",
         required: false,
-        colour: "#ffdfba",
-        id: "address_extra_line",
+        colour: "#caffbf",
+        id: "delivery_address_2",
+        dependent: "delivery_name",
       },
       {
         name: "Suburb",
         description: "Lorem ipsum",
-        required: true,
-        colour: "#ffffba",
-        id: "address_suburb",
+        required: false,
+        colour: "#9bf6ff",
+        id: "delivery_suburb",
+        dependent: "delivery_name",
       },
       {
         name: "Postcode",
         description: "Lorem ipsum",
         required: false,
-        colour: "#baffc9",
-        id: "address_postcode",
+        colour: "#a0c4ff",
+        id: "delivery_postcode",
+        dependent: "delivery_name",
       },
       {
         name: "State",
         description: "Lorem ipsum",
         required: false,
-        colour: "#bae1ff",
-        id: "address_state",
+        colour: "#bdb2ff",
+        id: "delivery_state",
+        dependent: "delivery_name",
       },
       {
         name: "Country",
         description: "Lorem ipsum",
         required: false,
-        colour: "#C3B1E1",
-        id: "address_contact_email",
+        colour: "#ffc6ff",
+        id: "delivery_country",
+        dependent: "delivery_name",
       },
     ],
   },
