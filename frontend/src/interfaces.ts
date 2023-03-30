@@ -34,6 +34,7 @@ export interface InvoiceDelivery {
 }
 
 export interface InvoiceMetadata {
+  name: string;
   id?: string;
   issueDate?: string;
   dueDate?: string;
