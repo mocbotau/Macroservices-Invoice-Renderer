@@ -2,7 +2,6 @@ import { invoiceOptions } from "@src/components/csvConfiguration/csvConfiguratio
 import { INVOICE_DELIVERY } from "@src/constants";
 import {
   AllInvoiceObjectTypes,
-  FullXMLOptions,
   InvoiceAddress,
   InvoiceDelivery,
   InvoiceItem,
@@ -13,6 +12,7 @@ import {
 } from "@src/interfaces";
 import {
   extractNumber,
+  generateXML,
   getDependentRequiredFields,
   getInvoiceItemIDs,
   lettersToNumber,
@@ -75,16 +75,12 @@ export function handleSubmit(
   } else {
     setShowLoading(true);
 
-    const finalRes: FullXMLOptions = {
-      items: convertItems(textFieldsState, hasHeaders, selection),
-      supplier: convertParty(textFieldsState, "from_party_"),
-      customer: convertParty(textFieldsState, "to_party_"),
-      meta: convertMetadata(textFieldsState),
-    };
-    console.log(finalRes);
+    const items = convertItems(textFieldsState, hasHeaders, selection);
+    const supplier = convertParty(textFieldsState, "from_party_");
+    const customer = convertParty(textFieldsState, "to_party_");
+    const meta = convertMetadata(textFieldsState);
+    console.log(generateXML(items, meta, supplier, customer));
     setShowLoading(false);
-
-    //TODO: pass onto the next page
   }
 }
 

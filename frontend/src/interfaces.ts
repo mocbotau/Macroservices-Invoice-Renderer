@@ -77,13 +77,6 @@ export interface MultiSelectRange {
 
 export type SetStateType<T> = React.Dispatch<React.SetStateAction<T>>;
 
-export interface FullXMLOptions {
-  items: InvoiceItem[];
-  meta: InvoiceMetadata;
-  supplier: InvoiceParty;
-  customer: InvoiceParty;
-}
-
 export type AllInvoiceObjectTypes =
   | InvoiceMetadata
   | InvoiceParty

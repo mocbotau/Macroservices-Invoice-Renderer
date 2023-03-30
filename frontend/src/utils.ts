@@ -101,13 +101,17 @@ export function generateXML(
   meta.issueDate ||= formatDate(today);
   meta.dueDate ||= formatDate(defaultDue);
   meta.reference ||= "Generic";
+  supplier.address ||= {};
+  customer.address ||= {};
   supplier.address.country ||= "AU";
   customer.address.country ||= "AU";
 
-  if (meta.delivery && meta.delivery.address === undefined) {
-    meta.delivery.address = { ...customer.address };
+  if (meta.delivery) {
+    if (meta.delivery.address === undefined) {
+      meta.delivery.address = { ...customer.address };
+    }
+    meta.delivery.address.country ||= "AU";
   }
-  meta.delivery.address.country ||= "AU";
 
   const formatCurrency = (amt: number) => [
     amt,
