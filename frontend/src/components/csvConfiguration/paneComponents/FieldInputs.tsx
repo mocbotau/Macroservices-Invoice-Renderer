@@ -55,10 +55,10 @@ function NewTextField(props: NewTextFieldProps) {
       value={!props.multipleSelect ? props.textFieldValue : ""}
       error={
         props.id === "delivery_name"
-          ? props.deliveryRequired && props.textFieldValue.length === 0
+          ? props.deliveryRequired && props.textFieldValue?.length === 0
           : props.showRequired &&
             props.required &&
-            props.textFieldValue.length === 0
+            props.textFieldValue?.length === 0
       }
       onFocus={() => setSelectedField(id)}
       onChange={handleTextFieldChange}
@@ -72,6 +72,7 @@ function NewTextField(props: NewTextFieldProps) {
         (useDropdown && props.dropdownOptions.length === 0) ||
         props.multipleSelect
       }
+      inputProps={{ "data-testid": props.id }}
       InputProps={
         useDropdown
           ? {}

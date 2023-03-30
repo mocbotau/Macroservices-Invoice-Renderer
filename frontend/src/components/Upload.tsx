@@ -1,5 +1,7 @@
-import { Button, Grid, Typography, Alert, Snackbar, Box } from "@mui/material";
+import { Button, Grid, Typography, Box } from "@mui/material";
 import { SetStateType } from "@src/interfaces";
+import { Snackbar } from "./Snackbar";
+import { useEffect, useState } from "react";
 
 interface ComponentProps {
   setSnackbarMessage: SetStateType<string>;
@@ -7,19 +9,28 @@ interface ComponentProps {
   handleUpload: () => Promise<void>;
 }
 
-export default function Upload(props: ComponentProps) {
+/**
+ * Function which renders the upload component
+ *
+ * @param {ComponentProps} props - the required props for the upload component
+ * @returns {JSX.Element} - returns the completed uploaded component
+ */
+export default function Upload(props: ComponentProps): JSX.Element {
+  const [showSnackbar, setShowSnackbar] = useState(false);
+
+  useEffect(() => {
+    if (props.snackbarMessage.length !== 0) {
+      setShowSnackbar(true);
+    }
+  }, [props.snackbarMessage]);
+
   return (
     <Box sx={{ width: "100vw", height: "100vh" }}>
       <Snackbar
-        open={props.snackbarMessage.length !== 0}
-        autoHideDuration={3000}
-        onClose={() => props.setSnackbarMessage("")}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" data-testid="wrong-file-type">
-          {props.snackbarMessage}
-        </Alert>
-      </Snackbar>
+        showSnackbar={showSnackbar}
+        setShowSnackbar={setShowSnackbar}
+        message={props.snackbarMessage}
+      />
 
       <Grid
         container

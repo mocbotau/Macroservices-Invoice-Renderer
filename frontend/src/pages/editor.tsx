@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { uploadFile } from "@src/utils";
-import Upload from "@src/components/upload";
-import CSVConfiguration from "@src/components/csvConfiguration/csvConfiguration";
+import Upload from "@src/components/Upload";
+import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 
 export default function Editor() {
   const [snackbarMessage, setSnackbarMessage] = useState("");

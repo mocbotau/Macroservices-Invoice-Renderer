@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { Box, Drawer, useTheme } from "@mui/material";
-import CSVConfigurationPane from "@src/components/csvConfiguration/csvConfigurationPane";
+import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
-import { Row, SelectedData } from "@src/interfaces";
+import { Row, SelectedData, emptySelection } from "@src/interfaces";
 import { MIN_ROW_COUNT } from "@src/constants";
 import dynamic from "next/dynamic";
 
@@ -18,14 +18,6 @@ const HotTable = dynamic(
 interface ComponentProps {
   file: File;
 }
-
-const emptySelection = {
-  data: [],
-  startRow: -1,
-  startCol: -1,
-  endRow: -1,
-  endCol: -1,
-};
 
 export default function CSVConfiguration(props: ComponentProps) {
   const theme = useTheme();

@@ -1,5 +1,5 @@
 import { invoiceOptions } from "@src/components/csvConfiguration/csvConfigurationFields";
-import { DEFAULT_ADDRESS, INVOICE_DELIVERY } from "@src/constants";
+import { INVOICE_DELIVERY } from "@src/constants";
 import {
   AllInvoiceObjectTypes,
   FullXMLOptions,
@@ -16,7 +16,7 @@ import {
   getDependentRequiredFields,
   getInvoiceItemIDs,
   lettersToNumber,
-} from "@src/utils";
+} from "../utils";
 
 const requiredFields: string[] = [];
 
@@ -109,6 +109,7 @@ function convertMetadata(
     currencyCode: textFieldsState["invoice_currency_code"],
     note: textFieldsState["invoice_notes"],
     delivery: !("name" in delivery) ? undefined : delivery,
+    reference: textFieldsState["invoice_reference"],
   }) as InvoiceMetadata;
 }
 
@@ -126,7 +127,7 @@ function convertDelivery(
   return removeEmptyValues({
     name: textFieldsState["delivery_name"],
     deliveryDate: textFieldsState["delivery_date"],
-    address: Object.keys(address).length === 0 ? DEFAULT_ADDRESS : address,
+    address: Object.keys(address).length === 0 ? undefined : address,
   }) as InvoiceDelivery;
 }
 
@@ -167,7 +168,7 @@ function convertParty(
   return removeEmptyValues({
     abn: textFieldsState[prefix + "abn"],
     name: textFieldsState[prefix + "name"],
-    address: Object.keys(address).length === 0 ? DEFAULT_ADDRESS : address,
+    address: Object.keys(address).length === 0 ? undefined : address,
     contactName: textFieldsState[prefix + "contact_name"],
     contactPhone: textFieldsState[prefix + "contact_phone"],
     contactEmail: textFieldsState[prefix + "contact_email"],

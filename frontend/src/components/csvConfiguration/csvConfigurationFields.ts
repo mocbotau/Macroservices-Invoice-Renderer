@@ -80,6 +80,13 @@ export const invoiceOptions: InvoiceOptionType[] = [
         colour: "#ffc6ff",
         id: "invoice_notes",
       },
+      {
+        name: "Reference",
+        description: "The invoice's customer reference.",
+        required: false,
+        colour: "#eeeeee",
+        id: "invoice_reference",
+      },
     ],
   },
   {

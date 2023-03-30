@@ -192,6 +192,7 @@ export function getDependentRequiredFields(
  * @returns {number} - returns 0 if not a number, otherwise returns the number
  */
 export function extractNumber(input: string): number {
+  if (!input || input.length === 0) return 0;
   const tmp = Number(input.replace("$", ""));
   return isNaN(tmp) ? 0 : tmp;
 }

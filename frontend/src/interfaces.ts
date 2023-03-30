@@ -38,6 +38,7 @@ export interface InvoiceItem {
   startDate?: string;
   endDate?: string;
   unit?: string;
+  reference?: string;
 }
 
 export interface InvoiceAddress {
@@ -52,7 +53,7 @@ export interface InvoiceAddress {
 export interface InvoiceDelivery {
   name: string;
   deliveryDate?: string;
-  address: InvoiceAddress;
+  address?: InvoiceAddress;
 }
 
 export interface InvoiceMetadata {
@@ -89,3 +90,11 @@ export type AllInvoiceObjectTypes =
   | InvoiceDelivery
   | InvoiceAddress
   | InvoiceItem;
+
+export const emptySelection = {
+  data: [],
+  startRow: -1,
+  startCol: -1,
+  endRow: -1,
+  endCol: -1,
+};
