@@ -5,21 +5,19 @@ import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurat
 import { colFromNumber, checkBoundaries } from "@src/utils";
 import { Row, SelectedData, emptySelection } from "@src/interfaces";
 import { MIN_ROW_COUNT } from "@src/constants";
-import dynamic from "next/dynamic";
-
-const HotTable = dynamic(
-  () =>
-    import("@handsontable/react").then((mod) => {
-      return mod;
-    }),
-  { ssr: false }
-);
+import { HotTable } from "./HotTable";
 
 interface ComponentProps {
   file: File;
 }
 
-export default function CSVConfiguration(props: ComponentProps) {
+/**
+ * The main screen for the CSVConfiguration page, holding the table and configuration pane
+ *
+ * @param {ComponentProps} props - the required props
+ * @returns {JSX.Element} - the returned component
+ */
+export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const theme = useTheme();
   const drawerWidth = theme.spacing(50);
 

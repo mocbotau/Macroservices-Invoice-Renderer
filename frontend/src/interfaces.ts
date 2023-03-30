@@ -48,7 +48,7 @@ export interface InvoiceMetadata {
 export interface InvoiceParty {
   abn: string;
   name: string;
-  address: InvoiceAddress;
+  address?: InvoiceAddress;
   contactName?: string;
   contactPhone?: string;
   contactEmail?: string;
@@ -75,56 +75,6 @@ export interface MultiSelectRange {
 }
 
 export type SetStateType<T> = React.Dispatch<React.SetStateAction<T>>;
-
-export interface InvoiceItem {
-  name: string;
-  qty: number;
-  unitPrice: number;
-  code?: string;
-  buyerId?: string;
-  sellerId?: string;
-  description?: string;
-  startDate?: string;
-  endDate?: string;
-  unit?: string;
-  reference?: string;
-}
-
-export interface InvoiceAddress {
-  extraLine?: string;
-  streetAddress?: string;
-  suburb?: string;
-  postcode?: string;
-  state?: string;
-  country?: string;
-}
-
-export interface InvoiceDelivery {
-  name: string;
-  deliveryDate?: string;
-  address?: InvoiceAddress;
-}
-
-export interface InvoiceMetadata {
-  invoiceName: string;
-  id?: string;
-  issueDate?: string;
-  dueDate?: string;
-  startDate?: string;
-  endDate?: string;
-  currencyCode?: string;
-  note?: string;
-  delivery?: InvoiceDelivery;
-}
-
-export interface InvoiceParty {
-  abn: string;
-  name: string;
-  address?: InvoiceAddress;
-  contactName?: string;
-  contactPhone?: string;
-  contactEmail?: string;
-}
 
 export interface FullXMLOptions {
   items: InvoiceItem[];

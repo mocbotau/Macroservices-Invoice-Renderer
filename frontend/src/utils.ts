@@ -87,7 +87,7 @@ export function generateXML(
   meta: InvoiceMetadata,
   supplier: InvoiceParty,
   customer: InvoiceParty
-) {
+): string {
   const formatDate = (date: Date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
       2,

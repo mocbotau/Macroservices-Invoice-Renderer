@@ -1,19 +1,9 @@
-import {
-  Grid,
-  Box,
-  TextField,
-  InputAdornment,
-  Tooltip,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
-import { useEffect } from "react";
-import { InvoiceOptionItems } from "../csvConfigurationFields";
-import TableViewIcon from "@mui/icons-material/TableView";
+import { InputAdornment, MenuItem, TextField, Tooltip } from "@mui/material";
 import { SelectedData, SetStateType } from "@src/interfaces";
-import { InfoRounded, WarningRounded } from "@mui/icons-material";
+import { useEffect } from "react";
+import TableViewIcon from "@mui/icons-material/TableView";
 
-type NewTextFieldProps = {
+interface NewTextFieldProps {
   selection: SelectedData;
   id: string;
   dropdownOptions: string[];
@@ -27,9 +17,15 @@ type NewTextFieldProps = {
   deliveryRequired: boolean;
   textFieldValue: string;
   multipleSelect: boolean;
-};
+}
 
-function NewTextField(props: NewTextFieldProps) {
+/**
+ * Creates a new text field which handles events and different selections
+ *
+ * @param {NewTextFieldProps} props - the required props
+ * @returns {JSX.Element} - the rendered component
+ */
+export const FieldInput = (props: NewTextFieldProps): JSX.Element => {
   const { setData, setSelectedField, selectedField, id, useDropdown } = props;
   const selectedFirstCell =
     props.selection.data.length !== 0 ? props.selection.data[0][0] : "";
@@ -104,71 +100,5 @@ function NewTextField(props: NewTextFieldProps) {
         );
       })}
     </TextField>
-  );
-}
-
-export const mapFieldItems = (
-  items: InvoiceOptionItems[],
-  selection: SelectedData,
-  dropdownOptions: string[],
-  selectedField: string,
-  setSelectedField: SetStateType<string>,
-  textFieldState: Record<string, string>,
-  setTextFieldState: SetStateType<Record<string, string>>,
-  showRequired: boolean,
-  deliveryRequired: boolean,
-  useDropdown: boolean,
-  multipleSelect: boolean,
-  idPrefix = ""
-): JSX.Element => {
-  return (
-    <>
-      {items.map((item) => {
-        return (
-          <Grid container sx={{ marginBottom: "10px" }} key={item.id}>
-            <Box
-              sx={{
-                borderLeft: 5,
-                paddingLeft: 1,
-                borderColor: item.colour,
-                height: "100%",
-                display: "flex",
-                width: "100%",
-              }}
-            >
-              <NewTextField
-                selection={selection}
-                id={idPrefix + item.id}
-                dropdownOptions={dropdownOptions}
-                selectedField={selectedField}
-                setSelectedField={setSelectedField}
-                setData={(value) => {
-                  setTextFieldState({
-                    ...textFieldState,
-                    [idPrefix + item.id]: value as string,
-                  });
-                }}
-                required={item.required}
-                label={item.name}
-                showRequired={showRequired}
-                deliveryRequired={deliveryRequired}
-                useDropdown={useDropdown}
-                textFieldValue={textFieldState[idPrefix + item.id]}
-                multipleSelect={multipleSelect}
-              />
-              <Tooltip title={item.description}>
-                <IconButton>
-                  {item.important ? (
-                    <WarningRounded color="warning" />
-                  ) : (
-                    <InfoRounded />
-                  )}
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Grid>
-        );
-      })}
-    </>
   );
 };

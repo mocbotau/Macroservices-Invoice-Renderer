@@ -61,7 +61,7 @@ export const SelectRangeSection = (props: ComponentProps): JSX.Element => {
         <InputBase
           sx={{ ml: 1, flex: 1 }}
           inputProps={{
-            "data-testid": "select_range_box",
+            "data-testid": "select-range-box",
           }}
           placeholder="No range selected"
           value={
@@ -72,7 +72,8 @@ export const SelectRangeSection = (props: ComponentProps): JSX.Element => {
           disabled
         />
         <ToggleButton
-          value="Select Range"
+          data-testid="select-range-button"
+          value={multipleSelection ? "Confirm" : "Select Range"}
           selected={multipleSelection}
           onClick={() => {
             setMultipleSelection(!multipleSelection);
@@ -89,6 +90,7 @@ export const SelectRangeSection = (props: ComponentProps): JSX.Element => {
           control={<Checkbox />}
           checked={hasHeaders}
           label="Use Headers"
+          data-testid="use-headers-checkbox"
           sx={{ display: "flex" }}
           onChange={() => setHasHeaders(!hasHeaders)}
           disabled={!multipleSelection}

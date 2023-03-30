@@ -12,8 +12,8 @@ describe("CSVConfigurationPane", () => {
       endCol: 3,
       data: [
         ["Name", "Age", "Gender"],
-        ["John Doe", "30", "Male"],
-        ["Jane Doe", "28", "Female"],
+        ["A A", "30", "Male"],
+        ["B B", "28", "Female"],
       ],
     },
     multipleSelection: false,
@@ -27,7 +27,7 @@ describe("CSVConfigurationPane", () => {
     expect(title).toBeInTheDocument();
   });
 
-  it("renders the Instructions accordion", () => {
+  it("renders the instructions accordion", () => {
     render(<CSVConfigurationPane {...props} />);
     const instructionsAccordion = screen.getByRole("button", {
       name: /Instructions/i,
@@ -35,7 +35,7 @@ describe("CSVConfigurationPane", () => {
     expect(instructionsAccordion).toBeInTheDocument();
   });
 
-  it("renders the Invoice Items accordion", () => {
+  it("renders the invoice items accordion", () => {
     render(<CSVConfigurationPane {...props} />);
     const invoiceItemsAccordion = screen.getByRole("button", {
       name: /Invoice Items/i,
@@ -102,6 +102,4 @@ describe("CSVConfigurationPane", () => {
     expect(invoiceNameField.value).toBe("");
     expect(deliveryNameField.value).toBe("");
   });
-
-  it("submitting successfully", async () => {});
 });

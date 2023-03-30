@@ -100,7 +100,7 @@ function convertMetadata(
   const delivery = convertDelivery(textFieldsState);
 
   return removeEmptyValues({
-    invoiceName: textFieldsState["invoice_name"],
+    name: textFieldsState["invoice_name"],
     id: textFieldsState["invoice_id"],
     issueDate: textFieldsState["invoice_issue_date"],
     dueDate: textFieldsState["invoice_due_date"],

@@ -182,7 +182,7 @@ export const invoiceOptions: InvoiceOptionType[] = [
       {
         name: "Name",
         description:
-          "The name of whom this invoice should be delivered to. Please note, that this field is required if any address fields are provided.",
+          "The name of whom this invoice should be delivered to. Please note, that this field is required if any other fields below are provided.",
         important: true,
         required: false,
         colour: "#ffadad",
@@ -194,6 +194,7 @@ export const invoiceOptions: InvoiceOptionType[] = [
         required: false,
         colour: "#ffd6a5",
         id: "delivery_date",
+        dependent: "delivery_name",
       },
       {
         name: "Street Address",

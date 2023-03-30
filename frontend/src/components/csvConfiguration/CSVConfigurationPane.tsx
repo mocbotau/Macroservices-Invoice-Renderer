@@ -4,7 +4,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Box } from "@mui/system";
 import { Button, Divider, Tab, Tabs } from "@mui/material";
 import { instructionsForUse, invoiceOptions } from "./csvConfigurationFields";
-import { mapFieldItems } from "./paneComponents/FieldInputs";
+import { AllFieldInputs } from "./paneComponents/AllFieldInputs";
 import { TabPanel } from "./paneComponents/TabPanel";
 import {
   colFromNumber,
@@ -151,38 +151,38 @@ export default function CSVConfigurationPane(
                       {["from_", "to_"].map((v, i) => {
                         return (
                           <TabPanel value={tabValue} index={i} key={i}>
-                            {mapFieldItems(
-                              category.items,
-                              selection,
-                              dropdownOptions,
-                              selectedField,
-                              setSelectedField,
-                              textFieldState,
-                              setTextFieldState,
-                              showRequired,
-                              deliveryRequired,
-                              category.id === "invoice_items",
-                              multipleSelection,
-                              v
-                            )}
+                            <AllFieldInputs
+                              items={category.items}
+                              selection={selection}
+                              dropdownOptions={dropdownOptions}
+                              selectedField={selectedField}
+                              setSelectedField={setSelectedField}
+                              textFieldState={textFieldState}
+                              setTextFieldState={setTextFieldState}
+                              showRequired={showRequired}
+                              deliveryRequired={deliveryRequired}
+                              useDropdown={category.id === "invoice_items"}
+                              multipleSelect={multipleSelection}
+                              idPrefix={v}
+                            />
                           </TabPanel>
                         );
                       })}
                     </Box>
                   ) : (
-                    mapFieldItems(
-                      category.items,
-                      selection,
-                      dropdownOptions,
-                      selectedField,
-                      setSelectedField,
-                      textFieldState,
-                      setTextFieldState,
-                      showRequired,
-                      deliveryRequired,
-                      category.id === "invoice_items",
-                      multipleSelection
-                    )
+                    <AllFieldInputs
+                      items={category.items}
+                      selection={selection}
+                      dropdownOptions={dropdownOptions}
+                      selectedField={selectedField}
+                      setSelectedField={setSelectedField}
+                      textFieldState={textFieldState}
+                      setTextFieldState={setTextFieldState}
+                      showRequired={showRequired}
+                      deliveryRequired={deliveryRequired}
+                      useDropdown={category.id === "invoice_items"}
+                      multipleSelect={multipleSelection}
+                    />
                   )}
                 </>
               </CustomAccordion>

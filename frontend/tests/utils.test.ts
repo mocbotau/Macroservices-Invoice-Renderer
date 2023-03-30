@@ -7,7 +7,7 @@ import {
   uploadFile,
   generateXML,
 } from "@src/utils";
-import { DB, DBGet, DBRun } from "@src/utils/DBHandler";
+import { DBRun } from "@src/utils/DBHandler";
 
 beforeEach(async () => {
   jest.clearAllMocks();
@@ -131,6 +131,7 @@ describe("generateXML", () => {
           { name: "Orange", qty: 3, unitPrice: 2 },
         ],
         {
+          invoiceName: "Invoice 1",
           delivery: {
             name: "John Smith",
             address: {

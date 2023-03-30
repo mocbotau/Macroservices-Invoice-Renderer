@@ -4,9 +4,10 @@ import Editor from "@src/pages/editor";
 import userEvent from "@testing-library/user-event";
 
 const mockUploadFile = jest.fn();
+const mockedCSVConfig = jest.fn();
 
 jest.mock("@src/components/csvConfiguration/CSVConfiguration", () => {
-  return () => null;
+  return () => mockedCSVConfig();
 });
 
 jest.mock("@src/utils", () => {
@@ -38,5 +39,6 @@ describe("Upload Screen and testing that CSV configuration page was rendered", (
     await userEvent.click(button);
 
     expect(mockUploadFile).toHaveBeenCalled();
+    expect(mockedCSVConfig).toHaveBeenCalled();
   });
 });
