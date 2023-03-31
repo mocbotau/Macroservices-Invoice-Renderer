@@ -30,7 +30,7 @@ export interface InvoiceAddress {
 export interface InvoiceDelivery {
   name: string;
   deliveryDate?: string;
-  address: InvoiceAddress;
+  address?: InvoiceAddress;
 }
 
 export interface InvoiceMetadata {
