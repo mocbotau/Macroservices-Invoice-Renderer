@@ -1,6 +1,16 @@
-import { InvoiceItem, JSONValue, InvoiceMetadata } from "./interfaces";
-import { json2xml } from "xml-js";
+import {
+  InvoiceItem,
+  JSONValue,
+  InvoiceMetadata,
+  InvoiceParty,
+  ConstantMap,
+  InvoiceAddress,
+  InvoiceDelivery,
+  XMLStructure,
+} from "./interfaces";
+import xml from "xml";
 import { NextApiRequest } from "next";
+import { ABN_ID, DEF_UNIT, GST_RATE, INVOICE_CODE } from "./constants";
 
 /**
  * Prompts the user to upload a file
@@ -56,78 +66,234 @@ export async function readFileAsText(file: File): Promise<string> {
   });
 }
 
-export function generateXML(items: InvoiceItem[], meta: InvoiceMetadata) {
-  const xmlObject: JSONValue = {};
+export function generateXML(
+  items: InvoiceItem[],
+  meta: InvoiceMetadata,
+  supplier: InvoiceParty,
+  customer: InvoiceParty
+) {
+  const formatDate = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")}`;
 
-  meta.currencyCode = meta.currencyCode || "AUD";
+  meta.currencyCode ||= "AUD";
+  const today = new Date();
+  const defaultDue = new Date();
+  defaultDue.setDate(today.getDate() + 14);
+  meta.issueDate ||= formatDate(today);
+  meta.dueDate ||= formatDate(defaultDue);
+  meta.reference ||= "Generic";
+  if (meta.delivery) meta.delivery.address.country ||= "AU";
+  supplier.address.country ||= "AU";
+  customer.address.country ||= "AU";
 
-  /*const applyMap = (
-    item: JSONValue,
-    map: Map<string, Array<string>>,
-    init: JSONValue
-  ) => {
-    Object.keys(item)
-      .filter((prop) => item[prop] !== undefined)
-      .filter((prop) => invoiceItemMap.get(prop) !== undefined)
-      .forEach((prop) => {
-        map.get(prop)?.reduce((prev, next, i, arr) => {
-          if (typeof prev === "object") {
-            if (i === arr.length - 1)
-              return (prev[next] = { "_text": item[prop] });
-            if (prev[next] === undefined) prev[next] = {};
-            return prev[next];
-          }
-        }, init);
-      });
-  };*/
+  const useCurrency = (amt: number) => [
+    amt,
+    { "_attr": { "currencyID": meta.currencyCode } },
+  ];
 
-  /*const invoiceItemMap = new Map<string, Array<string>>([
-    ["qty", ["cbc:InvoicedQuantity"]],
-    ["code", ["cbc:AccountCost"]],
-    ["startDate", ["cac:InvoicePeriod", "cbc:StartDate"]],
-    ["endDate", ["cac:InvoicePeriod", "cbc:EndDate"]],
-    ["name", ["cac:Item", "cbc:Name"]],
-    ["buyerId", ["cac:Item", "cac:BuyersItemIdentification"]],
-    ["sellerId", ["cac:Item", "cac:SellersItemIdentification"]],
-    ["unitPrice", ["cac:Price", "cbc:PriceAmount"]],
-  ]);
+  const useABNScheme = (abn: string) => [
+    abn,
+    { "_attr": { "schemeID": ABN_ID } },
+  ];
 
-  const invoiceMetaMap = new Map<string, Array<string>>([
-    ["id", ["cbc:ID"]],
-    ["note", ["cbc:Note"]],
-    ["issueDate", ["cbc:IssueDate"]],
-    ["dueDate", ["cbc:DueDate"]],
-    ["currencyCode", ["cbc:DocumentCurrencyCode"]],
-    ["startDate", ["cac:InvoicePeriod", "cbc:StartDate"]],
-    ["endDate", ["cac:InvoicePeriod", "cbc:EndDate"]],
-    ["buyerId", ["cac:Item", "cac:BuyersItemIdentification"]],
-    ["sellerId", ["cac:Item", "cac:SellersItemIdentification"]],
-    ["unitPrice", ["cac:Price", "cbc:PriceAmount"]],
-  ]);*/
+  const useAddress = (address?: InvoiceAddress) =>
+    address
+      ? [
+          { "cbc:StreetName": address.streetAddress },
+          { "cbc:AdditionalStreetName": address.extraLine },
+          { "cbc:CityName": address.suburb },
+          { "cbc:PostalZone": address.postcode },
+          { "cbc:CountrySubentity": address.state },
+          { "cac:Country": [{ "cbc:IdentificationCode": address.country }] },
+        ]
+      : {};
 
-  xmlObject["cbc:CustomizationID"] =
-    "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0";
-  xmlObject["cbc:ProfileID"] = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0";
-  xmlObject["cbc:InvoiceTypeCode"] = "380";
+  const useParty = (party?: InvoiceParty) =>
+    party
+      ? [
+          {
+            "cac:Party": [
+              { "cbc:EndpointID": useABNScheme(party.abn) },
+              { "cac:PartyName": [{ "cbc:Name": party.name }] },
+              { "cac:PostalAddress": useAddress(party.address) },
+              {
+                "cac:PartyLegalEntity": [
+                  { "cbc:RegistrationName": party.name },
+                  { "cbc:CompanyID": useABNScheme(party.abn) },
+                ],
+              },
+              {
+                "cac:Contact": [
+                  { "cbc:Name": party.contactName },
+                  { "cbc:Telephone": party.contactPhone },
+                  { "cbc:ElectronicMail": party.contactEmail },
+                ],
+              },
+            ],
+          },
+        ]
+      : {};
 
-  xmlObject["ubl:InvoiceLine"] = items.map((item, i) => {
-    const line: JSONValue = {};
-    line["cbc:ID"] = { "_text": i };
+  const round2dp = (num: number) => Math.round(num * 100) / 100;
 
-    line["cbc:LineExtensionAmount"] = {
-      "_text":
-        line["cbc:InvoicedQuantity"]["_text"] *
-        line["cac:Price"]["cbc:PriceAmount"]["_text"],
-      "_attributes": { currencyID: meta.currencyCode as string },
-    };
-    line["cac:Price"]["cbc:PriceAmount"]["_attributes"] = {
-      currencyID: meta.currencyCode as string,
-    };
-    line["cbc:InvoicedQuantity"]["_attributes"] = { unitCode: "C62" };
-    return line;
-  });
+  const clean = (obj: object | string | number) => {
+    if (typeof obj !== "object") return true;
+    const keys = Object.keys(obj);
+    if (keys.length !== 1) return false;
+    let contents = obj[keys[0]];
+    if (!Array.isArray(contents)) return contents !== undefined;
+    else {
+      obj[keys[0]] = contents.filter((x) => clean(x));
+      return obj[keys[0]].length > 0;
+    }
+  };
 
-  return json2xml(JSON.stringify(xmlObject), { compact: true, spaces: 2 });
+  // https://stackoverflow.com/questions/8511281/check-if-a-value-is-an-object-in-javascript
+  const check = <T>(obj: T, result: (obj: T) => object) =>
+    typeof obj === "object" && !Array.isArray(obj) && obj !== null
+      ? result(obj)
+      : {};
+
+  const preTaxTotal = items.reduce((p, n) => p + n.qty * n.unitPrice, 0);
+  const taxAmount = round2dp(preTaxTotal * GST_RATE);
+  const totalAmount = round2dp(preTaxTotal * (1 + GST_RATE));
+
+  const xmlObject = [
+    {
+      "Invoice": [
+        {
+          "_attr": {
+            "xmlns:cac":
+              "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
+            "xmlns:cbc":
+              "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
+            "xmlns": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
+          },
+        },
+        {
+          "cbc:CustomizationID":
+            "urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0",
+        },
+        { "cbc:ProfileID": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0" },
+        { "cbc:ID": meta.id || 12345 },
+        { "cbc:IssueDate": meta.issueDate },
+        { "cbc:DueDate": meta.dueDate },
+        { "cbc:InvoiceTypeCode": INVOICE_CODE },
+        { "cbc:Note": meta.note },
+        { "cbc:DocumentCurrencyCode": meta.currencyCode },
+        { "cbc:BuyerReference": meta.reference },
+        {
+          "cac:InvoicePeriod": [
+            { "cbc:StartDate": meta.startDate },
+            { "cbc:EndDate": meta.endDate },
+          ],
+        },
+        { "cac:AccountingSupplierParty": useParty(supplier) },
+        { "cac:AccountingCustomerParty": useParty(customer) },
+        check(meta.delivery, (x) => ({
+          "cac:Delivery": [
+            { "cbc:ActualDeliveryDate": x.deliveryDate },
+            { "cac:DeliveryLocation": useAddress(x.address) },
+            {
+              "cac:DeliveryParty": [
+                { "cac:PartyName": [{ "cbc:Name": x.name }] },
+              ],
+            },
+          ],
+        })),
+        {
+          "cac:TaxTotal": [
+            { "cbc:TaxAmount": useCurrency(taxAmount) },
+            {
+              "cac:TaxSubtotal": [
+                { "cbc:TaxableAmount": useCurrency(preTaxTotal) },
+                { "cbc:TaxAmount": useCurrency(taxAmount) },
+                {
+                  "cac:TaxCategory": [
+                    { "cbc:ID": "S" },
+                    { "cbc:Percent": GST_RATE * 100 },
+                    { "cac:TaxScheme": [{ "cbc:ID": "GST" }] },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          "cac:LegalMonetaryTotal": [
+            { "cbc:LineExtensionAmount": useCurrency(preTaxTotal) },
+            { "cbc:TaxExclusiveAmount": useCurrency(preTaxTotal) },
+            { "cbc:TaxInclusiveAmount": useCurrency(totalAmount) },
+            { "cbc:PayableAmount": useCurrency(totalAmount) },
+          ],
+        },
+        ...items.map((item, i) => ({
+          "cac:InvoiceLine": [
+            { "cbc:ID": i },
+            {
+              "cbc:InvoicedQuantity": [
+                item.qty,
+                { "_attr": { "unitCode": DEF_UNIT } },
+              ],
+            },
+            {
+              "cbc:LineExtensionAmount": useCurrency(
+                round2dp(item.unitPrice * item.qty)
+              ),
+            },
+            { "cbc:AccountingCost": item.code },
+            {
+              "cac:InvoicePeriod": [
+                { "cbc:StartDate": item.startDate },
+                { "cbc:EndDate": item.endDate },
+              ],
+            },
+            {
+              "cac:Item": [
+                { "cbc:Description": item.description },
+                { "cbc:Name": item.name },
+                {
+                  "cac:BuyersItemIdentification": [
+                    {
+                      "cbc:ID": item.buyerId,
+                    },
+                  ],
+                },
+                {
+                  "cac:SellersItemIdentification": [
+                    {
+                      "cbc:ID": item.sellerId,
+                    },
+                  ],
+                },
+                {
+                  "cac:ClassifiedTaxCategory": [
+                    { "cbc:ID": "S" },
+                    { "cbc:Percent": GST_RATE * 100 },
+                    { "cac:TaxScheme": [{ "cbc:ID": "GST" }] },
+                  ],
+                },
+              ],
+            },
+            {
+              "cac:Price": [
+                {
+                  "cbc:PriceAmount": useCurrency(item.unitPrice),
+                },
+              ],
+            },
+          ],
+        })),
+      ],
+    },
+  ];
+
+  clean(xmlObject[0]);
+
+  return xml(xmlObject, true);
 }
 
 export function getSession(req: NextApiRequest) {

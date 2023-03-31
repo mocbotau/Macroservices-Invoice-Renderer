@@ -13,39 +13,41 @@ export interface InvoiceItem {
   buyerId?: string;
   sellerId?: string;
   description?: string;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
   unit?: string;
 }
 
 export interface InvoiceAddress {
+  extraLine?: string;
   streetAddress?: string;
   suburb?: string;
   postcode?: string;
   state?: string;
-  country: string;
+  country?: string;
 }
 
 export interface InvoiceDelivery {
   name: string;
-  deliveryDate?: Date;
+  deliveryDate?: string;
   address: InvoiceAddress;
 }
 
 export interface InvoiceMetadata {
   id?: string;
-  issueDate?: Date;
-  dueDate?: Date;
-  startDate?: Date;
-  endDate?: Date;
+  issueDate?: string;
+  dueDate?: string;
+  startDate?: string;
+  endDate?: string;
   currencyCode?: string;
   note?: string;
   delivery?: InvoiceDelivery;
+  reference?: string;
 }
 
 export interface InvoiceParty {
   abn: string;
-  name?: string;
+  name: string;
   address: InvoiceAddress;
   contactName?: string;
   contactPhone?: string;
@@ -56,3 +58,10 @@ export type APIResponse = {
   status: number;
   json?: { error?: string };
 };
+
+export type ConstantMap = [
+  Array<string>,
+  ((x: JSONValue) => JSONValue) | JSONValue
+][];
+
+export type XMLStructure = [string, XMLStructure[] | string | undefined];
