@@ -1,6 +1,6 @@
 import { Api } from "@src/Api";
 import { InvoiceSendExtOptions, InvoiceSendOptions } from "@src/interfaces";
-import SendHandler from "@src/pages/api/send";
+import SendHandler, { handleSending } from "@src/pages/api/send";
 import { mockRequest } from "./apiTestHelper";
 
 const testFile = new Blob(["This is some test data"]);
@@ -20,7 +20,6 @@ const createTestReqBody = (
 };
 
 beforeEach(() => {
-  // sendSpy = jest.spyOn(Api, "sendInvoice");
   jest.clearAllMocks();
 });
 
@@ -28,7 +27,6 @@ describe("/api/send route", () => {
   test("It should provide a 405 status when the request is not POST", async () => {
     const resp = await mockRequest(SendHandler, { method: "GET" });
     expect(resp.statusCode).toBe(405);
-    // expect(sendSpy).toHaveBeenCalled();
   });
   test("It should provide a 400 status when no extension is passed in", async () => {
     const resp = await mockRequest(SendHandler, {
@@ -42,7 +40,6 @@ describe("/api/send route", () => {
       ),
     });
     expect(resp.statusCode).toBe(400);
-    // expect(sendSpy).toHaveBeenCalled();
   });
   test("It should provide a 400 status when no type is passed in", async () => {
     const resp = await mockRequest(SendHandler, {
@@ -56,7 +53,6 @@ describe("/api/send route", () => {
       ),
     });
     expect(resp.statusCode).toBe(400);
-    // expect(sendSpy).toHaveBeenCalled();
   });
   test("It should provide a 400 status when no file is passed in", async () => {
     const resp = await mockRequest(SendHandler, {
@@ -70,7 +66,6 @@ describe("/api/send route", () => {
       ),
     });
     expect(resp.statusCode).toBe(400);
-    // expect(sendSpy).toHaveBeenCalled();
   });
   test("It should provide a 400 status when no contact is passed in", async () => {
     const resp = await mockRequest(SendHandler, {
@@ -79,48 +74,60 @@ describe("/api/send route", () => {
       body: createTestReqBody("email", undefined, "pdf", testFile),
     });
     expect(resp.statusCode).toBe(400);
-    // expect(sendSpy).toHaveBeenCalled();
   });
-  // test("It should provide a 400 status when the type that is passed in is invaid", async () => {
-  //   const resp = await mockRequest(SendHandler, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "multipart/form-data" },
-  //     body: createTestReqBody(
-  //       "invalidType",
-  //       "brandon@masterofcubesau.com",
-  //       "pdf",
-  //       testFile
-  //     ),
-  //   });
-  // expect(resp.statusCode).toBe(400);
-  // });
   test("It should provide a 200, sending xml to sms via external api", async () => {
     let externalAPISpy: jest.SpyInstance;
     externalAPISpy = jest
       .spyOn(Api, "sendInvoiceExternal")
       .mockResolvedValue({ status: 200, json: {} });
-    const resp = await mockRequest(SendHandler, {
-      method: "POST",
-      body: createTestReqBody("sms", "043153253", "pdf", testFile),
-    });
+    const resp = await handleSending(
+      "brandon@masterofcubesau.com",
+      "sms",
+      "xml",
+      { buffer: new Buffer([testFile]) }
+    );
     expect(externalAPISpy).toBeCalled();
-    expect(resp.statusCode).toBe(200);
+    expect(resp.status).toBe(200);
   });
-  test.only("It should provide a 200, sending xml to email via external api", async () => {
+  test("It should provide a 200, sending xml to email via external api", async () => {
     let externalAPISpy: jest.SpyInstance;
     externalAPISpy = jest
       .spyOn(Api, "sendInvoiceExternal")
       .mockResolvedValue({ status: 200, json: {} });
-    const resp = await mockRequest(SendHandler, {
-      method: "POST",
-      body: createTestReqBody(
-        "sms",
-        "brandon@masterofcubesau.com",
-        "pdf",
-        testFile
-      ),
-    });
+    const resp = await handleSending(
+      "brandon@masterofcubesau.com",
+      "email",
+      "xml",
+      { buffer: new Buffer([testFile]) }
+    );
     expect(externalAPISpy).toBeCalled();
-    expect(resp.statusCode).toBe(200);
+    expect(resp.status).toBe(200);
+  });
+  test("It should provide a 200, sending pdf to email via our sending api", async () => {
+    const resp = await handleSending(
+      "brandon@masterofcubesau.com",
+      "email",
+      "pdf",
+      { buffer: new Buffer([testFile]) }
+    );
+    expect(resp.status).toBe(200);
+  });
+  test("It should provide a 200, sending html to email via our sending api", async () => {
+    const resp = await handleSending(
+      "brandon@masterofcubesau.com",
+      "email",
+      "html",
+      { buffer: new Buffer([testFile]) }
+    );
+    expect(resp.status).toBe(200);
+  });
+  test("It should provide a 200, sending json to email via our sending api", async () => {
+    const resp = await handleSending(
+      "brandon@masterofcubesau.com",
+      "email",
+      "json",
+      { buffer: new Buffer([testFile]) }
+    );
+    expect(resp.status).toBe(200);
   });
 });

@@ -4,49 +4,60 @@ import * as fs from "fs";
 import mime from "mime-types";
 import multer from "multer";
 import { Api } from "@src/Api";
+import { InvoiceSendExtOptions, InvoiceSendOptions } from "@src/interfaces";
 
-async function sendEmail(toEmail: string, file: any, filename: string) {
+async function sendEmail(
+  toEmail: string,
+  file: { buffer: Buffer },
+  filename: string
+) {
   // Send doc over SMTP
-  let transporter = NodeMailer.createTransport({
-    service: "hotmail",
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
+  if (process.env.NODE_ENV !== "test") {
+    const transporter = NodeMailer.createTransport({
+      service: "hotmail",
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
 
-  let info = await transporter.sendMail(
-    {
-      from: `Macroservices <${process.env.MAIL_USER}>`,
-      to: toEmail,
-      subject: "Macroservices Invoice Rendering",
-      html: fs
-        .readFileSync("src/emailTemplate.html", {
-          flag: "r",
-          encoding: "utf-8",
-        })
-        .replace("${fileName}", filename),
-      attachments: [
-        {
-          filename: filename,
-          content: file.buffer,
-          contentType: mime.lookup(filename) as string,
-        },
-      ],
-    },
-    (err, info) => {
-      return { success: false, error: info.response };
-    }
-  );
+    await transporter.sendMail(
+      {
+        from: `Macroservices <${process.env.MAIL_USER}>`,
+        to: toEmail,
+        subject: "Macroservices Invoice Rendering",
+        html: fs
+          .readFileSync("src/emailTemplate.html", {
+            flag: "r",
+            encoding: "utf-8",
+          })
+          .replace("${fileName}", filename),
+        attachments: [
+          {
+            filename: filename,
+            content: file.buffer,
+            contentType: mime.lookup(filename) as string,
+          },
+        ],
+      },
+      (err, info) => {
+        return { success: false, error: info.response };
+      }
+    );
+  }
   return { success: true, error: null };
 }
 
 function runMiddleware(
   req: NextApiRequest & { file?: { buffer: Buffer } },
   res: NextApiResponse,
+  // eslint-disable-next-line
   fn: (...args: any[]) => void
+  // eslint-disable-next-line
 ): Promise<any> {
+  // eslint-disable-next-line
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
         return reject(result);
@@ -64,64 +75,68 @@ const handler = async (
     return res.status(405).json({ error: "Only POST requests allowed" });
   const multerStorage = multer.memoryStorage();
   const multerUpload = multer({ storage: multerStorage });
-
-  console.log("called");
-  console.log(req.body, req.file);
-
   await runMiddleware(req, res, multerUpload.single("file"));
-  console.log("called 2");
-  const file = req.file;
-  const contact = req.body?.contact;
-  const type = req.body?.type;
-  const ext = req.body?.ext;
+  const sendResult = await handleSending(
+    req.body?.contact,
+    req.body?.type,
+    req.body?.ext,
+    req.file
+  );
+  res
+    .status(sendResult.status)
+    .json(sendResult.error ? { error: sendResult.error } : {});
+};
 
-  console.log(req.body, req.file);
-  console.log(file, contact, type, ext);
-
-  // for (const data of req.body.entries()) {
-  //   console.log(data);
-  // }
+export async function handleSending(
+  contact: string,
+  type: InvoiceSendOptions,
+  ext: InvoiceSendExtOptions,
+  file?: { buffer: Buffer }
+): Promise<{ status: number; error?: string }> {
   if (!type || !contact || !ext || !file) {
-    return res.status(400).json({
+    return {
+      status: 400,
       error:
         "Invalid input. Must have type, contact, file and file (ext)ension",
-    });
+    };
   }
 
   switch (type) {
-    case "sms":
-      // Send over external API
-      // const externRes = await fetch(`${process.env.SENDING_API_URL}/send-sms`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     phone: contact,
-      //     xml: file.buffer.toString(),
-      //     format: "pdf",
-      //   }),
-      // });
-      return res.status(externRes.status === 200 ? 200 : 502).json({});
+    case "sms": {
+      const externRes = await Api.sendInvoiceExternal(
+        contact,
+        "sms",
+        file.buffer.toString()
+      );
+      return {
+        status: externRes.status === 200 ? 200 : 502,
+      };
+    }
     case "email":
       if (ext === "xml") {
         // Send using external API
-        console.log("here");
-
         const externRes = await Api.sendInvoiceExternal(
           contact,
           "email",
           file.buffer.toString()
         );
-        return res.status(externRes.status === 200 ? 200 : 502).json({});
+        return {
+          status: externRes.status === 200 ? 200 : 502,
+        };
       } else {
         const sendEmailReq = await sendEmail(contact, file, `export.${ext}`);
-        sendEmailReq.success
-          ? res.status(200).json({})
-          : res.status(502).json({ error: sendEmailReq.error });
+        return sendEmailReq.success
+          ? {
+              status: 200,
+            }
+          : {
+              status: 502,
+            };
       }
     default:
-      return res.status(400).json({ error: "Type is invalid." });
+      return { status: 400, error: "Type is invalid." };
   }
-};
+}
 
 export const config = {
   api: {

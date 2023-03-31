@@ -1,7 +1,7 @@
 import { register_handler } from "@src/pages/api/auth/register";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
-import { mockRequest } from "./apiTestHelper";
+import { mockRequest } from "../apiTestHelper";
 
 beforeEach(async () => {
   jest.clearAllMocks();
