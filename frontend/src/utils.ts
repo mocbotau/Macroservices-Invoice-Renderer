@@ -62,6 +62,16 @@ export async function readFileAsText(file: File): Promise<string> {
   });
 }
 
+/**
+ * Takes potentially sparse, structured data and converts it into a UBL compliant
+ * XML string. Missing compulsory data is filled by reasonable defaults.
+ *
+ * @param {InvoiceItem[]} items - a list of items to include
+ * @param {InvoiceMetadata} meta - invoice-level metadata to include
+ * @param {InvoiceParty} supplier - details about the party supplying the goods/service
+ * @param {InvoiceParty} customer - details about the party receiving the goods/service
+ * @returns {string} - an XML string with the supplied data
+ */
 export function generateXML(
   items: InvoiceItem[],
   meta: InvoiceMetadata,
