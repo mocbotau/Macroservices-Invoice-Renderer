@@ -71,8 +71,24 @@ export class Api {
     formData.append("file", file);
     const res = await fetch("/api/send", {
       method: "POST",
-      headers: { "Content-Type": "multipart/form-data" },
       body: formData,
+    });
+    return { status: res.status, json: await res.json() };
+  }
+
+  static async sendInvoiceExternal(
+    contact: string,
+    type: InvoiceSendOptions,
+    xml: string
+  ): Promise<APIResponse> {
+    const res = await fetch(`${process.env.SENDING_API_URL}/send-xml`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        [type === "email" ? "email" : "sms"]: contact,
+        xml: xml,
+        format: "pdf",
+      }),
     });
     return { status: res.status, json: await res.json() };
   }
