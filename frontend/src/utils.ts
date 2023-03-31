@@ -93,9 +93,11 @@ export function generateXML(
   meta.reference ||= "Generic";
   supplier.address.country ||= "AU";
   customer.address.country ||= "AU";
+
   if (meta.delivery && meta.delivery.address === undefined) {
     meta.delivery.address = { ...customer.address };
   }
+  meta.delivery.address.country ||= "AU";
 
   const formatCurrency = (amt: number) => [
     amt,
