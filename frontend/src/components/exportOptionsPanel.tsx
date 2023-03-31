@@ -7,6 +7,7 @@ import {
   MenuItem,
   Select,
   Snackbar,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -20,6 +21,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [textError, setTextError] = useState("");
   const [textSuccess, setTextSuccess] = useState("");
 
+  const [exportMethod, setExportMethod] = useState("download");
   const [outputType, setOutputType] = useState("pdf");
   const [language, setLanguage] = useState("en");
   const [style, setStyle] = useState(0);
@@ -71,6 +73,29 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
         <Typography textAlign="center" variant="h5" mb={2}>
           Export Options
         </Typography>
+
+        <FormControl fullWidth data-testid="export-method-form">
+          <InputLabel id="export-method-label">Export Method</InputLabel>
+          <Select
+            labelId="export-method-label"
+            value={exportMethod}
+            label="Export Method"
+            onChange={(e) => setExportMethod(e.target.value)}
+          >
+            <MenuItem value="download" data-testid="download-option">
+              Download
+            </MenuItem>
+            <MenuItem value="send" data-testid="send-option">
+              Send
+            </MenuItem>
+          </Select>
+        </FormControl>
+
+        <Box height={theme.spacing(2)} />
+
+        <Box display={exportMethod === "send" ? "block" : "none"} mb={2}>
+          <TextField label="Recipient" variant="outlined" fullWidth />
+        </Box>
 
         <FormControl fullWidth data-testid="output-type-form">
           <InputLabel id="output-type-label">Output Type</InputLabel>
@@ -164,7 +189,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           disabled={exporting}
           data-testid="export-button"
         >
-          Export
+          {exportMethod === "download" ? "Export" : "Send"}
         </Button>
       </Box>
 
