@@ -58,10 +58,3 @@ export type APIResponse = {
   status: number;
   json?: { error?: string };
 };
-
-export type ConstantMap = [
-  Array<string>,
-  ((x: JSONValue) => JSONValue) | JSONValue
-][];
-
-export type XMLStructure = [string, XMLStructure[] | string | undefined];

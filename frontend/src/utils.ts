@@ -1,12 +1,8 @@
 import {
   InvoiceItem,
-  JSONValue,
   InvoiceMetadata,
   InvoiceParty,
-  ConstantMap,
   InvoiceAddress,
-  InvoiceDelivery,
-  XMLStructure,
 } from "./interfaces";
 import xml from "xml";
 import { NextApiRequest } from "next";
@@ -89,17 +85,14 @@ export function generateXML(
   supplier.address.country ||= "AU";
   customer.address.country ||= "AU";
 
-  const useCurrency = (amt: number) => [
+  const formatCurrency = (amt: number) => [
     amt,
     { "_attr": { "currencyID": meta.currencyCode } },
   ];
 
-  const useABNScheme = (abn: string) => [
-    abn,
-    { "_attr": { "schemeID": ABN_ID } },
-  ];
+  const formatABN = (abn: string) => [abn, { "_attr": { "schemeID": ABN_ID } }];
 
-  const useAddress = (address?: InvoiceAddress) =>
+  const formatAddress = (address?: InvoiceAddress) =>
     address
       ? [
           { "cbc:StreetName": address.streetAddress },
@@ -111,18 +104,18 @@ export function generateXML(
         ]
       : {};
 
-  const useParty = (party?: InvoiceParty) =>
+  const formatParty = (party?: InvoiceParty) =>
     party
       ? [
           {
             "cac:Party": [
-              { "cbc:EndpointID": useABNScheme(party.abn) },
+              { "cbc:EndpointID": formatABN(party.abn) },
               { "cac:PartyName": [{ "cbc:Name": party.name }] },
-              { "cac:PostalAddress": useAddress(party.address) },
+              { "cac:PostalAddress": formatAddress(party.address) },
               {
                 "cac:PartyLegalEntity": [
                   { "cbc:RegistrationName": party.name },
-                  { "cbc:CompanyID": useABNScheme(party.abn) },
+                  { "cbc:CompanyID": formatABN(party.abn) },
                 ],
               },
               {
@@ -143,7 +136,7 @@ export function generateXML(
     if (typeof obj !== "object") return true;
     const keys = Object.keys(obj);
     if (keys.length !== 1) return false;
-    let contents = obj[keys[0]];
+    const contents = obj[keys[0]];
     if (!Array.isArray(contents)) return contents !== undefined;
     else {
       obj[keys[0]] = contents.filter((x) => clean(x));
@@ -152,6 +145,8 @@ export function generateXML(
   };
 
   // https://stackoverflow.com/questions/8511281/check-if-a-value-is-an-object-in-javascript
+  // This next line is not a linting error.
+  // eslint-disable-next-line no-unused-vars
   const check = <T>(obj: T, result: (obj: T) => object) =>
     typeof obj === "object" && !Array.isArray(obj) && obj !== null
       ? result(obj)
@@ -191,12 +186,12 @@ export function generateXML(
             { "cbc:EndDate": meta.endDate },
           ],
         },
-        { "cac:AccountingSupplierParty": useParty(supplier) },
-        { "cac:AccountingCustomerParty": useParty(customer) },
+        { "cac:AccountingSupplierParty": formatParty(supplier) },
+        { "cac:AccountingCustomerParty": formatParty(customer) },
         check(meta.delivery, (x) => ({
           "cac:Delivery": [
             { "cbc:ActualDeliveryDate": x.deliveryDate },
-            { "cac:DeliveryLocation": useAddress(x.address) },
+            { "cac:DeliveryLocation": formatAddress(x.address) },
             {
               "cac:DeliveryParty": [
                 { "cac:PartyName": [{ "cbc:Name": x.name }] },
@@ -206,11 +201,11 @@ export function generateXML(
         })),
         {
           "cac:TaxTotal": [
-            { "cbc:TaxAmount": useCurrency(taxAmount) },
+            { "cbc:TaxAmount": formatCurrency(taxAmount) },
             {
               "cac:TaxSubtotal": [
-                { "cbc:TaxableAmount": useCurrency(preTaxTotal) },
-                { "cbc:TaxAmount": useCurrency(taxAmount) },
+                { "cbc:TaxableAmount": formatCurrency(preTaxTotal) },
+                { "cbc:TaxAmount": formatCurrency(taxAmount) },
                 {
                   "cac:TaxCategory": [
                     { "cbc:ID": "S" },
@@ -224,10 +219,10 @@ export function generateXML(
         },
         {
           "cac:LegalMonetaryTotal": [
-            { "cbc:LineExtensionAmount": useCurrency(preTaxTotal) },
-            { "cbc:TaxExclusiveAmount": useCurrency(preTaxTotal) },
-            { "cbc:TaxInclusiveAmount": useCurrency(totalAmount) },
-            { "cbc:PayableAmount": useCurrency(totalAmount) },
+            { "cbc:LineExtensionAmount": formatCurrency(preTaxTotal) },
+            { "cbc:TaxExclusiveAmount": formatCurrency(preTaxTotal) },
+            { "cbc:TaxInclusiveAmount": formatCurrency(totalAmount) },
+            { "cbc:PayableAmount": formatCurrency(totalAmount) },
           ],
         },
         ...items.map((item, i) => ({
@@ -240,7 +235,7 @@ export function generateXML(
               ],
             },
             {
-              "cbc:LineExtensionAmount": useCurrency(
+              "cbc:LineExtensionAmount": formatCurrency(
                 round2dp(item.unitPrice * item.qty)
               ),
             },
@@ -281,7 +276,7 @@ export function generateXML(
             {
               "cac:Price": [
                 {
-                  "cbc:PriceAmount": useCurrency(item.unitPrice),
+                  "cbc:PriceAmount": formatCurrency(item.unitPrice),
                 },
               ],
             },
