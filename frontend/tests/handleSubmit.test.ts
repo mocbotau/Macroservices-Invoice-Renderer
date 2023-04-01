@@ -4,16 +4,18 @@ import { handleSubmit } from "@src/utils/handleSubmit";
 
 let textFieldsState: Record<string, string>;
 
-beforeEach(() => {
-  jest.clearAllMocks();
-  textFieldsState = createTextStateObject();
-});
-
+const setLoadedXML = jest.fn();
 const setShowRequired = jest.fn();
 const setDeliveryRequired = jest.fn();
 const setShowSnackbar = jest.fn();
 const setShowLoading = jest.fn();
 const hasHeaders = false;
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  textFieldsState = createTextStateObject();
+  setLoadedXML.mockReset();
+});
 
 const fillSampleData = (): void => {
   textFieldsState["invoice_name"] = "Invoice #1";
@@ -34,6 +36,7 @@ describe("handleSubmit", () => {
       setDeliveryRequired,
       setShowSnackbar,
       setShowLoading,
+      setLoadedXML,
       emptySelection,
       hasHeaders
     );
@@ -54,6 +57,7 @@ describe("handleSubmit", () => {
       setDeliveryRequired,
       setShowSnackbar,
       setShowLoading,
+      setLoadedXML,
       emptySelection,
       hasHeaders
     );
@@ -83,6 +87,7 @@ describe("handleSubmit", () => {
       setDeliveryRequired,
       setShowSnackbar,
       setShowLoading,
+      setLoadedXML,
       selection,
       true
     );
@@ -115,6 +120,7 @@ describe("handleSubmit", () => {
       setDeliveryRequired,
       setShowSnackbar,
       setShowLoading,
+      setLoadedXML,
       selection,
       hasHeaders
     );
@@ -122,6 +128,7 @@ describe("handleSubmit", () => {
     expect(setShowRequired).not.toHaveBeenCalled();
     expect(setDeliveryRequired).not.toHaveBeenCalled();
     expect(setShowSnackbar).not.toHaveBeenCalled();
+    expect(setLoadedXML).toHaveBeenCalled();
     expect(setShowLoading).toHaveBeenCalledWith(true);
   });
 });

@@ -56,6 +56,7 @@ export function handleSubmit(
   setDeliveryRequired: SetStateType<boolean>,
   setShowSnackbar: SetStateType<boolean>,
   setShowLoading: SetStateType<boolean>,
+  setLoadedXML: SetStateType<string>,
   selection: SelectedData,
   hasHeaders: boolean
 ): void {
@@ -79,7 +80,7 @@ export function handleSubmit(
     const supplier = convertParty(textFieldsState, "from_party_");
     const customer = convertParty(textFieldsState, "to_party_");
     const meta = convertMetadata(textFieldsState);
-    console.log(generateXML(items, meta, supplier, customer));
+    setLoadedXML(generateXML(items, meta, supplier, customer));
     setShowLoading(false);
   }
 }

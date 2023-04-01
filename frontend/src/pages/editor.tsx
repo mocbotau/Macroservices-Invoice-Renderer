@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { uploadFile } from "@src/utils";
+import ExportOptions from "@src/components/exportOptions";
+import { CssBaseline } from "@mui/material";
 import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 
@@ -7,6 +9,7 @@ export default function Editor() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [file, setFile] = useState<File>();
+  const [loadedXML, setLoadedXML] = useState("");
 
   const handleUpload = async () => {
     const f = await uploadFile(".csv");
@@ -21,6 +24,8 @@ export default function Editor() {
 
   return (
     <>
+      <CssBaseline />
+
       {/* Create full height app */}
       {/* https://gist.github.com/dmurawsky/d45f068097d181c733a53687edce1919 */}
       <style global jsx>{`
@@ -32,8 +37,14 @@ export default function Editor() {
           height: 100%;
         }
       `}</style>
-      {uploadSuccess ? (
-        <CSVConfiguration file={file as File}></CSVConfiguration>
+
+      {loadedXML ? (
+        <ExportOptions ubl={loadedXML} />
+      ) : uploadSuccess ? (
+        <CSVConfiguration
+          file={file as File}
+          setLoadedXML={setLoadedXML}
+        ></CSVConfiguration>
       ) : (
         <Upload
           snackbarMessage={snackbarMessage}

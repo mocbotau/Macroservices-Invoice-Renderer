@@ -3,12 +3,18 @@ import Papa from "papaparse";
 import { Box, Drawer, useTheme } from "@mui/material";
 import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
-import { Row, SelectedData, emptySelection } from "@src/interfaces";
+import {
+  Row,
+  SelectedData,
+  SetStateType,
+  emptySelection,
+} from "@src/interfaces";
 import { MIN_ROW_COUNT } from "@src/constants";
 import { HotTable } from "./HotTable";
 
 interface ComponentProps {
   file: File;
+  setLoadedXML: SetStateType<string>;
 }
 
 /**
@@ -120,6 +126,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
             selection={selection}
             multipleSelection={multipleSelection}
             setMultipleSelection={setMultipleSelection}
+            setLoadedXML={props.setLoadedXML}
           />
         </Drawer>
       </Box>
