@@ -1,23 +1,22 @@
-import React from "react";
-import { Button, Grid, Typography } from "@mui/material";
-import { readFileAsText, uploadFile } from "@src/utils";
-import { IronSessionData } from "iron-session";
+import React, { useState } from "react";
+import { uploadFile } from "@src/utils";
+import Upload from "@src/components/Upload";
+import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 
-type PageProps = {
-  user: IronSessionData["user"];
-};
+export default function Editor() {
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [file, setFile] = useState<File>();
 
-/**
- * Editor page. Holds all stages starting from upload => edit => render.
- */
-// eslint-disable-next-line
-export default function Editor(props: PageProps) {
-  const upload = async () => {
+  const handleUpload = async () => {
     const f = await uploadFile(".csv");
-    const fText = await readFileAsText(f);
 
-    // TODO: Send the uploaded data to the next page
-    console.log(fText);
+    if (typeof f === "string") {
+      setSnackbarMessage(f);
+    } else {
+      setFile(f);
+      setUploadSuccess(true);
+    }
   };
 
   return (
@@ -33,27 +32,15 @@ export default function Editor(props: PageProps) {
           height: 100%;
         }
       `}</style>
-
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        spacing={4}
-      >
-        <Grid item>
-          <Typography variant="h4">INVOICE RENDERER</Typography>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            onClick={upload}
-            data-testid="csv-upload-button"
-          >
-            Upload CSV file
-          </Button>
-        </Grid>
-      </Grid>
+      {uploadSuccess ? (
+        <CSVConfiguration file={file as File}></CSVConfiguration>
+      ) : (
+        <Upload
+          snackbarMessage={snackbarMessage}
+          setSnackbarMessage={setSnackbarMessage}
+          handleUpload={handleUpload}
+        ></Upload>
+      )}
     </>
   );
 }
