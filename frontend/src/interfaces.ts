@@ -34,6 +34,7 @@ export interface InvoiceDelivery {
 }
 
 export interface InvoiceMetadata {
+  name: string;
   id?: string;
   issueDate?: string;
   dueDate?: string;
@@ -48,7 +49,7 @@ export interface InvoiceMetadata {
 export interface InvoiceParty {
   abn: string;
   name: string;
-  address: InvoiceAddress;
+  address?: InvoiceAddress;
   contactName?: string;
   contactPhone?: string;
   contactEmail?: string;
@@ -58,3 +59,37 @@ export type APIResponse = {
   status: number;
   json?: { error?: string };
 };
+
+export type Row = string[];
+
+export interface SelectedData {
+  data: string[][];
+  startRow: number;
+  startCol: number;
+  endRow: number;
+  endCol: number;
+}
+
+export interface MultiSelectRange {
+  rangeString: string;
+  data: string[][];
+}
+
+export type SetStateType<T> = React.Dispatch<React.SetStateAction<T>>;
+
+export type AllInvoiceObjectTypes =
+  | InvoiceMetadata
+  | InvoiceParty
+  | InvoiceDelivery
+  | InvoiceAddress
+  | InvoiceItem;
+
+export const emptySelection = {
+  data: [],
+  startRow: -1,
+  startCol: -1,
+  endRow: -1,
+  endCol: -1,
+};
+export type InvoiceSendOptions = "email" | "sms";
+export type InvoiceSendExtOptions = "json" | "pdf" | "html" | "xml";
