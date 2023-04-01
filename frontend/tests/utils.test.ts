@@ -47,6 +47,8 @@ describe("generateXML", () => {
           { name: "Orange", qty: 3, unitPrice: 2 },
         ],
         {
+          issueDate: "2023-03-31",
+          dueDate: "2023-04-14",
           delivery: {
             name: "John Smith",
             address: {
