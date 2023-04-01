@@ -14,6 +14,8 @@ import {
 import { Api } from "@src/Api";
 import { downloadFile } from "@src/utils";
 import { useState } from "react";
+import * as EmailValidator from "email-validator";
+import { InvoiceSendOptions } from "@src/interfaces";
 
 export default function ExportOptionsPanel(props: { ubl: string }) {
   const theme = useTheme();
@@ -22,6 +24,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [textSuccess, setTextSuccess] = useState("");
 
   const [exportMethod, setExportMethod] = useState("download");
+  const [recipient, setRecipient] = useState("");
   const [outputType, setOutputType] = useState("pdf");
   const [language, setLanguage] = useState("en");
   const [style, setStyle] = useState(0);
@@ -29,7 +32,44 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [exporting, setExporting] = useState(false);
 
   const exportDocument = async () => {
+    setTextError("");
+    setTextSuccess("");
+
+    let sendType: InvoiceSendOptions = "email";
+
+    if (exportMethod === "send") {
+      if (!recipient) {
+        setTextError("Recipient is required");
+        return;
+      }
+
+      if (EmailValidator.validate(recipient)) {
+        sendType = "email";
+      } else if (/^[0-9]{10}$/.test(recipient)) {
+        sendType = "sms";
+      } else {
+        setTextError("Invalid recipient, must be email or SMS");
+        return;
+      }
+    }
+
     setExporting(true);
+
+    if (exportMethod === "send" && outputType === "xml") {
+      const { status } = await Api.sendInvoiceExternal(
+        recipient,
+        sendType,
+        props.ubl
+      );
+
+      if (status !== 200) {
+        setTextError("Failed to send invoice");
+      } else {
+        setTextSuccess("Successfully sent invoice");
+      }
+      setExporting(false);
+      return;
+    }
 
     let response: { status: number; blob: Blob };
 
@@ -43,6 +83,9 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
       case "json":
         response = await Api.renderToJSON(props.ubl);
         break;
+      case "xml":
+        response = { status: 200, blob: new Blob([props.ubl]) };
+        break;
       default:
         console.error("Unknown export type!");
         setExporting(false);
@@ -50,10 +93,24 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
     }
 
     if (response.status !== 200) {
-      setTextError("An unexpected error occurred.");
+      setTextError("An error occurred when rendering the invoice");
     } else {
-      setTextSuccess("Exported successfully!");
-      downloadFile(response.blob, `export.${outputType}`);
+      if (exportMethod === "download") {
+        setTextSuccess("Exported successfully!");
+        downloadFile(response.blob, `export.${outputType}`);
+      } else {
+        const { status } = await Api.sendInvoice(
+          recipient,
+          sendType,
+          outputType,
+          response.blob
+        );
+        if (status !== 200) {
+          setTextError("An error occurred when sending the invoice");
+        } else {
+          setTextSuccess("Sent successfully!");
+        }
+      }
     }
 
     setExporting(false);
@@ -94,7 +151,14 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
         <Box height={theme.spacing(2)} />
 
         <Box display={exportMethod === "send" ? "block" : "none"} mb={2}>
-          <TextField label="Recipient" variant="outlined" fullWidth />
+          <TextField
+            label="Recipient"
+            variant="outlined"
+            fullWidth
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
+            data-testid="recipient-textfield"
+          />
         </Box>
 
         <FormControl fullWidth data-testid="output-type-form">
@@ -114,10 +178,13 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
             <MenuItem value="json" data-testid="json-option">
               JSON
             </MenuItem>
+            <MenuItem value="xml" data-testid="xml-option">
+              UBL
+            </MenuItem>
           </Select>
         </FormControl>
 
-        <Box display={outputType === "json" ? "none" : "block"}>
+        <Box display={["json", "xml"].includes(outputType) ? "none" : "block"}>
           <Box height={theme.spacing(2)} />
 
           <FormControl fullWidth data-testid="language-form">

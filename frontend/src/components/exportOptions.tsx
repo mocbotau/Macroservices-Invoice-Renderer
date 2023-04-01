@@ -12,7 +12,6 @@ export default function ExportOptions(props: { ubl: string }) {
         component="main"
         sx={{
           flexGrow: 1,
-          // bgcolor: theme.palette.grey["200"],
           display: "flex",
         }}
       >
