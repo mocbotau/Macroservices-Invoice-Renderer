@@ -246,7 +246,11 @@ export function generateXML(
         check(meta.delivery, (x) => ({
           "cac:Delivery": [
             { "cbc:ActualDeliveryDate": x.deliveryDate },
-            { "cac:DeliveryLocation": formatAddress(x.address) },
+            {
+              "cac:DeliveryLocation": [
+                { "cac:Address": formatAddress(x.address) },
+              ],
+            },
             {
               "cac:DeliveryParty": [
                 { "cac:PartyName": [{ "cbc:Name": x.name }] },

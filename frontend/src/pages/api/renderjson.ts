@@ -15,3 +15,11 @@ export default async function handler(
   res.setHeader("Content-Type", resp.headers.get("content-type") as string);
   Readable.from(buffer).pipe(res);
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "5mb",
+    },
+  },
+};

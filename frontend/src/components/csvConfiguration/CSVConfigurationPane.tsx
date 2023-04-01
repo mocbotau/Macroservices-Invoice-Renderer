@@ -21,7 +21,7 @@ interface ComponentProps {
   selection: SelectedData;
   multipleSelection: boolean;
   setMultipleSelection: SetStateType<boolean>;
-  setLoadedXML: (string) => void;
+  setLoadedXML: SetStateType<string>;
 }
 
 const emptySelectedRange: MultiSelectRange = {

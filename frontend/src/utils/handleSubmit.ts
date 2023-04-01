@@ -56,7 +56,7 @@ export function handleSubmit(
   setDeliveryRequired: SetStateType<boolean>,
   setShowSnackbar: SetStateType<boolean>,
   setShowLoading: SetStateType<boolean>,
-  setLoadedXML: (string) => void,
+  setLoadedXML: SetStateType<string>,
   selection: SelectedData,
   hasHeaders: boolean
 ): void {

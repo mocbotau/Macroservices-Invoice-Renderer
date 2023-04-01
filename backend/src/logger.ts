@@ -1,5 +1,4 @@
 import winston from "winston";
-import stripAnsi from "strip-ansi";
 
 const levels = {
   error: 0,
@@ -28,16 +27,15 @@ const formatConsole = winston.format.combine(
   winston.format.colorize(),
   winston.format.printf(
     (info) => `${info.timestamp} ${info.level}: ${info.message}`
-  ),
-  winston.format.errors({ stack: true })
+  )
 );
 
 const formatLogs = winston.format.combine(
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
   // remove ansi colours from morgan
-  winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${stripAnsi(info.message)}`
-  ),
+  winston.format.printf((info) => {
+    return `${info.timestamp} ${info.level}: ${info.message}`;
+  }),
   winston.format.errors({ stack: true })
 );
 

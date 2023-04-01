@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { uploadFile } from "@src/utils";
 import ExportOptions from "@src/components/exportOptions";
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 

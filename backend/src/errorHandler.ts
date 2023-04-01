@@ -18,7 +18,7 @@ export const errorHandler = (
     logger.debug(err.message);
     res.status(err.statusCode).json({ message: err.message });
   } else {
-    logger.error(err);
+    logger.error(err.message);
     res.status(500).json({ message: err.message });
   }
 };
