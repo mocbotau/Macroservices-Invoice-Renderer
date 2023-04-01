@@ -21,6 +21,7 @@ interface ComponentProps {
   selection: SelectedData;
   multipleSelection: boolean;
   setMultipleSelection: SetStateType<boolean>;
+  setLoadedXML: (string) => void;
 }
 
 const emptySelectedRange: MultiSelectRange = {
@@ -212,6 +213,7 @@ export default function CSVConfigurationPane(
                 setDeliveryRequired,
                 setShowSnackbar,
                 setShowLoading,
+                props.setLoadedXML,
                 selection,
                 hasHeaders
               )

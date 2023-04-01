@@ -9,6 +9,7 @@ import { HotTable } from "./HotTable";
 
 interface ComponentProps {
   file: File;
+  setLoadedXML: (string) => void;
 }
 
 /**
@@ -120,6 +121,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
             selection={selection}
             multipleSelection={multipleSelection}
             setMultipleSelection={setMultipleSelection}
+            setLoadedXML={props.setLoadedXML}
           />
         </Drawer>
       </Box>

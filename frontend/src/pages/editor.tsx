@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { uploadFile } from "@src/utils";
-import Upload from "@src/components/upload";
-import CSVConfiguration from "@src/components/csvConfiguration";
 import ExportOptions from "@src/components/exportOptions";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
-
 import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 
@@ -12,6 +9,7 @@ export default function Editor() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [file, setFile] = useState<File>();
+  const [loadedXML, setLoadedXML] = useState("");
 
   const handleUpload = async () => {
     const f = await uploadFile(".csv");
@@ -40,10 +38,13 @@ export default function Editor() {
         }
       `}</style>
 
-      {/* <ExportOptions ubl={exampleUBL} /> */}
-
-      {uploadSuccess ? (
-        <CSVConfiguration file={file as File}></CSVConfiguration>
+      {loadedXML ? (
+        <ExportOptions ubl={loadedXML} />
+      ) : uploadSuccess ? (
+        <CSVConfiguration
+          file={file as File}
+          setLoadedXML={setLoadedXML}
+        ></CSVConfiguration>
       ) : (
         <Upload
           snackbarMessage={snackbarMessage}
