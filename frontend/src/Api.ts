@@ -76,6 +76,14 @@ export class Api {
     return { status: res.status, json: await res.json() };
   }
 
+  /**
+   * Sends an XML invoice to an external source
+   * @param {string} contact - the recipient's identifier
+   * @param {InvoiceSendOptions} type - The medium in which to send the invoice
+   * @param {string} xml - the UBL data to send
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+
   static async sendInvoiceExternal(
     contact: string,
     type: InvoiceSendOptions,
