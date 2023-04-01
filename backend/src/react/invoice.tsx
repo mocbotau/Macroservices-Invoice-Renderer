@@ -29,14 +29,19 @@ import Document from "./components/base/Document";
 import Page from "./components/base/Page";
 import View from "./components/base/View";
 import { Show } from "./components/Show";
+import { isOptionalChain } from "typescript";
 
 const Invoice = (props: {
   ubl: JSONValue;
   renderingContext: RenderingContexts;
   styleContext: number;
+  optional?: {
+    icon?: Buffer;
+  };
 }) => {
   const userStyle = extraStyles[props.styleContext];
   const ubl = props.ubl;
+  const optional = props.optional || {};
 
   const missingComponents: string[] = [];
 
@@ -70,9 +75,11 @@ const Invoice = (props: {
               supplierParty={ubl["AccountingSupplierParty"]}
               customerParty={ubl["AccountingCustomerParty"]}
               i18next={i18next}
+              icon={optional.icon}
             />
             <Show min={Detail.DEFAULT}>
-              <Break height={32} solid />
+              <Break height={8} />
+              <Break height={12} solid />
             </Show>
             <Show max={Detail.SUMMARY}>
               <Break height={8} />
@@ -138,6 +145,7 @@ async function createInvoiceComponent(
         ubl={ublToJSON(args.ubl)}
         renderingContext={renderingContext}
         styleContext={args.style}
+        optional={args.optional}
       />
     </Suspense>
   );
@@ -155,6 +163,7 @@ export async function generateInvoicePDF(args: RouteRenderArgs) {
         ubl: args.ubl as string,
         style: parseInt(args.style),
         language: args.language as string,
+        optional: args.optional,
       },
       RenderingContexts.Pdf
     )

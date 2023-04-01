@@ -32,18 +32,15 @@ const defaultStyle = {
   },
   page: {
     padding: PAGE_SIZES.A4P.MARGIN,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "arial-regular",
-  },
-  section: {
-    padding: 8,
   },
   title: {
     fontFamily: "arial-bold",
-    fontSize: 48,
+    fontSize: 36,
   },
   h1: {
-    fontSize: 24,
+    fontSize: 18,
     marginTop: 12,
   },
   bold: {
@@ -53,7 +50,7 @@ const defaultStyle = {
     fontFamily: "arial-oblique",
   },
   big: {
-    fontSize: 18,
+    fontSize: 14,
     marginTop: 6,
   },
   horizontalFlex: {
@@ -99,6 +96,10 @@ const defaultStyle = {
     width: PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
     marginLeft:
       PAGE_SIZES.A4P.WIDTH - PAGE_SIZES.A4P.WIDTH / 2 - PAGE_SIZES.A4P.MARGIN,
+  },
+  icon: {
+    height: "64px",
+    width: "auto",
   },
 };
 
