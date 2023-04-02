@@ -145,7 +145,7 @@ export const Metadata = (props: {
               </Text>
               <Text>
                 {countryMap.isValid(countryCode)
-                  ? countryMap.getName(countryCode, i18next.language)
+                  ? countryMap.getName(countryCode, i18next.language || "en")
                   : countryCode}
               </Text>
               {deliveryAddress["AddressLine"] && (

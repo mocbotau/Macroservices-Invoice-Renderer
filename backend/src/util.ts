@@ -71,8 +71,8 @@ export function formatCurrency(currencyObject: JSONValue) {
     result += currencyMap(currencyObject["$currencyID"]);
   }
 
-  result += `${Math.abs(currencyObject["_text"]).toFixed(2)} ${
-    foundCurrency ? "" : currencyObject["$currencyID"]
+  result += `${Math.abs(currencyObject["_text"]).toFixed(2)}${
+    foundCurrency ? "" : ` ${currencyObject["$currencyID"]}`
   }`;
   return result;
 }
