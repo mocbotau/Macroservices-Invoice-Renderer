@@ -293,7 +293,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           </FormControl>
 
           <Typography textAlign="center" variant="h6" mt={2} mb={1}>
-            Optional components
+            Optional Components
           </Typography>
           <Grid container sx={{ width: "95%" }}>
             <Grid item xs={3}>
