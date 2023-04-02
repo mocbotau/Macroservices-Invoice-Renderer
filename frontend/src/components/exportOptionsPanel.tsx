@@ -4,6 +4,8 @@ import {
   Button,
   FormControl,
   InputAdornment,
+  Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -17,8 +19,7 @@ import { downloadFile } from "@src/utils";
 import { useEffect, useState } from "react";
 import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
-import { Email, Phone } from "@mui/icons-material";
-
+import { Email, Phone, Delete } from "@mui/icons-material";
 type CustomSendType = InvoiceSendOptions | "";
 
 export default function ExportOptionsPanel(props: { ubl: string }) {
@@ -34,6 +35,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [style, setStyle] = useState(0);
   const [sendType, setSendType] = useState<CustomSendType>("email");
   const [invalidRecipient, setInvalidRecipient] = useState(false);
+  const [iconFile, setIconFile] = useState<File>();
   const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
@@ -71,15 +73,44 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
 
     setExporting(true);
 
+    // Code to read a file as a base64 encoded string
+    // https://stackoverflow.com/questions/36280818/how-to-convert-file-to-base64-in-javascript
+    const toBase64 = (file: File) =>
+      new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+      });
+
+    const optional = {};
+    try {
+      if (iconFile) optional["icon"] = await toBase64(iconFile);
+    } catch {
+      setTextError("Failed to read icon file.");
+      setExporting(false);
+      return;
+    }
+
     let response: { status: number; blob: Blob };
 
     try {
       switch (outputType) {
         case "pdf":
-          response = await Api.renderToPDF(props.ubl, style, language);
+          response = await Api.renderToPDF(
+            props.ubl,
+            style,
+            language,
+            optional
+          );
           break;
         case "html":
-          response = await Api.renderToHTML(props.ubl, style, language);
+          response = await Api.renderToHTML(
+            props.ubl,
+            style,
+            language,
+            optional
+          );
           break;
         case "json":
           response = await Api.renderToJSON(props.ubl);
@@ -89,8 +120,10 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           break;
         default:
           console.error("Unknown export type!");
+          setExporting(false);
           return;
       }
+
       if (response.status !== 200) {
         setTextError("An error occurred when rendering the invoice");
       } else {
@@ -260,10 +293,44 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           </FormControl>
 
           <Typography textAlign="center" variant="h6" mt={2} mb={1}>
-            Components to render
+            Optional components
           </Typography>
-
-          <Typography textAlign="center">TODO</Typography>
+          <Grid container sx={{ width: "95%" }}>
+            <Grid item xs={3}>
+              <Button variant="contained" component="label">
+                Icon
+                <input
+                  hidden
+                  type="file"
+                  accept=".jpg,.png"
+                  onChange={(e) => setIconFile(e.target.files[0])}
+                />
+              </Button>
+            </Grid>
+            <Grid item xs={8} sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                pl={1}
+                pr={1}
+                sx={{
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {iconFile?.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              {iconFile && (
+                <IconButton
+                  onClick={() => setIconFile(undefined)}
+                  sx={{ height: "auto" }}
+                >
+                  <Delete />
+                </IconButton>
+              )}
+            </Grid>
+          </Grid>
         </Box>
       </Box>
       <Box>

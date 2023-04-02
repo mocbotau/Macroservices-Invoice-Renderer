@@ -13,6 +13,7 @@ jest.mock("@react-pdf/renderer", () => ({
   }),
   Text: ({ children }) => <p>{children}</p>,
   View: ({ children }) => <div>{children}</div>,
+  Image: (props) => <img data-testid={props["data-testid"]} />,
   Font: { register: () => null },
 }));
 

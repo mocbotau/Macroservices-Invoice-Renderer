@@ -1,6 +1,7 @@
 import { ValidationError, XMLParser, XMLValidator } from "fast-xml-parser";
 import { JSONValue } from "./interfaces";
 import { InvalidUBL } from "@src/error";
+import currencyMap from "currency-symbol-map";
 
 const textNodeName = "_text";
 
@@ -69,19 +70,15 @@ export function formatCurrency(currencyObject: JSONValue) {
 
   if (currencyObject["_text"] < 0) result = "-";
 
-  // Put this in a JSON map sometime
-  const currencyMap = {
-    "AUD": "$",
-  };
-
-  if (Object.keys(currencyMap).includes(currencyObject["$currencyID"])) {
-    result += currencyMap[currencyObject["$currencyID"]];
+  let foundCurrency = false;
+  if (currencyMap(currencyObject["$currencyID"])) {
+    foundCurrency = true;
+    result += currencyMap(currencyObject["$currencyID"]);
   }
 
-  result += `${Math.abs(currencyObject["_text"]).toFixed(2)} ${
-    currencyObject["$currencyID"]
+  result += `${Math.abs(currencyObject["_text"]).toFixed(2)}${
+    foundCurrency ? "" : ` ${currencyObject["$currencyID"]}`
   }`;
-
   return result;
 }
 

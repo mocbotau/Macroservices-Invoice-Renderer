@@ -20,7 +20,7 @@ describe("Tax section component", () => {
       />
     );
 
-    const textFields = ["$100.00 AUD", "$110.00 AUD"];
+    const textFields = ["$100.00", "$110.00"];
     textFields.forEach((text) =>
       expect(screen.getAllByText(text)).toBeTruthy()
     );

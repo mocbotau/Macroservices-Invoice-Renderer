@@ -74,7 +74,7 @@ export const invoiceOptions: InvoiceOptionType[] = [
       },
       {
         name: "Currency Code",
-        description: "The currency to use for the period. Default is dollars.",
+        description: "The ISO currency to use for the period. Default is AUD.",
         required: false,
         colour: "#C3B1E1",
         id: "invoice_currency_code",
@@ -154,7 +154,7 @@ export const invoiceOptions: InvoiceOptionType[] = [
       },
       {
         name: "Country",
-        description: "The country of the address.",
+        description: "The ISO country code of the address.",
         required: false,
         colour: "#ffc6ff",
         id: "party_country",
