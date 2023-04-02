@@ -201,12 +201,28 @@ components:
             - "ko"
             - "es"
             - "ja"
+        optional:
+          type: object
+          properties:
+            icon:
+              type: string
+              format: base64
+              description: "The icon to include (as a base64 encoded data URL)."
+              example: "data:image/png;base64,<base64string>"
+      required:
+        - ubl
+        - style
+        - language
     MultiPartRequestBody:
       type: object
       properties:
         file:
           type: string
           description: "The UBL XML binary."
+          format: binary
+        icon:
+          type: string
+          description: "The icon to include."
           format: binary
         style:
           type: integer
@@ -222,6 +238,10 @@ components:
             - "ko"
             - "es"
             - "ja"
+      required:
+        - file
+        - style
+        - language
     MultiPartRequestBodyJSON:
       type: object
       properties:

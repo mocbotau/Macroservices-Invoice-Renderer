@@ -37,7 +37,12 @@ describe("Header component", () => {
         supplierParty={testObject["AccountingSupplierParty"]}
         customerParty={testObject["AccountingCustomerParty"]}
         i18next={undefined}
-        icon={await readFile(`${__dirname}/../resources/icon.png`)}
+        icon={`data:image/xxx;base64,${await readFile(
+          `${__dirname}/../resources/icon.png`,
+          {
+            encoding: "base64",
+          }
+        )}`}
       />
     );
 

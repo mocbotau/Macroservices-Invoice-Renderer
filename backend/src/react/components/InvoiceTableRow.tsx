@@ -86,7 +86,9 @@ export const InvoiceTableRow = (props: {
       {widths["Price"] && (
         // Omitting units and discount
         <View style={[userStyle["col"], widths["Price"]]}>
-          <Text>{formatCurrency(invoiceLine["Price"]["PriceAmount"])}</Text>
+          <Text style={{ textAlign: "right" }}>
+            {formatCurrency(invoiceLine["Price"]["PriceAmount"])}
+          </Text>
           {invoiceLine["Price"]["BaseQuantity"] &&
           invoiceLine["Price"]["BaseQuantity"]["_text"] !== 1 ? (
             <Text>{` / ${invoiceLine["Price"]["BaseQuantity"]["_text"]}`}</Text>
@@ -98,7 +100,9 @@ export const InvoiceTableRow = (props: {
       {widths["InvoicedQuantity"] && (
         // Omitting units
         <View style={[userStyle["col"], widths["InvoicedQuantity"]]}>
-          <Text>{invoiceLine["InvoicedQuantity"]["_text"]}</Text>
+          <Text style={{ textAlign: "right" }}>
+            {invoiceLine["InvoicedQuantity"]["_text"]}
+          </Text>
         </View>
       )}
       {widths["AllowanceCharge"] && (

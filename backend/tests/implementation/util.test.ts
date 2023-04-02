@@ -130,28 +130,29 @@ describe("Parsing UBL XML to JSON", () => {
 describe("Formatting currency amounts", () => {
   test("It should format a AUD amount with cents correctly", () => {
     expect(formatCurrency({ _text: 12.34, $currencyID: "AUD" })).toEqual(
-      "$12.34 AUD"
+      "$12.34"
     );
   });
   test("It should format a AUD amount without cents correctly", () => {
     expect(formatCurrency({ _text: 10.2, $currencyID: "AUD" })).toEqual(
-      "$10.20 AUD"
+      "$10.20"
     );
-    expect(formatCurrency({ _text: 10, $currencyID: "AUD" })).toEqual(
-      "$10.00 AUD"
-    );
+    expect(formatCurrency({ _text: 10, $currencyID: "AUD" })).toEqual("$10.00");
   });
   test("It should format a non-AUD amount correctly", () => {
-    expect(formatCurrency({ _text: 10, $currencyID: "NZD" })).toEqual(
-      "10.00 NZD"
-    );
+    expect(formatCurrency({ _text: 10, $currencyID: "NZD" })).toEqual("$10.00");
   });
   test("It should format a negative amount correctly", () => {
     expect(formatCurrency({ _text: -10, $currencyID: "NZD" })).toEqual(
-      "-10.00 NZD"
+      "-$10.00"
     );
     expect(formatCurrency({ _text: -10, $currencyID: "AUD" })).toEqual(
-      "-$10.00 AUD"
+      "-$10.00"
+    );
+  });
+  test("It should format an unknown currency correctly", () => {
+    expect(formatCurrency({ _text: 10, $currencyID: "XXX" })).toEqual(
+      "10.00 XXX"
     );
   });
 });

@@ -3,6 +3,8 @@ import {
   Box,
   Button,
   FormControl,
+  Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -16,6 +18,7 @@ import { downloadFile } from "@src/utils";
 import { useState } from "react";
 import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
+import { Delete } from "@mui/icons-material";
 
 export default function ExportOptionsPanel(props: { ubl: string }) {
   const theme = useTheme();
@@ -28,6 +31,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [outputType, setOutputType] = useState("pdf");
   const [language, setLanguage] = useState("en");
   const [style, setStyle] = useState(0);
+  const [iconFile, setIconFile] = useState<File>();
 
   const [exporting, setExporting] = useState(false);
 
@@ -71,14 +75,33 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
       return;
     }
 
+    // Code to read a file as a base64 encoded string
+    // https://stackoverflow.com/questions/36280818/how-to-convert-file-to-base64-in-javascript
+    const toBase64 = (file: File) =>
+      new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+      });
+
+    const optional = {};
+    try {
+      if (iconFile) optional["icon"] = await toBase64(iconFile);
+    } catch {
+      setTextError("Failed to read icon file.");
+      setExporting(false);
+      return;
+    }
+
     let response: { status: number; blob: Blob };
 
     switch (outputType) {
       case "pdf":
-        response = await Api.renderToPDF(props.ubl, style, language);
+        response = await Api.renderToPDF(props.ubl, style, language, optional);
         break;
       case "html":
-        response = await Api.renderToHTML(props.ubl, style, language);
+        response = await Api.renderToHTML(props.ubl, style, language, optional);
         break;
       case "json":
         response = await Api.renderToJSON(props.ubl);
@@ -242,10 +265,44 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           </FormControl>
 
           <Typography textAlign="center" variant="h6" mt={2} mb={1}>
-            Components to render
+            Optional components
           </Typography>
-
-          <Typography textAlign="center">TODO</Typography>
+          <Grid container sx={{ width: "95%" }}>
+            <Grid item xs={3}>
+              <Button variant="contained" component="label">
+                Icon
+                <input
+                  hidden
+                  type="file"
+                  accept=".jpg,.png"
+                  onChange={(e) => setIconFile(e.target.files[0])}
+                />
+              </Button>
+            </Grid>
+            <Grid item xs={8} sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                pl={1}
+                pr={1}
+                sx={{
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {iconFile?.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              {iconFile && (
+                <IconButton
+                  onClick={() => setIconFile(undefined)}
+                  sx={{ height: "auto" }}
+                >
+                  <Delete />
+                </IconButton>
+              )}
+            </Grid>
+          </Grid>
         </Box>
       </Box>
       <Box>

@@ -21,27 +21,21 @@ import { Show } from "./Show";
 export const Header = (props: {
   supplierParty: JSONValue;
   customerParty: JSONValue;
-  icon?: Buffer;
+  icon?: string;
   i18next: i18n;
 }) => {
   const userStyle = extraStyles[useContext(styleContext)];
   const { t: translateHook } = useTranslation();
-
   return (
     <View>
-      <View
-        style={[
-          userStyle["horizontalFlex"],
-          { justifyContent: "space-between" },
-        ]}
-      >
-        <Text style={userStyle["title"]}>{translateHook("invoice")}</Text>
+      {props.icon && (
         <Image
           src={props.icon}
           style={userStyle["icon"]}
           data-testid={"icon"}
         />
-      </View>
+      )}
+      <Text style={userStyle["title"]}>{translateHook("invoice")}</Text>
       <View style={userStyle["horizontalFlex"]}>
         <Show
           min={Detail.DEFAULT}

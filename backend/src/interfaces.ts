@@ -7,7 +7,7 @@ export type RenderArgs = {
   style: number;
   ubl: string;
   optional?: {
-    icon?: Buffer;
+    icon?: string;
   };
 };
 
@@ -16,7 +16,7 @@ export type RouteRenderArgs = {
   style?: string;
   ubl?: string;
   optional?: {
-    icon?: Buffer;
+    icon?: string;
   };
 };
 

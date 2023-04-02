@@ -36,7 +36,7 @@ const Invoice = (props: {
   renderingContext: RenderingContexts;
   styleContext: number;
   optional?: {
-    icon?: Buffer;
+    icon?: string;
   };
 }) => {
   const userStyle = extraStyles[props.styleContext];
@@ -183,6 +183,7 @@ export async function generateInvoiceHTML(
       ubl: args.ubl as string,
       style: parseInt(args.style),
       language: args.language as string,
+      optional: args.optional,
     },
     RenderingContexts.Html
   );

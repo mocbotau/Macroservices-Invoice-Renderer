@@ -126,7 +126,7 @@ describe("exportOptionsPanel", () => {
           if (outType === "json") {
             expect(spy).toHaveBeenCalledWith(UBL);
           } else {
-            expect(spy).toHaveBeenCalledWith(UBL, 2, "es");
+            expect(spy).toHaveBeenCalledWith(UBL, 2, "es", {});
           }
         }
         if (isSuccessful) {

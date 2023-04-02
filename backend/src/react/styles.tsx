@@ -37,7 +37,7 @@ const defaultStyle = {
   },
   title: {
     fontFamily: "arial-bold",
-    fontSize: 36,
+    fontSize: 24,
   },
   h1: {
     fontSize: 18,
@@ -60,7 +60,7 @@ const defaultStyle = {
     display: "flex",
   },
   metadata: {
-    width: "25%",
+    width: "33.33%",
     paddingVertical: 4,
   },
   tableWrapper: {
@@ -99,7 +99,9 @@ const defaultStyle = {
   },
   icon: {
     height: "64px",
-    width: "auto",
+    position: "absolute",
+    top: 8,
+    right: 8,
   },
 };
 

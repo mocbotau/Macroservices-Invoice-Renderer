@@ -7,14 +7,13 @@ import { renderingContext, RenderingContexts } from "./renderingContext";
  * This component defines an image field (HTML img tag)
  * @param {JSONValue} props - an object containing the source, style and test ID
  */
-const Image = (props: { src: Buffer; style?: object }) => {
+const Image = (props: { src: string; style?: object }) => {
   const renderType = useContext(renderingContext);
 
   if (renderType === RenderingContexts.Pdf) {
-    console.log(props);
     return (
       <RPDFImage
-        src={props.src}
+        src={Buffer.from(props.src, "base64")}
         style={props.style}
         data-testid={props["data-testid"]}
       />
@@ -30,9 +29,7 @@ const Image = (props: { src: Buffer; style?: object }) => {
     if (!styles.margin) {
       styles.margin = 0;
     }
-    return (
-      <img src={URL.createObjectURL(new Blob([props.src]))} style={styles} />
-    );
+    return <img src={props.src} style={styles} />;
   }
 };
 
