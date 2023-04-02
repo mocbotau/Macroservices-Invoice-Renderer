@@ -92,6 +92,13 @@ router.use(
     const isJSON = req.get("Content-Type").includes("application/json");
     req.files ||= {};
     req.body.optional ||= {};
+    const b64str = check(
+      req.files["icon"],
+      (x) =>
+        `data:image/${x[0].originalname
+          .split(".")
+          .splice(-1)};base64,${x[0].buffer.toString("base64")}`
+    );
     const stream = await generateInvoiceHTML({
       ubl: isJSON
         ? req.body.ubl
@@ -100,15 +107,7 @@ router.use(
       style: req.body.style,
       optional: {
         ...req.body.optional,
-        icon: isJSON
-          ? req.body.optional.icon
-          : check(
-            req.files["icon"],
-            (x) =>
-              `data:image/${x[0].originalname
-                .split(".")
-                .splice(-1)};base64,${x[0].buffer.toString("base64")}`
-          ),
+        icon: isJSON ? req.body.optional.icon : b64str,
       },
     });
 
