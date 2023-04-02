@@ -19,6 +19,8 @@ import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
 import { Email, Phone } from "@mui/icons-material";
 
+type CustomSendType = InvoiceSendOptions | "";
+
 export default function ExportOptionsPanel(props: { ubl: string }) {
   const theme = useTheme();
 
@@ -30,7 +32,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [outputType, setOutputType] = useState("pdf");
   const [language, setLanguage] = useState("en");
   const [style, setStyle] = useState(0);
-  const [sendType, setSendType] = useState<InvoiceSendOptions>("email");
+  const [sendType, setSendType] = useState<CustomSendType>("email");
   const [invalidRecipient, setInvalidRecipient] = useState(false);
   const [exporting, setExporting] = useState(false);
 
@@ -41,6 +43,9 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
     } else if (
       /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/.test(recipient)
     ) {
+      if (/^[0-9]{10}$/.test(recipient)) {
+        setRecipient(`+61${recipient.substring(1)}`);
+      }
       setSendType("sms");
       setInvalidRecipient(false);
     } else {
@@ -65,28 +70,6 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
     }
 
     setExporting(true);
-
-    if (exportMethod === "send" && outputType === "xml") {
-      try {
-        const { status } = await Api.sendInvoiceExternal(
-          recipient,
-          sendType,
-          props.ubl
-        );
-
-        if (status !== 200) {
-          setTextError("Failed to send invoice");
-        } else {
-          setTextSuccess("Successfully sent invoice");
-        }
-        setExporting(false);
-        return;
-      } catch (err) {
-        setTextError("Failed to send invoice");
-        setExporting(false);
-        return;
-      }
-    }
 
     let response: { status: number; blob: Blob };
 
@@ -117,7 +100,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
         } else {
           const { status } = await Api.sendInvoice(
             recipient,
-            sendType,
+            sendType as InvoiceSendOptions,
             outputType,
             response.blob
           );

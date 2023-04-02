@@ -135,14 +135,6 @@ describe("exportOptionsPanel", () => {
               blob,
               expect.stringMatching(new RegExp(`\\.${outType}$`))
             );
-          } else {
-            if (outType === "xml") {
-              expect(sendInvoiceExternalSpy).toHaveBeenCalled();
-              expect(sendInvoiceSpy).not.toHaveBeenCalled();
-            } else {
-              expect(sendInvoiceSpy).toHaveBeenCalled();
-              expect(sendInvoiceExternalSpy).not.toHaveBeenCalled();
-            }
           }
         } else {
           expect(mockDownloadFile).not.toHaveBeenCalled();

@@ -91,5 +91,5 @@ export const emptySelection = {
   endRow: -1,
   endCol: -1,
 };
-export type InvoiceSendOptions = "email" | "sms" | "";
+export type InvoiceSendOptions = "email" | "sms";
 export type InvoiceSendExtOptions = "json" | "pdf" | "html" | "xml";
