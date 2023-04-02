@@ -62,6 +62,9 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
     startCol = checkBoundaries(startCol, rows[0].length - 1);
     endCol = checkBoundaries(endCol, rows[0].length - 1);
 
+    if (endRow < startRow) [endRow, startRow] = [startRow, endRow];
+    if (endCol < startCol) [endCol, startCol] = [startCol, endCol];
+
     setSelection({
       data: rows.slice(startRow, endRow + 1).map((row) => {
         return row.slice(startCol, endCol + 1);

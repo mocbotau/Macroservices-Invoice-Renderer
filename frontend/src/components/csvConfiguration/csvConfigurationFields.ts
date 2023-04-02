@@ -17,7 +17,7 @@ export interface InvoiceOptionItems {
 }
 
 export const instructionsForUse =
-  "Fill in all fields relevant to your CSV. You may either manually enter in data, or select the text field, followed by a cell in the table that contains the data. Please note that the table is editable, allowing you to add additional data.";
+  "Fill in all fields relevant to your invoice to be rendered. You may either manually enter in data into the individual fields, or select the text field, followed by a cell in the table that contains the data. Please note that the table is editable, allowing you to add additional data.";
 
 export const invoiceOptions: InvoiceOptionType[] = [
   {
