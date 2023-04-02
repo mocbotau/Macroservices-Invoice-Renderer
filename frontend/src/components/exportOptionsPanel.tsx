@@ -291,7 +291,9 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           disabled={exporting}
           data-testid="export-button"
         >
-          {exportMethod === "download" ? "Export" : "Send"}
+          {exportMethod === "download"
+            ? "Export"
+            : `Send ${sendType === "sms" ? "SMS" : "Email"}`}
         </Button>
       </Box>
 
