@@ -18,6 +18,8 @@ export const TaxSection = (props: { taxTotal: JSONValue; i18next: i18n }) => {
   const taxTotal = props.taxTotal;
   const { t: translateHook } = useTranslation();
 
+  if (!taxTotal["TaxSubtotal"]) return <></>;
+
   return (
     <View wrap={false}>
       <Text style={userStyle["h1"]}> {translateHook("tax_summary")}</Text>
