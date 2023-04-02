@@ -21,7 +21,7 @@ async function sendEmail(
       },
     });
 
-    await transporter.sendMail(
+    transporter.sendMail(
       {
         from: `Macroservices <${process.env.MAIL_USER}>`,
         to: toEmail,

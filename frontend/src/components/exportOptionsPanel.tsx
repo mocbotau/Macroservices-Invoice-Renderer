@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormControl,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -13,9 +14,10 @@ import {
 } from "@mui/material";
 import { Api } from "@src/Api";
 import { downloadFile } from "@src/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
+import { Email, Phone } from "@mui/icons-material";
 
 export default function ExportOptionsPanel(props: { ubl: string }) {
   const theme = useTheme();
@@ -28,27 +30,36 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [outputType, setOutputType] = useState("pdf");
   const [language, setLanguage] = useState("en");
   const [style, setStyle] = useState(0);
-
+  const [sendType, setSendType] = useState<InvoiceSendOptions>("email");
+  const [invalidRecipient, setInvalidRecipient] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  useEffect(() => {
+    if (EmailValidator.validate(recipient)) {
+      setSendType("email");
+      setInvalidRecipient(false);
+    } else if (
+      /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/.test(recipient)
+    ) {
+      setSendType("sms");
+      setInvalidRecipient(false);
+    } else {
+      setSendType("");
+    }
+  }, [recipient]);
 
   const exportDocument = async () => {
     setTextError("");
     setTextSuccess("");
 
-    let sendType: InvoiceSendOptions = "email";
-
     if (exportMethod === "send") {
       if (!recipient) {
         setTextError("Recipient is required");
+        setInvalidRecipient(true);
         return;
-      }
-
-      if (EmailValidator.validate(recipient)) {
-        sendType = "email";
-      } else if (/^[0-9]{10}$/.test(recipient)) {
-        sendType = "sms";
-      } else {
-        setTextError("Invalid recipient, must be email or SMS");
+      } else if (sendType === "") {
+        setTextError("Invalid recipient, must be an email or phone number");
+        setInvalidRecipient(true);
         return;
       }
     }
@@ -56,64 +67,72 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
     setExporting(true);
 
     if (exportMethod === "send" && outputType === "xml") {
-      const { status } = await Api.sendInvoiceExternal(
-        recipient,
-        sendType,
-        props.ubl
-      );
+      try {
+        const { status } = await Api.sendInvoiceExternal(
+          recipient,
+          sendType,
+          props.ubl
+        );
 
-      if (status !== 200) {
+        if (status !== 200) {
+          setTextError("Failed to send invoice");
+        } else {
+          setTextSuccess("Successfully sent invoice");
+        }
+        setExporting(false);
+        return;
+      } catch (err) {
         setTextError("Failed to send invoice");
-      } else {
-        setTextSuccess("Successfully sent invoice");
+        setExporting(false);
+        return;
       }
-      setExporting(false);
-      return;
     }
 
     let response: { status: number; blob: Blob };
 
-    switch (outputType) {
-      case "pdf":
-        response = await Api.renderToPDF(props.ubl, style, language);
-        break;
-      case "html":
-        response = await Api.renderToHTML(props.ubl, style, language);
-        break;
-      case "json":
-        response = await Api.renderToJSON(props.ubl);
-        break;
-      case "xml":
-        response = { status: 200, blob: new Blob([props.ubl]) };
-        break;
-      default:
-        console.error("Unknown export type!");
-        setExporting(false);
-        return;
-    }
-
-    if (response.status !== 200) {
-      setTextError("An error occurred when rendering the invoice");
-    } else {
-      if (exportMethod === "download") {
-        setTextSuccess("Exported successfully!");
-        downloadFile(response.blob, `export.${outputType}`);
-      } else {
-        const { status } = await Api.sendInvoice(
-          recipient,
-          sendType,
-          outputType,
-          response.blob
-        );
-        if (status !== 200) {
-          setTextError("An error occurred when sending the invoice");
-        } else {
-          setTextSuccess("Sent successfully!");
-        }
+    try {
+      switch (outputType) {
+        case "pdf":
+          response = await Api.renderToPDF(props.ubl, style, language);
+          break;
+        case "html":
+          response = await Api.renderToHTML(props.ubl, style, language);
+          break;
+        case "json":
+          response = await Api.renderToJSON(props.ubl);
+          break;
+        case "xml":
+          response = { status: 200, blob: new Blob([props.ubl]) };
+          break;
+        default:
+          console.error("Unknown export type!");
+          return;
       }
+      if (response.status !== 200) {
+        setTextError("An error occurred when rendering the invoice");
+      } else {
+        if (exportMethod === "download") {
+          setTextSuccess("Exported successfully!");
+          downloadFile(response.blob, `export.${outputType}`);
+        } else {
+          const { status } = await Api.sendInvoice(
+            recipient,
+            sendType,
+            outputType,
+            response.blob
+          );
+          if (status !== 200) {
+            setTextError("An error occurred when sending the invoice");
+          } else {
+            setTextSuccess("Sent successfully!");
+          }
+        }
+        setExporting(false);
+      }
+    } catch (err) {
+      setTextError("An error occurred when sending the invoice");
+      setExporting(false);
     }
-
-    setExporting(false);
   };
 
   return (
@@ -158,6 +177,22 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
             data-testid="recipient-textfield"
+            placeholder="Email or phone number"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  {sendType !== "" ? (
+                    sendType === "sms" ? (
+                      <Phone />
+                    ) : (
+                      <Email />
+                    )
+                  ) : null}
+                </InputAdornment>
+              ),
+            }}
+            required={true}
+            error={invalidRecipient}
           />
         </Box>
 
@@ -264,7 +299,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
         open={Boolean(textError)}
         autoHideDuration={3000}
         onClose={() => setTextError("")}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert severity="error">{textError}</Alert>
       </Snackbar>
@@ -273,7 +308,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
         open={Boolean(textSuccess)}
         autoHideDuration={3000}
         onClose={() => setTextSuccess("")}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert severity="success">{textSuccess}</Alert>
       </Snackbar>
