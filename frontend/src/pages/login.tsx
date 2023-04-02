@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Button,
   Grid,
   TextField,
   Typography,
@@ -11,15 +10,20 @@ import {
 } from "@mui/material";
 import { Api } from "@src/Api";
 import { useRouter } from "next/router";
+import { LoadingButton } from "@mui/lab";
 
 /**
  * Home (Index) page. Will redirect to /login if already signed in. Otherwise redirect to /editor
  */
 export default function Login() {
   const [textError, setTextError] = useState<string | null | undefined>(null);
+  const [loadingLogin, setLoadingLogin] = useState(false);
+  const [loadingRegister, setLoadingRegister] = useState(false);
+
   const { push } = useRouter();
 
   const handleLogin = async (event: React.SyntheticEvent) => {
+    setLoadingLogin(true);
     event.preventDefault();
     const email = (document.getElementById("email") as HTMLInputElement)?.value;
     const password = (document.getElementById("password") as HTMLInputElement)
@@ -27,12 +31,14 @@ export default function Login() {
     const res = await Api.login(email, password);
     if (res.status !== 200) {
       setTextError(res.json?.error);
+      setLoadingLogin(false);
     } else {
       push("/editor");
     }
   };
 
   const handleRegister = async (event: React.SyntheticEvent) => {
+    setLoadingRegister(true);
     event.preventDefault();
     const email = (document.getElementById("email") as HTMLInputElement)?.value;
     const password = (document.getElementById("password") as HTMLInputElement)
@@ -40,6 +46,7 @@ export default function Login() {
     const res = await Api.register(email, password);
     if (res.status !== 200) {
       setTextError(res.json?.error);
+      setLoadingRegister(false);
     } else {
       push("/editor");
     }
@@ -82,23 +89,25 @@ export default function Login() {
                 required
               />
               <Box sx={{ float: "right" }}>
-                <Button
+                <LoadingButton
                   type="button"
                   data-testid="RegisterButton"
                   onClick={handleRegister}
                   variant="outlined"
                   sx={{ mt: 2, ml: 2 }}
+                  loading={loadingRegister}
                 >
                   Register
-                </Button>
-                <Button
+                </LoadingButton>
+                <LoadingButton
                   type="submit"
                   data-testid="LoginButton"
                   variant="contained"
                   sx={{ mt: 2, ml: 2 }}
+                  loading={loadingLogin}
                 >
                   Login
-                </Button>
+                </LoadingButton>
               </Box>
             </Box>
           </Box>

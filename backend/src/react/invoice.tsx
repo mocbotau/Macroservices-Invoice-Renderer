@@ -43,21 +43,6 @@ const Invoice = (props: {
   const ubl = props.ubl;
   const optional = props.optional || {};
 
-  const missingComponents: string[] = [];
-
-  REQUIRED_FIELDS.forEach((key: string) => {
-    if (!ubl[key]) {
-      missingComponents.push(key);
-    }
-  });
-
-  if (missingComponents.length !== 0) {
-    throw new InvalidUBL({
-      message: `The provided UBL is missing some mandatory components: ${missingComponents
-        .join(", ")
-        .replace(/,\s*$/, "")}`,
-    });
-  }
   return (
     <renderingContext.Provider value={props.renderingContext}>
       <styleContext.Provider value={props.styleContext}>
@@ -139,15 +124,30 @@ async function createInvoiceComponent(
   }
   await i18next.changeLanguage(args.language);
 
+  const ubl: any = ublToJSON(args.ubl);
+  const missingComponents: string[] = [];
+
+  REQUIRED_FIELDS.forEach((key: string) => {
+    if (!ubl[key]) {
+      missingComponents.push(key);
+    }
+  });
+
+  if (missingComponents.length !== 0) {
+    throw new InvalidUBL({
+      message: `The provided UBL is missing some mandatory components: ${missingComponents
+        .join(", ")
+        .replace(/,\s*$/, "")}`,
+    });
+  }
+
   return (
-    <Suspense fallback="loading">
-      <Invoice
-        ubl={ublToJSON(args.ubl)}
-        renderingContext={renderingContext}
-        styleContext={args.style}
-        optional={args.optional}
-      />
-    </Suspense>
+    <Invoice
+      ubl={ubl}
+      renderingContext={renderingContext}
+      styleContext={args.style}
+      optional={args.optional}
+    />
   );
 }
 
@@ -191,6 +191,7 @@ export async function generateInvoiceHTML(
   return new Promise((res) => {
     const stream = ReactDOM.renderToPipeableStream(invoiceComponent, {
       onShellReady() {
+        // Resolves the promise when the stream is ready
         res(stream);
       },
     });

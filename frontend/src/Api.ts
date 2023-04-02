@@ -175,12 +175,14 @@ export class Api {
     type: InvoiceSendOptions,
     xml: string
   ): Promise<APIResponse> {
-    const res = await fetch(`${process.env.SENDING_API_URL}/send-xml`, {
+    const res = await fetch(`${process.env.SENDING_API_URL}/${type}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        [type === "email" ? "email" : "sms"]: contact,
-        xml: xml,
+        recipients: contact,
+        xmlString: xml,
+        subject: "Macroservices Invoice Rendering",
+        message: "You've received an invoice!",
         format: "pdf",
       }),
     });

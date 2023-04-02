@@ -41,14 +41,19 @@ export function ublToJSON(ublStr: string): JSONValue {
     ignoreAttributes: false,
     textNodeName: textNodeName,
     attributeNamePrefix: "$",
-    isArray: (name, jpath) => {
+    numberParseOptions: {
+      leadingZeros: true,
+      hex: true,
+      skipLike: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
+    },
+    isArray: (name: string, jpath: string) => {
       return (
         !jpathNeverArray.includes(jpath) &&
         (jpathAlwaysArray.includes(jpath) || nameAlwaysArray.includes(name))
       );
     },
-    transformTagName: (tagName) => tagName.replace(/^c.c:/, ""),
-    transformAttributeName: (attributeName) =>
+    transformTagName: (tagName: string) => tagName.replace(/^c.c:/, ""),
+    transformAttributeName: (attributeName: string) =>
       attributeName.replace(/^c.c:/, ""),
   };
   const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
