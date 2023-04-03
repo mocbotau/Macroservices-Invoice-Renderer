@@ -183,7 +183,7 @@ export class Api {
         xmlString: xml,
         subject: "Macroservices Invoice Rendering",
         message: "You've received an invoice!",
-        format: "pdf",
+        format: "json",
       }),
     });
     return { status: res.status, json: await res.json() };
