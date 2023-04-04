@@ -93,7 +93,7 @@ describe("exportOptionsPanel", () => {
         fireEvent.mouseDown(
           within(screen.getByTestId("language-form")).getByRole("button")
         );
-        fireEvent.click(await screen.findByTestId("spanish-option"));
+        fireEvent.click(await screen.findByTestId("es-option"));
 
         fireEvent.mouseDown(
           within(screen.getByTestId("style-form")).getByRole("button")

@@ -16,6 +16,7 @@ import { downloadFile } from "@src/utils";
 import { useState } from "react";
 import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
+import { SUPPORTED_LANGUAGES } from "@src/constants";
 
 export default function ExportOptionsPanel(props: { ubl: string }) {
   const theme = useTheme();
@@ -195,21 +196,15 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
               label="Language"
               onChange={(e) => setLanguage(e.target.value)}
             >
-              <MenuItem value="en" data-testid="english-option">
-                English
-              </MenuItem>
-              <MenuItem value="zh" data-testid="chinese-option">
-                Chinese
-              </MenuItem>
-              <MenuItem value="es" data-testid="spanish-option">
-                Spanish
-              </MenuItem>
-              <MenuItem value="ko" data-testid="korean-option">
-                Korean
-              </MenuItem>
-              <MenuItem value="ja" data-testid="japanese-option">
-                Japanese
-              </MenuItem>
+              {SUPPORTED_LANGUAGES.map((language) => (
+                <MenuItem
+                  value={language.langCode}
+                  data-testid={language.langCode + "-option"}
+                  key={language.langCode}
+                >
+                  {language.language}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
