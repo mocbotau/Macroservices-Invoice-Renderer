@@ -7,9 +7,9 @@ import { useTranslation } from "react-i18next";
 
 import View from "./base/View";
 import Text from "./base/Text";
-import { i18n } from "i18next";
+import i18next, { i18n } from "i18next";
 import { Show } from "./Show";
-import { COUNTRY_MAP } from "@src/constants";
+import countryMap from "i18n-iso-countries";
 
 /**
  * This component renders the metadata associated with an invoice.
@@ -87,56 +87,6 @@ export const Metadata = (props: {
             <Text>{props.dueDate.toString()}</Text>
           </View>
         )}
-        {props.delivery && (
-          <Show
-            min={Detail.DEFAULT}
-            style={[userStyle["flexbox"], userStyle["metadata"]]}
-          >
-            <Text style={userStyle["bold"]}>
-              {translateHook("delivery_details")}{" "}
-            </Text>
-            {props.delivery["ActualDeliveryDate"] && (
-              <Text>
-                {translateHook("delivered_on", {
-                  delivery_date: props.delivery["ActualDeliveryDate"],
-                })}
-              </Text>
-            )}
-            {props.delivery["DeliveryParty"] && (
-              <Text>
-                {translateHook("delivered_to", {
-                  delivery_party:
-                    props.delivery["DeliveryParty"]["PartyName"]["Name"],
-                })}
-              </Text>
-            )}
-            {(props.delivery["ActualDeliveryDate"] ||
-              props.delivery["DeliveryParty"]) && <Break height={8} />}
-            {deliveryAddress && (
-              <View>
-                {deliveryAddress["StreetName"] && (
-                  <Text>{deliveryAddress["StreetName"]}</Text>
-                )}
-                {deliveryAddress["AdditionalStreetName"] && (
-                  <Text>{deliveryAddress["AdditionalStreetName"]}</Text>
-                )}
-                <Text>
-                  {[
-                    deliveryAddress["CityName"],
-                    deliveryAddress["CountrySubentity"],
-                    deliveryAddress["PostalZone"],
-                  ]
-                    .filter((x) => x !== undefined)
-                    .join(" ")}
-                </Text>
-                <Text>{COUNTRY_MAP[countryCode] || countryCode}</Text>
-                {deliveryAddress["AddressLine"] && (
-                  <Text>{deliveryAddress["AddressLine"]["Line"]}</Text>
-                )}
-              </View>
-            )}
-          </Show>
-        )}
         {props.accountingCost && (
           <View style={[userStyle["flexbox"], userStyle["metadata"]]}>
             <Text style={userStyle["bold"]}>
@@ -151,6 +101,58 @@ export const Metadata = (props: {
           <Break />
           <Text style={userStyle["bold"]}>{translateHook("invoice_note")}</Text>
           <Text>{note.join("\n")}</Text>
+        </Show>
+      )}
+      {props.delivery && (
+        <Show min={Detail.DEFAULT}>
+          <Break />
+          <Text style={userStyle["bold"]}>
+            {translateHook("delivery_details")}{" "}
+          </Text>
+          {props.delivery["ActualDeliveryDate"] && (
+            <Text>
+              {translateHook("delivered_on", {
+                delivery_date: props.delivery["ActualDeliveryDate"],
+              })}
+            </Text>
+          )}
+          {props.delivery["DeliveryParty"] && (
+            <Text>
+              {translateHook("delivered_to", {
+                delivery_party:
+                  props.delivery["DeliveryParty"]["PartyName"]["Name"],
+              })}
+            </Text>
+          )}
+          {(props.delivery["ActualDeliveryDate"] ||
+            props.delivery["DeliveryParty"]) && <Break height={8} />}
+          {deliveryAddress && (
+            <View>
+              {deliveryAddress["StreetName"] && (
+                <Text>{deliveryAddress["StreetName"]}</Text>
+              )}
+              {deliveryAddress["AdditionalStreetName"] && (
+                <Text>{deliveryAddress["AdditionalStreetName"]}</Text>
+              )}
+              <Text>
+                {[
+                  deliveryAddress["CityName"],
+                  deliveryAddress["CountrySubentity"],
+                  deliveryAddress["PostalZone"],
+                ]
+                  .filter((x) => x !== undefined)
+                  .join(" ")}
+              </Text>
+              <Text>
+                {countryMap.isValid(countryCode)
+                  ? countryMap.getName(countryCode, i18next.language || "en")
+                  : countryCode}
+              </Text>
+              {deliveryAddress["AddressLine"] && (
+                <Text>{deliveryAddress["AddressLine"]["Line"]}</Text>
+              )}
+            </View>
+          )}
         </Show>
       )}
     </View>

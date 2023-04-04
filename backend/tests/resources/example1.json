@@ -21,7 +21,7 @@
       "PartyIdentification": [
         {
           "ID": {
-            "_text": 80647710156,
+            "_text": "80647710156",
             "$schemeAgencyID": "ZZZ",
             "$schemeID": "0151"
           }
@@ -43,7 +43,7 @@
       "PartyLegalEntity": {
         "RegistrationName": "Ebusiness Software Services Pty Ltd",
         "CompanyID": {
-          "_text": 80647710156,
+          "_text": "80647710156",
           "$schemeAgencyID": "ZZZ",
           "$schemeID": "0151"
         }

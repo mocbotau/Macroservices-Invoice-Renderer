@@ -1,6 +1,7 @@
 import { ValidationError, XMLParser, XMLValidator } from "fast-xml-parser";
 import { JSONValue } from "./interfaces";
 import { InvalidUBL } from "@src/error";
+import currencyMap from "currency-symbol-map";
 
 const textNodeName = "_text";
 
@@ -40,14 +41,19 @@ export function ublToJSON(ublStr: string): JSONValue {
     ignoreAttributes: false,
     textNodeName: textNodeName,
     attributeNamePrefix: "$",
-    isArray: (name, jpath) => {
+    numberParseOptions: {
+      leadingZeros: true,
+      hex: true,
+      skipLike: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
+    },
+    isArray: (name: string, jpath: string) => {
       return (
         !jpathNeverArray.includes(jpath) &&
         (jpathAlwaysArray.includes(jpath) || nameAlwaysArray.includes(name))
       );
     },
-    transformTagName: (tagName) => tagName.replace(/^c.c:/, ""),
-    transformAttributeName: (attributeName) =>
+    transformTagName: (tagName: string) => tagName.replace(/^c.c:/, ""),
+    transformAttributeName: (attributeName: string) =>
       attributeName.replace(/^c.c:/, ""),
   };
   const parsed = new XMLParser(parseOptions).parse(ublStr).Invoice;
@@ -64,19 +70,15 @@ export function formatCurrency(currencyObject: JSONValue) {
 
   if (currencyObject["_text"] < 0) result = "-";
 
-  // Put this in a JSON map sometime
-  const currencyMap = {
-    "AUD": "$",
-  };
-
-  if (Object.keys(currencyMap).includes(currencyObject["$currencyID"])) {
-    result += currencyMap[currencyObject["$currencyID"]];
+  let foundCurrency = false;
+  if (currencyMap(currencyObject["$currencyID"])) {
+    foundCurrency = true;
+    result += currencyMap(currencyObject["$currencyID"]);
   }
 
-  result += `${Math.abs(currencyObject["_text"]).toFixed(2)} ${
-    currencyObject["$currencyID"]
+  result += `${Math.abs(currencyObject["_text"]).toFixed(2)}${
+    foundCurrency ? "" : ` ${currencyObject["$currencyID"]}`
   }`;
-
   return result;
 }
 

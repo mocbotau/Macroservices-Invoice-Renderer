@@ -26,8 +26,8 @@ describe("Invoice table component", () => {
       "1",
       "pencils",
       "500",
-      "$0.20 AUD",
-      "$100.00 AUD",
+      "$0.20",
+      "$100.00",
     ];
     textFields.forEach((text) => expect(screen.getByText(text)).toBeTruthy());
   });

@@ -17,7 +17,7 @@ export interface InvoiceOptionItems {
 }
 
 export const instructionsForUse =
-  "Fill in all fields relevant to your CSV. You may either manually enter in data, or select the text field, followed by a cell in the table that contains the data. Please note that the table is editable, allowing you to add additional data.";
+  "Fill in all fields relevant to your invoice to be rendered. You may either manually enter in data into the individual fields, or select the text field, followed by a cell in the table that contains the data. Please note that the table is editable, allowing you to add additional data.";
 
 export const invoiceOptions: InvoiceOptionType[] = [
   {
@@ -74,7 +74,7 @@ export const invoiceOptions: InvoiceOptionType[] = [
       },
       {
         name: "Currency Code",
-        description: "The currency to use for the period. Default is dollars.",
+        description: "The ISO currency to use for the period. Default is AUD.",
         required: false,
         colour: "#C3B1E1",
         id: "invoice_currency_code",
@@ -154,7 +154,7 @@ export const invoiceOptions: InvoiceOptionType[] = [
       },
       {
         name: "Country",
-        description: "The country of the address.",
+        description: "The ISO country code of the address.",
         required: false,
         colour: "#ffc6ff",
         id: "party_country",

@@ -6,12 +6,18 @@ export type RenderArgs = {
   language: string;
   style: number;
   ubl: string;
+  optional?: {
+    icon?: string;
+  };
 };
 
 export type RouteRenderArgs = {
   language?: string;
   style?: string;
   ubl?: string;
+  optional?: {
+    icon?: string;
+  };
 };
 
 export type JSONValue =

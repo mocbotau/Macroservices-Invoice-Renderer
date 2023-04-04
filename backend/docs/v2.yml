@@ -32,9 +32,16 @@ info:
 
     v2 Changelog:
     - Added multipart request bodies to support form uploads.
-    - Modified API route. /v1 becomes /api/v1 etc.
     - Added v2 and v1 docs (/docs/v1 and /docs/v2). Also add latest docs endpoint (/docs)
     - Added additional languages supported 
+    - Rendering routes now supports Multipart to allow for users to upload their files directly. This involves checking for the right kind of file etc.
+      - Backwards compatibility is paramount, and thus the existing input method of JSON still exists in v2.
+    - Support for uploading a custom business icon to your invoice. This will embed the business icon into the invoice for rendered PDFs and HTMLs, if required.
+    - The render to HTML route now no longer returns a 200 error, when something fails (such as a supposed 422 error). This used to fail on many instances when an invalid UBL that was missing components was passed into the API.
+    - Phone numbers are now read properly inside of the invoice. Previously, any inputted phone numbers would be converted into a number and thus lose any leading zeros.
+    - Fixed some minor alignment issues on the HTML rendering page.
+    - Changed some default values that would be created if fields were not present.
+    - Added support for translation of the country name, as well as different currency codes being displayed based on the currency code parsed in.
 
     Some useful links:
     - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/F14A-Macroservices-Invoice-Renderer) repository
@@ -226,12 +233,28 @@ components:
             - "it"
             - "ru"
             - "th"
+        optional:
+          type: object
+          properties:
+            icon:
+              type: string
+              format: base64
+              description: "The icon to include (as a base64 encoded data URL)."
+              example: "data:image/png;base64,<base64string>"
+      required:
+        - ubl
+        - style
+        - language
     MultiPartRequestBody:
       type: object
       properties:
         file:
           type: string
           description: "The UBL XML binary."
+          format: binary
+        icon:
+          type: string
+          description: "The icon to include."
           format: binary
         style:
           type: integer
@@ -254,6 +277,10 @@ components:
             - "it"
             - "ru"
             - "th"
+      required:
+        - file
+        - style
+        - language
     MultiPartRequestBodyJSON:
       type: object
       properties:

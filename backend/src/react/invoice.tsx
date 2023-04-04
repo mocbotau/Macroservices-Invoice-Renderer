@@ -29,30 +29,20 @@ import Document from "./components/base/Document";
 import Page from "./components/base/Page";
 import View from "./components/base/View";
 import { Show } from "./components/Show";
+import { isOptionalChain } from "typescript";
 
 const Invoice = (props: {
   ubl: JSONValue;
   renderingContext: RenderingContexts;
   styleContext: number;
+  optional?: {
+    icon?: string;
+  };
 }) => {
   const userStyle = extraStyles[props.styleContext];
   const ubl = props.ubl;
+  const optional = props.optional || {};
 
-  const missingComponents: string[] = [];
-
-  REQUIRED_FIELDS.forEach((key: string) => {
-    if (!ubl[key]) {
-      missingComponents.push(key);
-    }
-  });
-
-  if (missingComponents.length !== 0) {
-    throw new InvalidUBL({
-      message: `The provided UBL is missing some mandatory components: ${missingComponents
-        .join(", ")
-        .replace(/,\s*$/, "")}`,
-    });
-  }
   return (
     <renderingContext.Provider value={props.renderingContext}>
       <styleContext.Provider value={props.styleContext}>
@@ -70,9 +60,11 @@ const Invoice = (props: {
               supplierParty={ubl["AccountingSupplierParty"]}
               customerParty={ubl["AccountingCustomerParty"]}
               i18next={i18next}
+              icon={optional.icon}
             />
             <Show min={Detail.DEFAULT}>
-              <Break height={32} solid />
+              <Break height={8} />
+              <Break height={12} solid />
             </Show>
             <Show max={Detail.SUMMARY}>
               <Break height={8} />
@@ -132,14 +124,30 @@ async function createInvoiceComponent(
   }
   await i18next.changeLanguage(args.language);
 
+  const ubl: any = ublToJSON(args.ubl);
+  const missingComponents: string[] = [];
+
+  REQUIRED_FIELDS.forEach((key: string) => {
+    if (!ubl[key]) {
+      missingComponents.push(key);
+    }
+  });
+
+  if (missingComponents.length !== 0) {
+    throw new InvalidUBL({
+      message: `The provided UBL is missing some mandatory components: ${missingComponents
+        .join(", ")
+        .replace(/,\s*$/, "")}`,
+    });
+  }
+
   return (
-    <Suspense fallback="loading">
-      <Invoice
-        ubl={ublToJSON(args.ubl)}
-        renderingContext={renderingContext}
-        styleContext={args.style}
-      />
-    </Suspense>
+    <Invoice
+      ubl={ubl}
+      renderingContext={renderingContext}
+      styleContext={args.style}
+      optional={args.optional}
+    />
   );
 }
 
@@ -155,6 +163,7 @@ export async function generateInvoicePDF(args: RouteRenderArgs) {
         ubl: args.ubl as string,
         style: parseInt(args.style),
         language: args.language as string,
+        optional: args.optional,
       },
       RenderingContexts.Pdf
     )
@@ -174,6 +183,7 @@ export async function generateInvoiceHTML(
       ubl: args.ubl as string,
       style: parseInt(args.style),
       language: args.language as string,
+      optional: args.optional,
     },
     RenderingContexts.Html
   );
@@ -181,6 +191,7 @@ export async function generateInvoiceHTML(
   return new Promise((res) => {
     const stream = ReactDOM.renderToPipeableStream(invoiceComponent, {
       onShellReady() {
+        // Resolves the promise when the stream is ready
         res(stream);
       },
     });

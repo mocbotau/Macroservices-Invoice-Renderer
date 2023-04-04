@@ -24,7 +24,10 @@ export class Api {
   static async renderToPDF(
     ubl: string,
     style: number,
-    language: string
+    language: string,
+    optional: {
+      [prop: string]: string;
+    }
   ): Promise<{ status: number; blob: Blob }> {
     const resp = await fetch("/api/renderpdf", {
       method: "POST",
@@ -35,6 +38,7 @@ export class Api {
         ubl,
         style,
         language,
+        optional,
       }),
     });
 
@@ -51,7 +55,10 @@ export class Api {
   static async renderToHTML(
     ubl: string,
     style: number,
-    language: string
+    language: string,
+    optional: {
+      [prop: string]: string;
+    }
   ): Promise<{ status: number; blob: Blob }> {
     const resp = await fetch("/api/renderhtml", {
       method: "POST",
@@ -62,6 +69,7 @@ export class Api {
         ubl,
         style,
         language,
+        optional,
       }),
     });
 
@@ -167,13 +175,15 @@ export class Api {
     type: InvoiceSendOptions,
     xml: string
   ): Promise<APIResponse> {
-    const res = await fetch(`${process.env.SENDING_API_URL}/send-xml`, {
+    const res = await fetch(`${process.env.SENDING_API_URL}/${type}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        [type === "email" ? "email" : "sms"]: contact,
-        xml: xml,
-        format: "pdf",
+        recipients: contact,
+        xmlString: xml,
+        subject: "Macroservices Invoice Rendering",
+        message: "You've received an invoice!",
+        format: "json",
       }),
     });
     return { status: res.status, json: await res.json() };

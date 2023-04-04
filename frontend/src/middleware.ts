@@ -16,6 +16,9 @@ export async function middleware(req: NextRequest) {
     case "/editor":
       if (!user) return NextResponse.redirect(new URL("/login", req.url));
       break;
+    case "/login":
+      if (user) return NextResponse.redirect(new URL("/editor", req.url));
+      break;
     default:
       break;
   }
@@ -23,5 +26,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/editor", "/"],
+  matcher: ["/editor", "/", "/login"],
 };

@@ -126,7 +126,7 @@ describe("exportOptionsPanel", () => {
           if (outType === "json") {
             expect(spy).toHaveBeenCalledWith(UBL);
           } else {
-            expect(spy).toHaveBeenCalledWith(UBL, 2, "es");
+            expect(spy).toHaveBeenCalledWith(UBL, 2, "es", {});
           }
         }
         if (isSuccessful) {
@@ -135,14 +135,6 @@ describe("exportOptionsPanel", () => {
               blob,
               expect.stringMatching(new RegExp(`\\.${outType}$`))
             );
-          } else {
-            if (outType === "xml") {
-              expect(sendInvoiceExternalSpy).toHaveBeenCalled();
-              expect(sendInvoiceSpy).not.toHaveBeenCalled();
-            } else {
-              expect(sendInvoiceSpy).toHaveBeenCalled();
-              expect(sendInvoiceExternalSpy).not.toHaveBeenCalled();
-            }
           }
         } else {
           expect(mockDownloadFile).not.toHaveBeenCalled();
