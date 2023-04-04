@@ -6,7 +6,20 @@ export const COUNTRY_MAP = {
 };
 
 export const MAX_STYLES = 5;
-export const SUPPORTED_LANGUAGES = ["en", "zh", "es", "ko", "ja"];
+export const SUPPORTED_LANGUAGES = [
+  "en",
+  "zh",
+  "es",
+  "ko",
+  "ja",
+  "ar",
+  "fr",
+  "de",
+  "hi",
+  "it",
+  "ru",
+  "th",
+];
 export const DEFAULT_HEIGHT = 16;
 
 export const PAGE_SIZES: {

@@ -13,10 +13,28 @@ info:
     * TaxTotal
     * LegalMonetaryTotal
 
+    Supported Languages:
+    * Arabic - ar 
+    * Chinese - zh
+    * English - en
+    * French - fr
+    * German - de
+    * Hindi - hi
+    * Italian - it
+    * Japanese - ja
+    * Korean - ko
+    * Russian - ru
+    * Spanish - es
+    * Thai - th
+
+    Additionally, if you are looking to input a UBL via JSON, please note that per the JSON specification, the UBL string must be sanitised and serialised. This means that all double quotes (") must be replaced with single quotes ('), and new lines must be removed. 
+    This can be done in Visual Studio Code through the Command Palette (Ctrl + Shift + P) > Join Lines.
+
     v2 Changelog:
     - Added multipart request bodies to support form uploads.
     - Modified API route. /v1 becomes /api/v1 etc.
     - Added v2 and v1 docs (/docs/v1 and /docs/v2). Also add latest docs endpoint (/docs)
+    - Added additional languages supported 
 
     Some useful links:
     - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/F14A-Macroservices-Invoice-Renderer) repository
@@ -194,13 +212,20 @@ components:
           maximum: 4
         language:
           type: string
-          description: The language to render the invoice in. Must be one of [en, zh, ko, es, ja]
+          description: The language to render the invoice in. Please refer to the beginning of this documentation page to see all the available languages.
           enum:
             - "en"
             - "zh"
             - "ko"
             - "es"
             - "ja"
+            - "ar"
+            - "fr"
+            - "de"
+            - "hi"
+            - "it"
+            - "ru"
+            - "th"
     MultiPartRequestBody:
       type: object
       properties:
@@ -215,13 +240,20 @@ components:
           maximum: 4
         language:
           type: string
-          description: The language to render the invoice in. Must be one of [en, zh, ko, es, ja]
+          description: The language to render the invoice in. Please refer to the beginning of this documentation page to see all the available languages.
           enum:
             - "en"
             - "zh"
             - "ko"
             - "es"
             - "ja"
+            - "ar"
+            - "fr"
+            - "de"
+            - "hi"
+            - "it"
+            - "ru"
+            - "th"
     MultiPartRequestBodyJSON:
       type: object
       properties:
