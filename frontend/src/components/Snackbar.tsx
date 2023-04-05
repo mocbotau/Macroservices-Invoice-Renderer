@@ -5,6 +5,7 @@ interface ComponentProps {
   showSnackbar: boolean;
   setShowSnackbar: SetStateType<boolean>;
   message: string;
+  severity: "error" | "info" | "success" | "warning";
 }
 
 /**
@@ -14,7 +15,7 @@ interface ComponentProps {
  * @returns {JSX.Element} - the returned element
  */
 export const Snackbar = (props: ComponentProps): JSX.Element => {
-  const { showSnackbar, setShowSnackbar, message } = props;
+  const { showSnackbar, setShowSnackbar, message, severity } = props;
 
   return (
     <SnackbarOriginal
@@ -23,7 +24,7 @@ export const Snackbar = (props: ComponentProps): JSX.Element => {
       onClose={() => setShowSnackbar(false)}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
     >
-      <Alert severity="error" data-testid="error-snackbar">
+      <Alert severity={severity} data-testid="error-snackbar">
         {message}
       </Alert>
     </SnackbarOriginal>

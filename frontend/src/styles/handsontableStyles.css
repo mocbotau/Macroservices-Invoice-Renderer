@@ -750,3 +750,7 @@
   width: 12px;
   background: var(--theme-scrollbar);
 }
+
+.main {
+  height: 100%;
+}

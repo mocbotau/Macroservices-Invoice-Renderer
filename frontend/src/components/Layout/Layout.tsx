@@ -10,7 +10,7 @@ export default function Layout(props: AppProps) {
   return (
     <Box sx={{ height: "100vh", width: "100vw" }}>
       <NavBar />
-      <main>{props.children}</main>
+      <main className="main">{props.children}</main>
     </Box>
   );
 }

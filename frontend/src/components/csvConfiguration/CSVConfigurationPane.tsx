@@ -5,7 +5,7 @@ import { Box } from "@mui/system";
 import { Button, Divider, Tab, Tabs } from "@mui/material";
 import { instructionsForUse, invoiceOptions } from "./csvConfigurationFields";
 import { AllFieldInputs } from "./paneComponents/AllFieldInputs";
-import { TabPanel } from "./paneComponents/TabPanel";
+import { TabPanel } from "../TabPanel";
 import {
   colFromNumber,
   convertToCellRefs,
@@ -85,6 +85,7 @@ export default function CSVConfigurationPane(
         showSnackbar={showSnackbar}
         setShowSnackbar={setShowSnackbar}
         message="Please fill in all required fields."
+        severity="error"
       />
       <Box
         sx={{

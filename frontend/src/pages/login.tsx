@@ -11,6 +11,8 @@ import {
 import { Api } from "@src/Api";
 import { useRouter } from "next/router";
 import { LoadingButton } from "@mui/lab";
+import LoginImage from "@public/1659510338070 (1).jpg";
+import Image from "next/image";
 
 /**
  * Home (Index) page. Will redirect to /login if already signed in. Otherwise redirect to /editor
@@ -55,64 +57,82 @@ export default function Login() {
   // Adapted from https://frontendshape.com/post/react-mui-5-login-page-example
   return (
     <>
-      <Grid style={{ minHeight: "100vh" }}>
-        <Container maxWidth="xs">
-          <Box
-            sx={{
-              marginTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography component="h1" variant="h5">
-              Macroservices Sign In
-            </Typography>
-            <Box component="form" onSubmit={handleLogin}>
-              <TextField
-                label="Email"
-                data-testid="EmailField"
-                id="email"
-                name="email"
-                margin="normal"
-                fullWidth
-                required
-              />
-              <TextField
-                label="Password"
-                data-testid="PasswordField"
-                id="password"
-                name="password"
-                type="password"
-                margin="normal"
-                fullWidth
-                required
-              />
-              <Box sx={{ float: "right" }}>
-                <LoadingButton
-                  type="button"
-                  data-testid="RegisterButton"
-                  onClick={handleRegister}
-                  variant="outlined"
-                  sx={{ mt: 2, ml: 2 }}
-                  loading={loadingRegister}
-                >
-                  Register
-                </LoadingButton>
-                <LoadingButton
-                  type="submit"
-                  data-testid="LoginButton"
-                  variant="contained"
-                  sx={{ mt: 2, ml: 2 }}
-                  loading={loadingLogin}
-                >
-                  Login
-                </LoadingButton>
-              </Box>
+      <Box
+        sx={{
+          boxShadow: 5,
+          bgcolor: (theme) =>
+            theme.palette.mode === "dark" ? "#191919" : "fff",
+          borderRadius: 2,
+          display: "flex",
+          height: "100%",
+        }}
+      >
+        <Box sx={{ width: "60%", position: "relative " }}>
+          <Image
+            src={LoginImage}
+            style={{ objectFit: "cover", objectPosition: "bottom" }}
+            fill
+            alt="Login image"
+          />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            margin: "0 auto",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 3,
+            width: "40%",
+          }}
+        >
+          <Typography component="h1" variant="h5">
+            Macroservices Sign In
+          </Typography>
+          <Box component="form" onSubmit={handleLogin}>
+            <TextField
+              label="Email"
+              data-testid="EmailField"
+              id="email"
+              name="email"
+              margin="normal"
+              fullWidth
+              required
+            />
+            <TextField
+              label="Password"
+              data-testid="PasswordField"
+              id="password"
+              name="password"
+              type="password"
+              margin="normal"
+              fullWidth
+              required
+            />
+            <Box sx={{ float: "right" }}>
+              <LoadingButton
+                type="button"
+                data-testid="RegisterButton"
+                onClick={handleRegister}
+                variant="outlined"
+                sx={{ mt: 2, ml: 2 }}
+                loading={loadingRegister}
+              >
+                Register
+              </LoadingButton>
+              <LoadingButton
+                type="submit"
+                data-testid="LoginButton"
+                variant="contained"
+                sx={{ mt: 2, ml: 2 }}
+                loading={loadingLogin}
+              >
+                Login
+              </LoadingButton>
             </Box>
           </Box>
-        </Container>
-      </Grid>
+        </Box>
+      </Box>
       <Snackbar
         open={Boolean(textError)}
         autoHideDuration={3000}

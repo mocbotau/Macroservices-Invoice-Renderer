@@ -30,6 +30,7 @@ export default function Upload(props: ComponentProps): JSX.Element {
         showSnackbar={showSnackbar}
         setShowSnackbar={setShowSnackbar}
         message={props.snackbarMessage}
+        severity="error"
       />
 
       <Grid
@@ -37,7 +38,6 @@ export default function Upload(props: ComponentProps): JSX.Element {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        style={{ minHeight: "100vh" }}
         spacing={4}
       >
         <Grid item xs={3}>
