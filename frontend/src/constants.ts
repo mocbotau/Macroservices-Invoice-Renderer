@@ -15,3 +15,18 @@ export const MAX_ID_LENGTH = 7;
 export const DEFAULT_COUNTRY = "AU";
 export const DEFAULT_CURRENCY = "AUD";
 export const DEFAULT_REFERENCE = "Generic";
+
+export const SUPPORTED_LANGUAGES = [
+  { langCode: "en", language: "English" },
+  { langCode: "ar", language: "Arabic" },
+  { langCode: "zh", language: "Chinese" },
+  { langCode: "fr", language: "French" },
+  { langCode: "de", language: "German" },
+  { langCode: "hi", language: "Hindi" },
+  { langCode: "it", language: "Italian" },
+  { langCode: "ja", language: "Japanese" },
+  { langCode: "ko", language: "Korean" },
+  { langCode: "ru", language: "Russian" },
+  { langCode: "es", language: "Spanish" },
+  { langCode: "th", language: "Thai" },
+];
