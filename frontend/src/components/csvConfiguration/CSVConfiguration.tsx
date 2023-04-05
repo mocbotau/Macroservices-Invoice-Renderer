@@ -78,13 +78,18 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
 
   return (
     <>
-      <Box sx={{ display: "block", height: "100vh", width: "100vw" }}>
+      <Box
+        sx={{
+          display: "flex",
+          height: "100vh",
+          width: "100vw",
+        }}
+      >
         <Box
           component="main"
           id={"hot-table-box"}
           sx={{
-            display: "block",
-            height: "100%",
+            display: "flex",
             width: `calc(100% - ${drawerWidth})`,
           }}
         >
@@ -113,17 +118,16 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
             }}
           />
         </Box>
-        <Drawer
+        <Box
           sx={{
             width: drawerWidth,
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
+              alignContent: "right",
             },
           }}
-          variant="permanent"
-          anchor="right"
         >
           <CSVConfigurationPane
             selection={selection}
@@ -131,7 +135,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
             setMultipleSelection={setMultipleSelection}
             setLoadedXML={props.setLoadedXML}
           />
-        </Drawer>
+        </Box>
       </Box>
     </>
   );

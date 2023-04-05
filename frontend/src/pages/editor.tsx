@@ -26,18 +26,6 @@ export default function Editor() {
     <>
       <CssBaseline />
 
-      {/* Create full height app */}
-      {/* https://gist.github.com/dmurawsky/d45f068097d181c733a53687edce1919 */}
-      <style global jsx>{`
-        html,
-        body,
-        body > div:first-child,
-        div#__next,
-        div#__next > div {
-          height: 100%;
-        }
-      `}</style>
-
       {loadedXML ? (
         <ExportOptions ubl={loadedXML} />
       ) : uploadSuccess ? (
