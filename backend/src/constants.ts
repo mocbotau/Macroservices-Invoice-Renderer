@@ -1,20 +1,27 @@
 export const ABN_ID = "0151";
 
-export const MAX_STYLES = 5;
-export const SUPPORTED_LANGUAGES = [
-  "en",
-  "zh",
-  "es",
-  "ko",
-  "ja",
-  "ar",
-  "fr",
-  "de",
-  "hi",
-  "it",
-  "ru",
-  "th",
+export const STYLES = [
+  "Default (blue theme)",
+  "Landscape",
+  "Landscape (detailed)",
+  "Summary",
+  "Default (high contrast)",
 ];
+export const SUPPORTED_LANGUAGES = [
+  { langCode: "en", language: "English" },
+  { langCode: "ar", language: "Arabic" },
+  { langCode: "zh", language: "Chinese" },
+  { langCode: "fr", language: "French" },
+  { langCode: "de", language: "German" },
+  { langCode: "hi", language: "Hindi" },
+  { langCode: "it", language: "Italian" },
+  { langCode: "ja", language: "Japanese" },
+  { langCode: "ko", language: "Korean" },
+  { langCode: "ru", language: "Russian" },
+  { langCode: "es", language: "Spanish" },
+  { langCode: "th", language: "Thai" },
+];
+
 export const DEFAULT_HEIGHT = 16;
 
 export const PAGE_SIZES: {

@@ -25,7 +25,7 @@ export default function Upload(props: ComponentProps): JSX.Element {
   }, [props.snackbarMessage]);
 
   return (
-    <Box sx={{ width: "100vw", height: "100vh" }}>
+    <Box>
       <Snackbar
         showSnackbar={showSnackbar}
         setShowSnackbar={setShowSnackbar}
@@ -37,7 +37,6 @@ export default function Upload(props: ComponentProps): JSX.Element {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        style={{ minHeight: "100vh" }}
         spacing={4}
       >
         <Grid item xs={3}>

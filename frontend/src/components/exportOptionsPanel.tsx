@@ -249,7 +249,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
             >
               {SUPPORTED_LANGUAGES.map((language) => (
                 <MenuItem
-                  value={language.langCode}
+                  value={language.id.langCode}
                   data-testid={language.langCode + "-option"}
                   key={language.langCode}
                 >
