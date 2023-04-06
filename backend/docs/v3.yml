@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Macroservices Invoice Renderer API v2
+  title: Macroservices Invoice Renderer API v3
   description: |-
     This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
 
