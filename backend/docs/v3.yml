@@ -27,6 +27,8 @@ servers:
 tags:
   - name: Generate Key
     description: Generate API key
+  - name: Information
+    description: Parameter Information
   - name: Render
     description: Invoice Rendering
   - name: Healthcheck
