@@ -15,7 +15,7 @@ i18next
     ns: ["default"],
     defaultNS: "default",
 
-    supportedLngs: SUPPORTED_LANGUAGES,
+    supportedLngs: SUPPORTED_LANGUAGES.map((x) => x.langCode),
     backend: {
       loadPath: loadPath,
     },

@@ -14,7 +14,7 @@ import { TaxSection } from "./components/TaxSection";
 import { MonetaryTotal } from "./components/MonetaryTotal";
 import { ublToJSON } from "@src/util";
 import {
-  MAX_STYLES,
+  STYLES,
   SUPPORTED_LANGUAGES,
   PAGE_SIZES,
   REQUIRED_FIELDS,
@@ -111,13 +111,16 @@ async function createInvoiceComponent(
 ) {
   if (!args || !args.ubl) {
     throw new InvalidUBL({ message: "No UBL file was provided." });
-  } else if (!args.language || !SUPPORTED_LANGUAGES.includes(args.language)) {
+  } else if (
+    !args.language ||
+    !SUPPORTED_LANGUAGES.map((x) => x.langCode).includes(args.language)
+  ) {
     throw new InvalidLanguage();
   } else if (
     args.style === undefined ||
     isNaN(args.style) ||
     args.style < 0 ||
-    args.style >= MAX_STYLES
+    args.style >= STYLES.length
   ) {
     // assuming style numbers from 0-4
     throw new InvalidStyle();

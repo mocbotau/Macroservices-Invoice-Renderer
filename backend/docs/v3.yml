@@ -1,0 +1,352 @@
+openapi: 3.0.0
+info:
+  title: Macroservices Invoice Renderer API v3
+  description: |-
+    This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
+
+    Please note that the following components must be present within the UBL invoice in order for an invoice to be generated:
+    * AccountingSupplierParty
+    * AccountingCustomerParty
+    * InvoiceLine
+    * ID
+    * IssueDate
+    * TaxTotal
+    * LegalMonetaryTotal
+
+    Additionally, if you are looking to input a UBL via JSON, please note that per the JSON specification, the UBL string must be sanitised and serialised. This means that all double quotes (") must be replaced with single quotes ('), and new lines must be removed. 
+    This can be done in Visual Studio Code through the Command Palette (Ctrl + Shift + P) > Join Lines.
+
+    v3 Changelog:
+    - Added routes for listing available languages and styles.
+
+    Some useful links:
+    - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/F14A-Macroservices-Invoice-Renderer) repository
+  version: 3.0.0
+servers:
+  - url: https://macroservices.masterofcubesau.com/api/v3
+tags:
+  - name: Generate Key
+    description: Generate API key
+  - name: Information
+    description: Parameter Information
+  - name: Render
+    description: Invoice Rendering
+  - name: Healthcheck
+    description: Server Status
+paths:
+  /generatekey:
+    get:
+      tags:
+        - Generate Key
+      summary: Generates an API key for use in the api-key header.
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateKeyResponse"
+
+  /healthcheck:
+    get:
+      tags:
+        - Healthcheck
+      summary: Returns a short response on success to check that the server is running.
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthcheckResponse"
+  /invoice/styles:
+    get:
+      tags:
+        - Information
+      summary: Retrieve a list of available styles.
+      description: |-
+        Retrieves a list of friendly names and IDs of styles available to render.
+        There are 5 styles to choose from which are currently implemented.
+          * Style ID 0 - Default: blue themed title headings for aesthetic appeal, and a moderate level of detail
+          * Style ID 1 - Landscape: black and white landscape invoice with moderate detail for users who find the default layout too horizontally cramped
+          * Style ID 2 - Detailed: as with Landscape style, but with greater detail for accountants and other professionals to visualise relevant data
+          * Style ID 3 - Summary: black and white portrait invoice with minimal detail for shorter files and quicker understanding of invoice items
+          * Style ID 4 - Default High Contrast: black and white version of Default style for vision impaired users (or those with only black and white printing)
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StylesResponse"
+  /invoice/languages:
+    get:
+      tags:
+        - Information
+      summary: Retrieve a list of available languages.
+      description: |-
+        Retrieves a list of friendly names and codes of languages available.
+        The languages currently supported are:
+          * Arabic - ar 
+          * Chinese - zh
+          * English - en
+          * French - fr
+          * German - de
+          * Hindi - hi
+          * Italian - it
+          * Japanese - ja
+          * Korean - ko
+          * Russian - ru
+          * Spanish - es
+          * Thai - th
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LanguagesResponse"
+  /invoice/render/pdf:
+    post:
+      tags:
+        - Render
+      summary: Render a UBL XML file into a PDF file.
+      description: |
+        Given a UBL XML file, renders into a human readable visualisation in PDF form.
+      security:
+        - APIKey: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/MultiPartRequestBody"
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JSONRequestBody"
+      responses:
+        "200":
+          description: OK. Returns a PDF.
+          content:
+            application/pdf:
+              schema:
+                $ref: "#/components/schemas/RenderPDFResponse"
+        "400":
+          $ref: "#/components/responses/InvalidInputs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/InvalidUBL"
+  /invoice/render/html:
+    post:
+      tags:
+        - Render
+      summary: Render a UBL XML file and returns HTML.
+      description: |-
+        Given a UBL XML file, renders into a human readable visualisation in HTML form.
+          Styles can be obtained via the /invoice/styles route.
+      security:
+        - APIKey: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/MultiPartRequestBody"
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JSONRequestBody"
+      responses:
+        "200":
+          description: OK. Returns HTML.
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/RenderHTMLResponse"
+        "400":
+          $ref: "#/components/responses/InvalidInputs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/InvalidUBL"
+  /invoice/render/json:
+    post:
+      tags:
+        - Render
+      summary: Render a UBL XML file and returns JSON.
+      description: Given a UBL XML file, renders into a human readable visualisation in JSON form.
+      security:
+        - APIKey: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/MultiPartRequestBodyJSON"
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestBodyJSON"
+      responses:
+        "200":
+          description: OK. Returns JSON.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenderJSONResponse"
+        "400":
+          $ref: "#/components/responses/InvalidInputs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/InvalidUBL"
+
+components:
+  responses:
+    Unauthorized:
+      description: "No API key was provided."
+    Forbidden:
+      description: "An invalid API key was provided."
+    InvalidUBL:
+      description: "An invalid UBL file was provided."
+    InvalidInputs:
+      description: "An invalid style number or language was provided."
+  securitySchemes:
+    APIKey:
+      type: apiKey
+      in: header
+      name: api-key
+  schemas:
+    JSONRequestBody:
+      type: object
+      properties:
+        ubl:
+          type: string
+          description: "The UBL XML file data formatted as a single string. All quotation marks should be single quotes, and there should be no line breaks."
+          example: "<Invoice></Invoice>"
+        style:
+          type: integer
+          description: The style of the invoice to render.
+          minimum: 0
+          maximum: 4
+        language:
+          type: string
+          description: The language to render the invoice in. Please refer to the /invoice/languages route for a list of supported languages.
+          enum:
+            - "en"
+            - "zh"
+            - "ko"
+            - "es"
+            - "ja"
+            - "ar"
+            - "fr"
+            - "de"
+            - "hi"
+            - "it"
+            - "ru"
+            - "th"
+        optional:
+          type: object
+          properties:
+            icon:
+              type: string
+              format: base64
+              description: "The icon to include (as a base64 encoded data URL)."
+              example: "data:image/png;base64,<base64string>"
+      required:
+        - ubl
+        - style
+        - language
+    MultiPartRequestBody:
+      type: object
+      properties:
+        file:
+          type: string
+          description: "The UBL XML binary."
+          format: binary
+        icon:
+          type: string
+          description: "The icon to include."
+          format: binary
+        style:
+          type: integer
+          description: The style of the invoice to render.
+          minimum: 0
+          maximum: 4
+        language:
+          type: string
+          description: The language to render the invoice in. Please refer to the /invoice/languages route for a list of supported languages.
+          enum:
+            - "en"
+            - "zh"
+            - "ko"
+            - "es"
+            - "ja"
+            - "ar"
+            - "fr"
+            - "de"
+            - "hi"
+            - "it"
+            - "ru"
+            - "th"
+      required:
+        - file
+        - style
+        - language
+    MultiPartRequestBodyJSON:
+      type: object
+      properties:
+        file:
+          type: string
+          description: "The UBL XML binary."
+          format: binary
+    RequestBodyJSON:
+      type: object
+      properties:
+        ubl:
+          type: string
+          description: "The UBL XML file data formatted as a single string. All quotation marks should be single quotes, and there should be no line breaks."
+          example: "<Invoice></Invoice>"
+    GenerateKeyResponse:
+      type: object
+      properties:
+        key:
+          type: string
+    HealthcheckResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    StylesResponse:
+      type: object
+      properties:
+        styles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+    LanguagesResponse:
+      type: object
+      properties:
+        languages:
+          type: object
+          properties:
+            langCode:
+              type: string
+            language:
+              type: string
+    RenderPDFResponse:
+      type: string
+      format: binary
+    RenderJSONResponse:
+      type: object
+      additionalProperties: true
+    RenderHTMLResponse:
+      type: string
+      example: "<html>Invoice</html>"

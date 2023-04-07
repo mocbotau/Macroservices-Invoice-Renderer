@@ -18,9 +18,11 @@ const swaggerOptions = {
 
 const v1JSON = YAML.load("docs/v1.yml");
 const v2JSON = YAML.load("docs/v2.yml");
+const v3JSON = YAML.load("docs/v3.yml");
 
 const v1HTML = swaggerUi.generateHTML(v1JSON, swaggerOptions);
 const v2HTML = swaggerUi.generateHTML(v2JSON, swaggerOptions);
+const v3HTML = swaggerUi.generateHTML(v3JSON, swaggerOptions);
 
 // v1 docs
 app.use("/docs/v1", swaggerUi.serveFiles(v1JSON, swaggerOptions));
@@ -34,9 +36,15 @@ app.get("/docs/v2", (req, res) => {
   res.send(v2HTML);
 });
 
+// v3 docs
+app.use("/docs/v3", swaggerUi.serveFiles(v3JSON, swaggerOptions));
+app.get("/docs/v3", (req, res) => {
+  res.send(v3HTML);
+});
+
 // Redirect /docs to latest
 app.get("/docs", (req, res) => {
-  res.redirect("/docs/v2");
+  res.redirect("/docs/v3");
 });
 
 app.listen(port, host, () => {
