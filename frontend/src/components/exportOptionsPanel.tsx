@@ -17,7 +17,7 @@ import {
 import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
 import { Api } from "@src/Api";
 import { downloadFile } from "@src/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
 import { SUPPORTED_LANGUAGES } from "@src/constants";
