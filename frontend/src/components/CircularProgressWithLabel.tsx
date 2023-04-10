@@ -2,7 +2,7 @@ import CircularProgress, {
   CircularProgressProps,
 } from "@mui/material/CircularProgress";
 import { Box, Typography } from "@mui/material";
-import { SEND_TIMEOUT_MS } from "./exportOptionsPanel";
+import { SEND_TIMEOUT_MS } from "@src/constants";
 
 export function CircularProgressWithLabel(
   props: CircularProgressProps & { value: number }

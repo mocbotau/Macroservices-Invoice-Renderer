@@ -22,9 +22,8 @@ import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
 import { SUPPORTED_LANGUAGES } from "@src/constants";
 import { Email, Phone, Delete } from "@mui/icons-material";
+import { SEND_TIMEOUT_MS } from "@src/constants";
 type CustomSendType = InvoiceSendOptions | "";
-
-export const SEND_TIMEOUT_MS = 10000;
 
 export default function ExportOptionsPanel(props: { ubl: string }) {
   const theme = useTheme();
