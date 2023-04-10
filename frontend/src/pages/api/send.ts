@@ -14,7 +14,7 @@ async function sendEmail(
   // Send doc over SMTP
   if (process.env.NODE_ENV !== "test") {
     const transporter = NodeMailer.createTransport({
-      service: "hotmail",
+      service: "gmail",
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
