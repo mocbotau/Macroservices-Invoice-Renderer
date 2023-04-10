@@ -16,6 +16,8 @@ export const DEFAULT_COUNTRY = "AU";
 export const DEFAULT_CURRENCY = "AUD";
 export const DEFAULT_REFERENCE = "Generic";
 
+export const SEND_TIMEOUT_MS = 10000;
+
 export const SUPPORTED_LANGUAGES = [
   { langCode: "en", language: "English" },
   { langCode: "ar", language: "Arabic" },

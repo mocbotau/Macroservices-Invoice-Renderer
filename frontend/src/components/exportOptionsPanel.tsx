@@ -14,6 +14,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
 import { Api } from "@src/Api";
 import { downloadFile } from "@src/utils";
 import { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions } from "@src/interfaces";
 import { SUPPORTED_LANGUAGES } from "@src/constants";
 import { Email, Phone, Delete } from "@mui/icons-material";
+import { SEND_TIMEOUT_MS } from "@src/constants";
 type CustomSendType = InvoiceSendOptions | "";
 
 export default function ExportOptionsPanel(props: { ubl: string }) {
@@ -38,6 +40,8 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
   const [invalidRecipient, setInvalidRecipient] = useState(false);
   const [iconFile, setIconFile] = useState<File>();
   const [exporting, setExporting] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendTimeout, setSendTimeout] = useState<number>(0);
 
   useEffect(() => {
     if (EmailValidator.validate(recipient)) {
@@ -50,6 +54,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
         setRecipient(`+61${recipient.substring(1)}`);
       }
       setSendType("sms");
+      setOutputType("xml");
       setInvalidRecipient(false);
     } else {
       setSendType("");
@@ -132,6 +137,7 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           setTextSuccess("Exported successfully!");
           downloadFile(response.blob, `export.${outputType}`);
         } else {
+          setSending(true);
           const { status } = await Api.sendInvoice(
             recipient,
             sendType as InvoiceSendOptions,
@@ -140,8 +146,14 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           );
           if (status !== 200) {
             setTextError("An error occurred when sending the invoice");
+            setSending(false);
           } else {
             setTextSuccess("Sent successfully!");
+            setSendTimeout(SEND_TIMEOUT_MS);
+            setTimeout(() => {
+              setSending(false);
+              setSendTimeout(null);
+            }, SEND_TIMEOUT_MS);
           }
         }
         setExporting(false);
@@ -151,6 +163,18 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
       setExporting(false);
     }
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSendTimeout(Math.max(sendTimeout - 1000, 0));
+    }, 1000);
+    if (sendTimeout === 0) {
+      clearInterval(interval);
+    }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [sendTimeout]);
 
   return (
     <Box
@@ -212,29 +236,35 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
             error={invalidRecipient}
           />
         </Box>
-
-        <FormControl fullWidth data-testid="output-type-form">
-          <InputLabel id="output-type-label">Output Type</InputLabel>
-          <Select
-            labelId="output-type-label"
-            value={outputType}
-            label="Output Type"
-            onChange={(e) => setOutputType(e.target.value)}
-          >
-            <MenuItem value="pdf" data-testid="pdf-option">
-              PDF
-            </MenuItem>
-            <MenuItem value="html" data-testid="html-option">
-              HTML
-            </MenuItem>
-            <MenuItem value="json" data-testid="json-option">
-              JSON
-            </MenuItem>
-            <MenuItem value="xml" data-testid="xml-option">
-              UBL
-            </MenuItem>
-          </Select>
-        </FormControl>
+        {sendType === "sms" ? (
+          <Alert severity="info">
+            This invoice will be sent as a summary to the specified recipient
+            above.
+          </Alert>
+        ) : (
+          <FormControl fullWidth data-testid="output-type-form">
+            <InputLabel id="output-type-label">Output Type</InputLabel>
+            <Select
+              labelId="output-type-label"
+              value={outputType}
+              label="Output Type"
+              onChange={(e) => setOutputType(e.target.value)}
+            >
+              <MenuItem value="pdf" data-testid="pdf-option">
+                PDF
+              </MenuItem>
+              <MenuItem value="html" data-testid="html-option">
+                HTML
+              </MenuItem>
+              <MenuItem value="json" data-testid="json-option">
+                JSON
+              </MenuItem>
+              <MenuItem value="xml" data-testid="xml-option">
+                XML
+              </MenuItem>
+            </Select>
+          </FormControl>
+        )}
 
         <Box display={["json", "xml"].includes(outputType) ? "none" : "block"}>
           <Box height={theme.spacing(2)} />
@@ -333,12 +363,16 @@ export default function ExportOptionsPanel(props: { ubl: string }) {
           fullWidth
           variant="contained"
           onClick={exportDocument}
-          disabled={exporting}
+          disabled={exportMethod === "download" ? exporting : sending}
           data-testid="export-button"
         >
-          {exportMethod === "download"
-            ? "Export"
-            : `Send ${sendType === "sms" ? "SMS" : "Email"}`}
+          {sending ? (
+            <CircularProgressWithLabel value={sendTimeout} />
+          ) : exportMethod === "download" ? (
+            "Export"
+          ) : (
+            `Send ${sendType === "sms" ? "SMS" : "Email"}`
+          )}
         </Button>
       </Box>
 
