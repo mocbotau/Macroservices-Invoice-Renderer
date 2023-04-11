@@ -20,6 +20,7 @@ import {
   DEFAULT_REFERENCE,
   DEFAULT_COUNTRY,
 } from "./constants";
+import { Api } from "./Api";
 
 /**
  * Prompts the user to upload a file
@@ -33,7 +34,7 @@ export async function uploadFile(fileType: string): Promise<File | string> {
     input.type = "file";
     input.accept = fileType;
 
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       if (!e || !e.target) {
         return res("Something went wrong. Please try again.");
       }
@@ -41,9 +42,27 @@ export async function uploadFile(fileType: string): Promise<File | string> {
       if (!target.files) {
         return res("Something went wrong. Please try again.");
       }
+
       const file = target.files[0];
-      if (!file.name.match(/(^[\w.]+)?\.csv$/)) {
+
+      if (fileType === ".csv" && !file.name.match(/(^[\w.]+)?\.csv$/)) {
         return res("Please upload a valid .csv file.");
+      } else if (fileType === ".xml") {
+        if (!file.name.match(/(^[\w.]+)?\.xml$/)) {
+          return res("Please upload a valid .xml file.");
+        }
+        const bytes = await file.arrayBuffer();
+        const checkUBL = await Api.renderToJSON(Buffer.from(bytes).toString());
+
+        if (checkUBL.status === 422) {
+          return res(
+            "The uploaded file does not follow the A-NZ-PEPPOL-BIS-3.0 specification."
+          );
+        } else if (checkUBL.status !== 200) {
+          return res(
+            "Something went wrong on our end. Please try again later."
+          );
+        }
       }
 
       res(file);
@@ -487,3 +506,13 @@ export function extractNumber(input: string): number {
   const tmp = Number(input.replace("$", ""));
   return isNaN(tmp) ? 0 : tmp;
 }
+
+// Code to read a file as a base64 encoded string
+// https://stackoverflow.com/questions/36280818/how-to-convert-file-to-base64-in-javascript
+export const toBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });

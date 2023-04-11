@@ -186,6 +186,9 @@ export class Api {
         format: "json",
       }),
     });
+    if (res.status !== 200) {
+      return { status: res.status, json: {} };
+    }
     return { status: res.status, json: await res.json() };
   }
 }

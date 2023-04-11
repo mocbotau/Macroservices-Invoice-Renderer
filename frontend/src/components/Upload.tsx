@@ -1,12 +1,12 @@
-import { Button, Grid, Typography, Box } from "@mui/material";
+import { Button, Grid, Typography, Box, Snackbar, Alert } from "@mui/material";
 import { SetStateType } from "@src/interfaces";
-import { Snackbar } from "./Snackbar";
 import { useEffect, useState } from "react";
 
 interface ComponentProps {
   setSnackbarMessage: SetStateType<string>;
   snackbarMessage: string;
-  handleUpload: () => Promise<void>;
+  handleCSVUpload: () => Promise<void>;
+  handleUBLUpload: () => Promise<void>;
 }
 
 /**
@@ -27,10 +27,18 @@ export default function Upload(props: ComponentProps): JSX.Element {
   return (
     <Box>
       <Snackbar
-        showSnackbar={showSnackbar}
-        setShowSnackbar={setShowSnackbar}
-        message={props.snackbarMessage}
-      />
+        open={showSnackbar}
+        autoHideDuration={3000}
+        onClose={() => {
+          setShowSnackbar(false);
+          props.setSnackbarMessage("");
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" data-testid="error-snackbar">
+          {props.snackbarMessage}
+        </Alert>
+      </Snackbar>
 
       <Grid
         container
@@ -38,17 +46,27 @@ export default function Upload(props: ComponentProps): JSX.Element {
         justifyContent="center"
         alignItems="center"
         spacing={4}
+        height="100%"
       >
-        <Grid item xs={3}>
+        <Grid item>
           <Typography variant="h4">INVOICE RENDERER</Typography>
         </Grid>
         <Grid item>
           <Button
             variant="contained"
-            onClick={props.handleUpload}
+            onClick={props.handleCSVUpload}
             data-testid="csv-upload-button"
+            sx={{ margin: 1 }}
           >
             Upload CSV file
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={props.handleUBLUpload}
+            data-testid="ubl-upload-button"
+            sx={{ margin: 1 }}
+          >
+            Upload UBL file
           </Button>
         </Grid>
       </Grid>

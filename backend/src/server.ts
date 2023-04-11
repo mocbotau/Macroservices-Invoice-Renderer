@@ -6,14 +6,19 @@ import logger from "@src/logger";
 import YAML from "yamljs";
 import { SwaggerTheme } from "swagger-themes";
 import swaggerUi from "swagger-ui-express";
+import path from "path";
+import express from "express";
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const host = process.env.HOST || "localhost";
 const theme = new SwaggerTheme("v3");
 
+app.use("/public", express.static("public"));
+
 const swaggerOptions = {
   customCss: theme.getBuffer("dark"),
-  customSiteTitle: "MACROSERVICES",
+  customSiteTitle: "API Docs | Macroservices",
+  customfavIcon: "/public/favicon.ico",
 };
 
 const v1JSON = YAML.load("docs/v1.yml");
@@ -45,6 +50,10 @@ app.get("/docs/v3", (req, res) => {
 // Redirect /docs to latest
 app.get("/docs", (req, res) => {
   res.redirect("/docs/v3");
+});
+
+app.get("/docs/getting-started", (req, res) => {
+  res.sendFile(path.join(__dirname, "/gettingStarted.html"));
 });
 
 app.listen(port, host, () => {
