@@ -13,10 +13,10 @@ export default withIronSessionApiRoute(register_handler, IronOptions);
  * This function will return:
  * 200 - When registration is successful
  * 405 - If any request is not a POST request
- * 400 - If the email is empty
- * 400 - If the password is empty
+ * 400 - If any of the fields are empty
  * 400 - If the email is not a valid email
- * 409 - If the email  already exists
+ * 400 - If the password is less than 6 characters long
+ * 409 - If the email already exists
  * @param {NextApiRequest} - The Next API request
  * @param {NextApiResponse} - The Next API response
  * @returns {void}
@@ -24,16 +24,22 @@ export default withIronSessionApiRoute(register_handler, IronOptions);
 export async function register_handler(
   req: NextApiRequest,
   res: NextApiResponse
-) {
+): Promise<void> {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Only POST requests allowed" });
   const body = req.body;
-  if (!body.email || !body.password) {
-    res.status(400).json({ error: "Email/Password can not be empty." });
+  if (!body.email || !body.password || !body.name) {
+    res.status(400).json({ error: "Fields cannot be empty." });
     return;
   }
   if (!EmailValidator.validate(body.email)) {
     res.status(400).json({ error: "Email is not a valid form." });
+    return;
+  }
+  if (body.password < 6) {
+    res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters long." });
     return;
   }
   const hashedPassword = createHash("sha256")
@@ -45,9 +51,10 @@ export async function register_handler(
   if (user) {
     res.status(409).json({ error: "User already exists." });
   } else {
-    await DBRun("INSERT INTO Users (Email, Password) VALUES (?,?)", [
+    await DBRun("INSERT INTO Users (Email, Password, Name) VALUES (?,?,?)", [
       body.email,
       hashedPassword,
+      body.name,
     ]);
     const session = getSession(req);
     session.user = {

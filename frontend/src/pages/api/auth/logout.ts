@@ -17,7 +17,7 @@ export default withIronSessionApiRoute(logout_handler, IronOptions);
 export async function logout_handler(
   req: NextApiRequest,
   res: NextApiResponse
-) {
+): Promise<void> {
   if (req.method !== "GET")
     return res.status(405).json({ error: "Only GET requests allowed" });
   await getSession(req).destroy();

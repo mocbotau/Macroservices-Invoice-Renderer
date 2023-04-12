@@ -128,11 +128,15 @@ export class Api {
    * Registers a user
    * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
-  static async register(email: string, password: string): Promise<APIResponse> {
+  static async register(
+    email: string,
+    password: string,
+    name: string
+  ): Promise<APIResponse> {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, name }),
     });
     return { status: res.status, json: await res.json() };
   }

@@ -8,9 +8,16 @@ type AppProps = {
 
 export default function Layout(props: AppProps) {
   return (
-    <Box sx={{ height: "100vh", width: "100vw" }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        minWidth: "100vw",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <NavBar />
-      <main className="main">{props.children}</main>
+      <main style={{ height: "calc(100vh - 70px)" }}>{props.children}</main>
     </Box>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { Box, Drawer, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
 import {
@@ -81,8 +81,8 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
       <Box
         sx={{
           display: "flex",
-          height: "100vh",
-          width: "100vw",
+          height: "100%",
+          width: "100%",
         }}
       >
         <Box
@@ -121,6 +121,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
         <Box
           sx={{
             width: drawerWidth,
+            maxHeight: "100%",
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,

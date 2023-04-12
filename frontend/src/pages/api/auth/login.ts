@@ -18,7 +18,10 @@ export default withIronSessionApiRoute(login_handler, IronOptions);
  * @param {NextApiResponse} - The Next API response
  * @returns {void}
  */
-export async function login_handler(req: NextApiRequest, res: NextApiResponse) {
+export async function login_handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Only POST requests allowed" });
   const body = req.body;
