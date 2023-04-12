@@ -4,6 +4,8 @@ info:
   description: |-
     This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
 
+    **If you are unsure of how to get started using our service, check out our [Getting Started Guide](https://macroservices.masterofcubesau.com/docs/getting-started).**
+
     Please note that the following components must be present within the UBL invoice in order for an invoice to be generated:
     * AccountingSupplierParty
     * AccountingCustomerParty
@@ -180,8 +182,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RenderJSONResponse"
-        "400":
-          $ref: "#/components/responses/InvalidInputs"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":

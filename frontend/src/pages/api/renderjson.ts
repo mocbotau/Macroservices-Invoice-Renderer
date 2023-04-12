@@ -13,6 +13,7 @@ export default async function handler(
   const buffer = Buffer.from(arr);
 
   res.setHeader("Content-Type", resp.headers.get("content-type") as string);
+  res.status(resp.status);
   Readable.from(buffer).pipe(res);
 }
 

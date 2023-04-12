@@ -11,6 +11,7 @@ import {
 import { Api } from "@src/Api";
 import { useRouter } from "next/router";
 import { LoadingButton } from "@mui/lab";
+import { NextSeo } from "next-seo";
 
 /**
  * Home (Index) page. Will redirect to /login if already signed in. Otherwise redirect to /editor
@@ -55,6 +56,7 @@ export default function Login() {
   // Adapted from https://frontendshape.com/post/react-mui-5-login-page-example
   return (
     <>
+      <NextSeo title="Login" />
       <Grid style={{ minHeight: "100vh" }}>
         <Container maxWidth="xs">
           <Box
