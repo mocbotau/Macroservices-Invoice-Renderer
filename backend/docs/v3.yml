@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Macroservices Invoice Renderer API v2
+  title: Macroservices Invoice Renderer API v3
   description: |-
     This document outlines the specifications behind the Invoice Renderer for F14A-Macroservices for SENG2021 T1. 
 
@@ -15,44 +15,22 @@ info:
     * TaxTotal
     * LegalMonetaryTotal
 
-    Supported Languages:
-    * Arabic - ar 
-    * Chinese - zh
-    * English - en
-    * French - fr
-    * German - de
-    * Hindi - hi
-    * Italian - it
-    * Japanese - ja
-    * Korean - ko
-    * Russian - ru
-    * Spanish - es
-    * Thai - th
-
     Additionally, if you are looking to input a UBL via JSON, please note that per the JSON specification, the UBL string must be sanitised and serialised. This means that all double quotes (") must be replaced with single quotes ('), and new lines must be removed. 
     This can be done in Visual Studio Code through the Command Palette (Ctrl + Shift + P) > Join Lines.
 
-    v2 Changelog:
-    - Added multipart request bodies to support form uploads.
-    - Added v2 and v1 docs (/docs/v1 and /docs/v2). Also add latest docs endpoint (/docs)
-    - Added additional languages supported 
-    - Rendering routes now supports Multipart to allow for users to upload their files directly. This involves checking for the right kind of file etc.
-      - Backwards compatibility is paramount, and thus the existing input method of JSON still exists in v2.
-    - Support for uploading a custom business icon to your invoice. This will embed the business icon into the invoice for rendered PDFs and HTMLs, if required.
-    - The render to HTML route now no longer returns a 200 error, when something fails (such as a supposed 422 error). This used to fail on many instances when an invalid UBL that was missing components was passed into the API.
-    - Phone numbers are now read properly inside of the invoice. Previously, any inputted phone numbers would be converted into a number and thus lose any leading zeros.
-    - Fixed some minor alignment issues on the HTML rendering page.
-    - Changed some default values that would be created if fields were not present.
-    - Added support for translation of the country name, as well as different currency codes being displayed based on the currency code parsed in.
+    v3 Changelog:
+    - Added routes for listing available languages and styles.
 
     Some useful links:
     - The [Invoice Renderer](https://github.com/cseteaching-unsw-edu-au/F14A-Macroservices-Invoice-Renderer) repository
-  version: 2.0.0
+  version: 3.0.0
 servers:
-  - url: https://macroservices.masterofcubesau.com/api/v2
+  - url: https://macroservices.masterofcubesau.com/api/v3
 tags:
   - name: Generate Key
     description: Generate API key
+  - name: Information
+    description: Parameter Information
   - name: Render
     description: Invoice Rendering
   - name: Healthcheck
@@ -83,6 +61,53 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthcheckResponse"
+  /invoice/styles:
+    get:
+      tags:
+        - Information
+      summary: Retrieve a list of available styles.
+      description: |-
+        Retrieves a list of friendly names and IDs of styles available to render.
+        There are 5 styles to choose from which are currently implemented.
+          * Style ID 0 - Default: blue themed title headings for aesthetic appeal, and a moderate level of detail
+          * Style ID 1 - Landscape: black and white landscape invoice with moderate detail for users who find the default layout too horizontally cramped
+          * Style ID 2 - Detailed: as with Landscape style, but with greater detail for accountants and other professionals to visualise relevant data
+          * Style ID 3 - Summary: black and white portrait invoice with minimal detail for shorter files and quicker understanding of invoice items
+          * Style ID 4 - Default High Contrast: black and white version of Default style for vision impaired users (or those with only black and white printing)
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StylesResponse"
+  /invoice/languages:
+    get:
+      tags:
+        - Information
+      summary: Retrieve a list of available languages.
+      description: |-
+        Retrieves a list of friendly names and codes of languages available.
+        The languages currently supported are:
+          * Arabic - ar 
+          * Chinese - zh
+          * English - en
+          * French - fr
+          * German - de
+          * Hindi - hi
+          * Italian - it
+          * Japanese - ja
+          * Korean - ko
+          * Russian - ru
+          * Spanish - es
+          * Thai - th
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LanguagesResponse"
   /invoice/render/pdf:
     post:
       tags:
@@ -90,12 +115,6 @@ paths:
       summary: Render a UBL XML file into a PDF file.
       description: |
         Given a UBL XML file, renders into a human readable visualisation in PDF form.
-          There are 5 styles to choose from which are currently implemented.
-          * Style ID 0 - Default: blue themed title headings for aesthetic appeal, and a moderate level of detail
-          * Style ID 1 - Landscape: black and white landscape invoice with moderate detail for users who find the default layout too horizontally cramped
-          * Style ID 2 - Detailed: as with Landscape style, but with greater detail for accountants and other professionals to visualise relevant data
-          * Style ID 3 - Summary: black and white portrait invoice with minimal detail for shorter files and quicker understanding of invoice items
-          * Style ID 4 - Default High Contrast: black and white version of Default style for vision impaired users (or those with only black and white printing)
       security:
         - APIKey: []
       requestBody:
@@ -128,12 +147,7 @@ paths:
       summary: Render a UBL XML file and returns HTML.
       description: |-
         Given a UBL XML file, renders into a human readable visualisation in HTML form.
-          There are 5 styles to choose from which are currently implemented.
-          * Style ID 0 - Default: blue themed title headings for aesthetic appeal, and a moderate level of detail
-          * Style ID 1 - Landscape: black and white landscape invoice with moderate detail for users who find the default layout too horizontally cramped
-          * Style ID 2 - Detailed: as with Landscape style, but with greater detail for accountants and other professionals to visualise relevant data
-          * Style ID 3 - Summary: black and white portrait invoice with minimal detail for shorter files and quicker understanding of invoice items
-          * Style ID 4 - Default High Contrast: black and white version of Default style for vision impaired users (or those with only black and white printing)
+          Styles can be obtained via the /invoice/styles route.
       security:
         - APIKey: []
       requestBody:
@@ -219,7 +233,7 @@ components:
           maximum: 4
         language:
           type: string
-          description: The language to render the invoice in. Please refer to the beginning of this documentation page to see all the available languages.
+          description: The language to render the invoice in. Please refer to the /invoice/languages route for a list of supported languages.
           enum:
             - "en"
             - "zh"
@@ -263,7 +277,7 @@ components:
           maximum: 4
         language:
           type: string
-          description: The language to render the invoice in. Please refer to the beginning of this documentation page to see all the available languages.
+          description: The language to render the invoice in. Please refer to the /invoice/languages route for a list of supported languages.
           enum:
             - "en"
             - "zh"
@@ -305,6 +319,28 @@ components:
       properties:
         message:
           type: string
+    StylesResponse:
+      type: object
+      properties:
+        styles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+    LanguagesResponse:
+      type: object
+      properties:
+        languages:
+          type: object
+          properties:
+            langCode:
+              type: string
+            language:
+              type: string
     RenderPDFResponse:
       type: string
       format: binary

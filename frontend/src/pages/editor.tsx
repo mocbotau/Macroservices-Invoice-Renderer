@@ -4,6 +4,7 @@ import ExportOptions from "@src/components/exportOptions";
 import { CssBaseline } from "@mui/material";
 import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
+import { NextSeo } from "next-seo";
 
 export default function Editor() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -11,7 +12,7 @@ export default function Editor() {
   const [file, setFile] = useState<File>();
   const [loadedXML, setLoadedXML] = useState("");
 
-  const handleUpload = async () => {
+  const handleCSVUpload = async () => {
     const f = await uploadFile(".csv");
 
     if (typeof f === "string") {
@@ -22,8 +23,21 @@ export default function Editor() {
     }
   };
 
+  const handleUBLUpload = async () => {
+    const f = await uploadFile(".xml");
+
+    if (typeof f === "string") {
+      setSnackbarMessage(f);
+    } else {
+      const bytes = await f.arrayBuffer();
+      setLoadedXML(Buffer.from(bytes).toString());
+      setUploadSuccess(true);
+    }
+  };
+
   return (
     <>
+      <NextSeo title="Editor" />
       <CssBaseline />
 
       {loadedXML ? (
@@ -37,7 +51,8 @@ export default function Editor() {
         <Upload
           snackbarMessage={snackbarMessage}
           setSnackbarMessage={setSnackbarMessage}
-          handleUpload={handleUpload}
+          handleCSVUpload={handleCSVUpload}
+          handleUBLUpload={handleUBLUpload}
         ></Upload>
       )}
     </>

@@ -4,6 +4,8 @@ import React from "react";
 import { AppProps } from "next/app";
 import "@src/styles/handsontableStyles.css";
 import Layout from "@src/components/Layout/Layout";
+import Head from "next/head";
+import { DefaultSeo } from "next-seo";
 
 export default function App({ Component, pageProps }: AppProps) {
   const darkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -20,11 +22,18 @@ export default function App({ Component, pageProps }: AppProps) {
     [darkMode]
   );
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Layout>
+    <>
+      <Head>
+        <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+      </Head>
+      <DefaultSeo
+        titleTemplate="%s | Macroservices"
+        defaultTitle="App | Macroservices"
+      />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Component {...pageProps} />
-      </Layout>
-    </ThemeProvider>
+      </ThemeProvider>
+    </>
   );
 }
