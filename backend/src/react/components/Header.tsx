@@ -12,6 +12,7 @@ import Image from "./base/Image";
 import { i18n } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Show } from "./Show";
+import { RenderingContexts, renderingContext } from "./base/renderingContext";
 
 /**
  * This component renders the header for the invoice file.
@@ -25,13 +26,18 @@ export const Header = (props: {
   i18next: i18n;
 }) => {
   const userStyle = extraStyles[useContext(styleContext)];
+  const renderType = useContext(renderingContext);
   const { t: translateHook } = useTranslation();
   return (
     <View>
       {props.icon && (
         <Image
           src={props.icon}
-          style={userStyle["icon"]}
+          style={
+            userStyle[
+              renderType === RenderingContexts.Html ? "iconHtml" : "icon"
+            ]
+          }
           data-testid={"icon"}
         />
       )}
