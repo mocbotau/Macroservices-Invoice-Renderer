@@ -102,7 +102,12 @@ export default function Editor() {
         zIndex={999}
       >
         <IconButton
-          sx={{ backgroundColor: theme.palette.background.default }}
+          sx={{
+            backgroundColor: theme.palette.background.default,
+            ":hover": {
+              backgroundColor: theme.palette.background.default,
+            },
+          }}
           onClick={goBack}
         >
           <ArrowBack />
