@@ -1,3 +1,5 @@
+import { SAVE_FILE_KEY, SAVE_UBL_KEY } from "./constants";
+
 /**
  * Saves a file locally
  *
@@ -6,7 +8,7 @@
 export async function saveFile(f: File): Promise<void> {
   const fText = await f.text();
 
-  localStorage.setItem("macroservices-save-file", fText);
+  localStorage.setItem(SAVE_FILE_KEY, fText);
 }
 
 /**
@@ -16,7 +18,7 @@ export async function saveFile(f: File): Promise<void> {
  * not exist
  */
 export async function loadFile(): Promise<File | null> {
-  const fText = localStorage.getItem("macroservices-save-file");
+  const fText = localStorage.getItem(SAVE_FILE_KEY);
 
   if (fText === null) {
     return null;
@@ -26,12 +28,19 @@ export async function loadFile(): Promise<File | null> {
 }
 
 /**
+ * Clears the stored file
+ */
+export async function clearFile(): Promise<void> {
+  localStorage.removeItem(SAVE_FILE_KEY);
+}
+
+/**
  * Saves UBL locally
  *
  * @param {string} ubl - UBL to save
  */
 export async function saveUBL(ubl: string): Promise<void> {
-  localStorage.setItem("macroservices-save-ubl", ubl);
+  localStorage.setItem(SAVE_UBL_KEY, ubl);
 }
 
 /**
@@ -41,7 +50,14 @@ export async function saveUBL(ubl: string): Promise<void> {
  * not exist
  */
 export async function loadUBL(): Promise<string | null> {
-  const ubl = localStorage.getItem("macroservices-save-ubl");
+  const ubl = localStorage.getItem(SAVE_UBL_KEY);
 
   return ubl;
+}
+
+/**
+ * Clears the stored UBL
+ */
+export async function clearUBL(): Promise<void> {
+  localStorage.removeItem(SAVE_UBL_KEY);
 }

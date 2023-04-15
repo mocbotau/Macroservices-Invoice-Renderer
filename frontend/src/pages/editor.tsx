@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { uploadFile } from "@src/utils";
 import ExportOptions from "@src/components/exportOptions";
-import { CssBaseline } from "@mui/material";
+import { Box, CssBaseline, IconButton, useTheme } from "@mui/material";
+import ArrowBack from "@mui/icons-material/ArrowBack";
 import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 import { NextSeo } from "next-seo";
-import { loadFile, loadUBL, saveFile, saveUBL } from "@src/persistence";
+import {
+  clearFile,
+  clearUBL,
+  loadFile,
+  loadUBL,
+  saveFile,
+  saveUBL,
+} from "@src/persistence";
 
 export default function Editor() {
+  const theme = useTheme();
+
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [file, setFile] = useState<File>();
@@ -63,6 +73,17 @@ export default function Editor() {
     }
   };
 
+  const goBack = () => {
+    if (loadedXML) {
+      setLoadedXML("");
+      clearUBL();
+    } else if (file) {
+      setFile(null);
+      setUploadSuccess(false);
+      clearFile();
+    }
+  };
+
   useEffect(() => {
     loadProgress();
     loadXMLData();
@@ -72,6 +93,21 @@ export default function Editor() {
     <>
       <NextSeo title="Editor" />
       <CssBaseline />
+
+      <Box
+        position="fixed"
+        ml={1}
+        mt={1}
+        display={loadedXML || uploadSuccess ? "block" : "none"}
+        zIndex={999}
+      >
+        <IconButton
+          sx={{ backgroundColor: theme.palette.background.default }}
+          onClick={goBack}
+        >
+          <ArrowBack />
+        </IconButton>
+      </Box>
 
       {/* Create full height app */}
       {/* https://gist.github.com/dmurawsky/d45f068097d181c733a53687edce1919 */}
