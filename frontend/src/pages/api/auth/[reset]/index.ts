@@ -74,7 +74,7 @@ export async function reset_password_handler(
       const code = uuidv4();
       await sendResetEmail(
         req.body.email,
-        `http://${req.headers.host}/reset/${code}`
+        `${process.env.FRONTEND_URL}/reset/${code}`
       );
       await DBRun("INSERT INTO ResetCodes (Email, Code) VALUES (?, ?)", [
         req.body.email,
