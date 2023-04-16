@@ -103,6 +103,34 @@ export class Api {
   }
 
   /**
+   * Sends a password reset link to the email provided. Always returns a 202 as to not expose whether the account exists
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async requestResetPassword(email: string): Promise<APIResponse> {
+    const res = await fetch("/api/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    return { status: res.status, json: await res.json() };
+  }
+  /**
+   * Given a code, reset the users' password
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async resetPassword(
+    code: string,
+    password: string
+  ): Promise<APIResponse> {
+    const res = await fetch(`/api/reset/${code}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    return { status: res.status, json: await res.json() };
+  }
+
+  /**
    * Logs a user into the app
    * @returns {Promise<APIResponse>} - The status and JSON of the return
    */

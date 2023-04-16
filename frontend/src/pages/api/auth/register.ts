@@ -54,6 +54,7 @@ export default async function register_handler(
     ]);
     const session: Session = {
       email: body.email as string,
+      name: body.name as string,
     };
     res.status(200).json({ user: session });
   }

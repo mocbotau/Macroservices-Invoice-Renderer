@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -18,6 +17,7 @@ import {
   Snackbar,
   Tab,
   Tabs,
+  Button,
 } from "@mui/material";
 import { Api } from "@src/Api";
 import { useRouter } from "next/router";
@@ -25,8 +25,11 @@ import { LoadingButton } from "@mui/lab";
 import { NextSeo } from "next-seo";
 import { TabPanel } from "@src/components/TabPanel";
 import * as EmailValidator from "email-validator";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { GitHub, Visibility, VisibilityOff } from "@mui/icons-material";
 import { signIn } from "next-auth/react";
+import RequestResetPassword from "@src/components/Login/RequestResetPassword";
+import GoogleIcon from "@mui/icons-material/Google";
+import ThirdPartySignInButton from "@src/components/Login/ThirdPartySignInButton";
 
 export default function SignInSide() {
   const [textError, setTextError] = useState<string | null | undefined>(null);
@@ -37,6 +40,7 @@ export default function SignInSide() {
   const [registerNameError, setRegisterNameError] = useState("");
   const [registerEmailError, setRegisterEmailError] = useState("");
   const [registerPasswordError, setRegisterPasswordError] = useState("");
+  const [showResetPassword, setShowResetPassword] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -164,155 +168,192 @@ export default function SignInSide() {
             style={{ minHeight: "100%" }}
           >
             <Grid item xs={3} width="50%">
-              <Tabs
-                value={tabValue}
-                onChange={handleTabChange}
-                variant="fullWidth"
-                textColor="primary"
-                indicatorColor="primary"
-                sx={{ paddingBottom: 2 }}
-              >
-                <Tab label="Login" />
-                <Tab label="Register" />
-              </Tabs>
-              <TabPanel value={tabValue} index={0}>
-                <Typography component="h1" variant="h5">
-                  Welcome Back!
-                </Typography>
-                <Box
-                  component="form"
-                  noValidate
-                  onSubmit={handleLogin}
-                  sx={{ mt: 1 }}
-                >
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    error={loginEmailError.length > 0}
-                    helperText={loginEmailError}
-                    id="login_email"
-                    label="Email Address"
-                    name="login_email"
-                    autoComplete="email"
-                    autoFocus
-                    onFocus={() => setLoginEmailError("")}
-                  />
-                  <FormControl fullWidth variant="outlined" sx={{ marginY: 2 }}>
-                    <InputLabel htmlFor="login_password">Password</InputLabel>
-                    <OutlinedInput
-                      id="login_password"
-                      label="Password"
-                      autoComplete="current-password"
-                      type={showPassword ? "text" : "password"}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                  </FormControl>
-                  <LoadingButton
-                    type="submit"
-                    data-testid="LoginButton"
-                    fullWidth
-                    variant="contained"
-                    sx={{ my: 2 }}
-                    loading={loadingLogin}
+              {showResetPassword ? (
+                <RequestResetPassword
+                  setShowResetPassword={setShowResetPassword}
+                />
+              ) : (
+                <>
+                  <Tabs
+                    value={tabValue}
+                    onChange={handleTabChange}
+                    variant="fullWidth"
+                    textColor="primary"
+                    indicatorColor="primary"
+                    sx={{ paddingBottom: 2 }}
                   >
-                    Login
-                  </LoadingButton>
-                  <Grid container>
-                    <Grid item xs>
-                      <Link href="#" variant="body2">
-                        Forgot password?
-                      </Link>
-                    </Grid>
-                    <Grid item></Grid>
-                  </Grid>
-                </Box>
-              </TabPanel>
-              <TabPanel value={tabValue} index={1}>
-                <Typography component="h1" variant="h5">
-                  Welcome!
-                </Typography>
-                <Box
-                  component="form"
-                  noValidate
-                  onSubmit={handleRegister}
-                  sx={{ mt: 1 }}
-                >
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    error={registerNameError.length > 0}
-                    helperText={registerNameError}
-                    onFocus={() => setRegisterNameError("")}
-                    id="register_name"
-                    label="Name"
-                    name="register_name"
-                    autoFocus
-                  />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    error={registerEmailError.length > 0}
-                    helperText={registerEmailError}
-                    onFocus={() => setRegisterEmailError("")}
-                    id="register_email"
-                    label="Email Address"
-                    name="register_email"
-                    autoComplete="email"
-                  />
-                  <FormControl fullWidth variant="outlined" sx={{ marginY: 2 }}>
-                    <InputLabel htmlFor="register_password">
-                      Password
-                    </InputLabel>
-                    <OutlinedInput
-                      id="register_password"
-                      label="Password"
-                      type={showPassword ? "text" : "password"}
-                      error={registerPasswordError.length > 0}
-                      onFocus={() => setRegisterPasswordError("")}
-                      autoComplete="current-password"
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
+                    <Tab label="Login" />
+                    <Tab label="Register" />
+                  </Tabs>
+                  <TabPanel value={tabValue} index={0}>
+                    <Typography component="h1" variant="h5">
+                      Welcome Back!
+                    </Typography>
+                    <Box
+                      component="form"
+                      noValidate
+                      onSubmit={handleLogin}
+                      sx={{ mt: 1 }}
+                    >
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        error={loginEmailError.length > 0}
+                        helperText={loginEmailError}
+                        id="login_email"
+                        label="Email Address"
+                        name="login_email"
+                        autoComplete="email"
+                        autoFocus
+                        onFocus={() => setLoginEmailError("")}
+                      />
+                      <FormControl
+                        fullWidth
+                        variant="outlined"
+                        sx={{ marginY: 2 }}
+                      >
+                        <InputLabel htmlFor="login_password">
+                          Password
+                        </InputLabel>
+                        <OutlinedInput
+                          id="login_password"
+                          label="Password"
+                          autoComplete="current-password"
+                          type={showPassword ? "text" : "password"}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                      <LoadingButton
+                        type="submit"
+                        data-testid="LoginButton"
+                        fullWidth
+                        variant="contained"
+                        sx={{ my: 2 }}
+                        loading={loadingLogin}
+                      >
+                        Login
+                      </LoadingButton>
+                      <ThirdPartySignInButton
+                        icon={<GoogleIcon />}
+                        name="Google"
+                        onClick={() => signIn("google")}
+                      />
+                      {/* <ThirdPartySignInButton icon={<GitHub />} name="GitHub" /> */}
+                      <Grid container>
+                        <Grid item xs>
+                          <Button
+                            variant="text"
+                            onClick={() => setShowResetPassword(true)}
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                    <FormHelperText error={registerPasswordError.length > 0}>
-                      {registerPasswordError}
-                    </FormHelperText>
-                  </FormControl>
-                  <LoadingButton
-                    type="submit"
-                    data-testid="RegisterButton"
-                    fullWidth
-                    variant="contained"
-                    sx={{ my: 2 }}
-                    loading={loadingRegister}
-                  >
-                    Register
-                  </LoadingButton>
-                </Box>
-              </TabPanel>
+                            Forgot password?
+                          </Button>
+                        </Grid>
+                        <Grid item></Grid>
+                      </Grid>
+                    </Box>
+                  </TabPanel>
+                  <TabPanel value={tabValue} index={1}>
+                    <Typography component="h1" variant="h5">
+                      Welcome!
+                    </Typography>
+                    <Box
+                      component="form"
+                      noValidate
+                      onSubmit={handleRegister}
+                      sx={{ mt: 1 }}
+                    >
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        error={registerNameError.length > 0}
+                        helperText={registerNameError}
+                        onFocus={() => setRegisterNameError("")}
+                        id="register_name"
+                        label="Name"
+                        name="register_name"
+                        autoFocus
+                      />
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        error={registerEmailError.length > 0}
+                        helperText={registerEmailError}
+                        onFocus={() => setRegisterEmailError("")}
+                        id="register_email"
+                        label="Email Address"
+                        name="register_email"
+                        autoComplete="email"
+                      />
+                      <FormControl
+                        fullWidth
+                        variant="outlined"
+                        sx={{ marginY: 2 }}
+                      >
+                        <InputLabel htmlFor="register_password">
+                          Password
+                        </InputLabel>
+                        <OutlinedInput
+                          id="register_password"
+                          label="Password"
+                          type={showPassword ? "text" : "password"}
+                          error={registerPasswordError.length > 0}
+                          onFocus={() => setRegisterPasswordError("")}
+                          autoComplete="current-password"
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                        />
+                        <FormHelperText
+                          error={registerPasswordError.length > 0}
+                        >
+                          {registerPasswordError}
+                        </FormHelperText>
+                      </FormControl>
+                      <LoadingButton
+                        type="submit"
+                        data-testid="RegisterButton"
+                        fullWidth
+                        variant="contained"
+                        sx={{ my: 2 }}
+                        loading={loadingRegister}
+                      >
+                        Register
+                      </LoadingButton>
+                    </Box>
+                  </TabPanel>
+                </>
+              )}
             </Grid>
           </Grid>
         </Grid>

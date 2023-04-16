@@ -13,14 +13,14 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import MacroLogo from "@public/MacroservicesLogo2.png";
 import Image from "next/image";
-import { Api } from "@src/Api";
 import { useRouter } from "next/router";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["Dashboard", "About Us"];
 
 function NavBar() {
   const router = useRouter();
+  const { data } = useSession();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -49,6 +49,36 @@ function NavBar() {
     signOut();
     router.push("/");
   };
+
+  function stringToColor(string: string) {
+    let hash = 0;
+
+    /* eslint-disable no-bitwise */
+    for (let i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    let color = "#";
+
+    for (let i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+    /* eslint-enable no-bitwise */
+
+    return color;
+  }
+
+  function stringAvatar(name: string) {
+    return {
+      sx: {
+        bgcolor: stringToColor(name),
+      },
+      children: `${name.split(" ")[0][0].toUpperCase()}${
+        name.split(" ").length <= 1 ? "" : name.split(" ")[1][0].toUpperCase()
+      }`,
+    };
+  }
 
   return (
     <AppBar position="static" id="navbar">
@@ -118,33 +148,42 @@ function NavBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <MenuItem onClick={handleLogout}>
-                <Typography textAlign="center">Logout</Typography>
-              </MenuItem>
-            </Menu>
-          </Box>
+          {router.pathname !== "/login" && (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  {data ? (
+                    <Avatar
+                      alt={data.user.name}
+                      {...stringAvatar(data.user.name)}
+                    />
+                  ) : (
+                    <Typography>LOGIN</Typography>
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem onClick={handleLogout}>
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

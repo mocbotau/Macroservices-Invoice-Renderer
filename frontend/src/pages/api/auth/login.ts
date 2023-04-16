@@ -25,7 +25,7 @@ export default async function login_handler(
     .update(body.password)
     .digest("hex");
   const user = await DBGet(
-    "SELECT Email, Password FROM Users WHERE Email = ?",
+    "SELECT Email, Password, Name FROM Users WHERE Email = ?",
     [body.email]
   );
   if (!user) {
@@ -35,6 +35,7 @@ export default async function login_handler(
   } else {
     const session: Session = {
       email: user.Email as string,
+      name: user.Name as string,
     };
     res.status(200).json({ user: session });
   }

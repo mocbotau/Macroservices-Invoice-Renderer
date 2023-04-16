@@ -1,6 +1,6 @@
-import { Api } from "@src/Api";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
   providers: [
@@ -22,6 +22,13 @@ export const authOptions = {
 
         const user = (await res.json()).user;
         return user || null;
+      },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      httpOptions: {
+        timeout: 40000,
       },
     }),
   ],

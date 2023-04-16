@@ -13,7 +13,6 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const darkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
   const theme = React.useMemo(
     () =>
       createTheme({
