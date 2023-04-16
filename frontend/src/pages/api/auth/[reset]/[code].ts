@@ -2,6 +2,16 @@ import { DBGet, DBRun } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
 
+/**
+ * This route will reset a users' password given a valid code
+ * This route returns:
+ * 405 - When the method is anything other than POST
+ * 400 - When a code or password is not passed
+ * 200 - On password reset success
+ * @param {NextApiRequest} req - The request object
+ * @param {NextApiResponse} res  -The response object
+ * @returns {void}
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

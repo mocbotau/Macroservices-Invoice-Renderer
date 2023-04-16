@@ -8,6 +8,12 @@ import { DBGet, DBRun } from "@src/utils/DBHandler";
 
 export default withIronSessionApiRoute(reset_password_handler, IronOptions);
 
+/**
+ *  This function sends the password reset email to the given email
+ * @param {string} toEmail - the email to send the password request email to
+ * @param {string} url - the password reset link
+ * @returns {object} - the status and error (if applicable)
+ */
 async function sendResetEmail(toEmail: string, url: string) {
   if (process.env.NODE_ENV !== "test") {
     const transporter = NodeMailer.createTransport({
@@ -38,6 +44,16 @@ async function sendResetEmail(toEmail: string, url: string) {
   return { success: true, error: null };
 }
 
+/**
+ * This route will send a password request email if that email is a valid user.
+ * This route returns:
+ * 405 - When the method is anything other than POST
+ * 400 - When an email is not provided
+ * 202 - In every other case
+ * @param {NextApiRequest} req - The request object
+ * @param {NextApiResponse} res  -The response object
+ * @returns {void}
+ */
 export async function reset_password_handler(
   req: NextApiRequest,
   res: NextApiResponse
