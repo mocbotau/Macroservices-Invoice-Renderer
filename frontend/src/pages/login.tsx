@@ -7,6 +7,7 @@ import {
   Container,
   Snackbar,
   Alert,
+  Link,
 } from "@mui/material";
 import { Api } from "@src/Api";
 import { useRouter } from "next/router";
@@ -90,26 +91,31 @@ export default function Login() {
                 fullWidth
                 required
               />
-              <Box sx={{ float: "right" }}>
-                <LoadingButton
-                  type="button"
-                  data-testid="RegisterButton"
-                  onClick={handleRegister}
-                  variant="outlined"
-                  sx={{ mt: 2, ml: 2 }}
-                  loading={loadingRegister}
-                >
-                  Register
-                </LoadingButton>
-                <LoadingButton
-                  type="submit"
-                  data-testid="LoginButton"
-                  variant="contained"
-                  sx={{ mt: 2, ml: 2 }}
-                  loading={loadingLogin}
-                >
-                  Login
-                </LoadingButton>
+              <Box sx={{ display: "flex" }}>
+                <Box>
+                  <Link href="/reset">Forgot your password?</Link>
+                </Box>
+                <Box sx={{ flexGrow: 1 }}>
+                  <LoadingButton
+                    type="button"
+                    data-testid="RegisterButton"
+                    onClick={handleRegister}
+                    variant="outlined"
+                    sx={{ mt: 2, ml: 2 }}
+                    loading={loadingRegister}
+                  >
+                    Register
+                  </LoadingButton>
+                  <LoadingButton
+                    type="submit"
+                    data-testid="LoginButton"
+                    variant="contained"
+                    sx={{ mt: 2, ml: 2 }}
+                    loading={loadingLogin}
+                  >
+                    Login
+                  </LoadingButton>
+                </Box>
               </Box>
             </Box>
           </Box>
