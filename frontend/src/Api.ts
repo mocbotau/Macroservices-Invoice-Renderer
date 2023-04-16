@@ -114,16 +114,7 @@ export class Api {
     });
     return { status: res.status, json: await res.json() };
   }
-  /**
-   * Logs a user out (clears session)
-   * @returns {Promise<APIResponse>} - The status and JSON of the return
-   */
-  static async logout(): Promise<APIResponse> {
-    const res = await fetch("/api/auth/logout", {
-      method: "GET",
-    });
-    return { status: res.status, json: await res.json() };
-  }
+
   /**
    * Registers a user
    * @returns {Promise<APIResponse>} - The status and JSON of the return
@@ -138,6 +129,7 @@ export class Api {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, name }),
     });
+    console.log("a", res);
     return { status: res.status, json: await res.json() };
   }
 

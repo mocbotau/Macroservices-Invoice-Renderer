@@ -2,11 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { DBRun, DBGet } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import * as EmailValidator from "email-validator";
-import { withIronSessionApiRoute } from "iron-session/next";
-import { IronOptions } from "@src/../iron_session.config";
-import { getSession } from "@src/utils";
-
-export default withIronSessionApiRoute(register_handler, IronOptions);
+import { Session } from "@src/interfaces";
 
 /**
  * This function attempts to register a user, creating a session.
@@ -21,7 +17,7 @@ export default withIronSessionApiRoute(register_handler, IronOptions);
  * @param {NextApiResponse} - The Next API response
  * @returns {void}
  */
-export async function register_handler(
+export default async function register_handler(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
@@ -56,11 +52,9 @@ export async function register_handler(
       hashedPassword,
       body.name,
     ]);
-    const session = getSession(req);
-    session.user = {
-      email: body.email,
+    const session: Session = {
+      email: body.email as string,
     };
-    await session.save();
-    res.status(200).json({});
+    res.status(200).json({ user: session });
   }
 }

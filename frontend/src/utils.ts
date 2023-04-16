@@ -28,38 +28,38 @@ import { Api } from "./Api";
  * @param {string} fileType - file type to upload (eg ".csv")
  * @returns {Promise<File>} - uploaded file
  */
-export async function uploadFile(fileType: string): Promise<File | string> {
-  return new Promise((res) => {
+export async function uploadFile(fileType: string): Promise<File> {
+  return new Promise((res, rej) => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = fileType;
 
     input.onchange = async (e) => {
       if (!e || !e.target) {
-        return res("Something went wrong. Please try again.");
+        return rej("Something went wrong. Please try again.");
       }
       const target = e.target as HTMLInputElement;
       if (!target.files) {
-        return res("Something went wrong. Please try again.");
+        return rej("Something went wrong. Please try again.");
       }
 
       const file = target.files[0];
 
       if (fileType === ".csv" && !file.name.match(/(^[\w.]+)?\.csv$/)) {
-        return res("Please upload a valid .csv file.");
+        return rej("Please upload a valid .csv file.");
       } else if (fileType === ".xml") {
         if (!file.name.match(/(^[\w.]+)?\.xml$/)) {
-          return res("Please upload a valid .xml file.");
+          return rej("Please upload a valid .xml file.");
         }
         const bytes = await file.arrayBuffer();
         const checkUBL = await Api.renderToJSON(Buffer.from(bytes).toString());
 
         if (checkUBL.status === 422) {
-          return res(
+          return rej(
             "The uploaded file does not follow the A-NZ-PEPPOL-BIS-3.0 specification."
           );
         } else if (checkUBL.status !== 200) {
-          return res(
+          return rej(
             "Something went wrong on our end. Please try again later."
           );
         }

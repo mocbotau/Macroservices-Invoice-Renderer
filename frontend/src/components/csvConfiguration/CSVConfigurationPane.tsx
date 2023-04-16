@@ -16,6 +16,7 @@ import { handleSubmit } from "@src/utils/handleSubmit";
 import { CustomAccordion } from "./paneComponents/Accordion";
 import { SelectRangeSection } from "./paneComponents/SelectRange";
 import { Snackbar } from "../Snackbar";
+import { loadFieldStates, saveFieldStates } from "@src/persistence";
 
 interface ComponentProps {
   selection: SelectedData;
@@ -43,17 +44,88 @@ export default function CSVConfigurationPane(
 
   const [tabValue, setTabValue] = useState(0);
   const [selectedField, setSelectedField] = useState("");
-  const [dropdownOptions, setDropdownOptions] = useState<string[]>([]);
+  const [dropdownOptions, setRawDropdownOptions] = useState<string[]>([]);
   const [showRequired, setShowRequired] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [hasHeaders, setHasHeaders] = useState(false);
+  const [hasHeaders, setRawHasHeaders] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [deliveryRequired, setDeliveryRequired] = useState(false);
+  const [expanded, setExpanded] = React.useState<string | false>(false);
 
   const initialState = createTextStateObject();
-  const [textFieldState, setTextFieldState] = useState(initialState);
+  const [textFieldState, setRawTextFieldState] = useState(initialState);
 
-  const [selectedRange, setSelectedRange] = useState(emptySelectedRange);
+  const [selectedRange, setRawSelectedRange] = useState(emptySelectedRange);
+
+  const loadInitialState = async () => {
+    const initialState = await loadFieldStates();
+
+    if (initialState !== null) {
+      const { fieldStates, dropdownOptions, selectedRange, hasHeaders } =
+        initialState;
+
+      setRawTextFieldState(fieldStates);
+      setRawDropdownOptions(dropdownOptions);
+      setRawSelectedRange(selectedRange);
+      setRawHasHeaders(hasHeaders);
+    }
+  };
+
+  useEffect(() => {
+    loadInitialState();
+  }, []);
+
+  const setTextFieldState = (newTextFieldState) => {
+    setRawTextFieldState(newTextFieldState);
+
+    // TODO: potentially debounce this function if it becomes more
+    //  expensive (eg. contacting an API)
+    saveFieldStates({
+      fieldStates: newTextFieldState,
+      dropdownOptions,
+      selectedRange,
+      hasHeaders,
+    });
+  };
+
+  const setDropdownOptions = (newDropdownOptions) => {
+    setRawDropdownOptions(newDropdownOptions);
+
+    // TODO: potentially debounce this function if it becomes more
+    //  expensive (eg. contacting an API)
+    saveFieldStates({
+      fieldStates: textFieldState,
+      dropdownOptions: newDropdownOptions,
+      selectedRange,
+      hasHeaders,
+    });
+  };
+
+  const setSelectedRange = (newSelectedRange) => {
+    setRawSelectedRange(newSelectedRange);
+
+    // TODO: potentially debounce this function if it becomes more
+    //  expensive (eg. contacting an API)
+    saveFieldStates({
+      fieldStates: textFieldState,
+      dropdownOptions,
+      selectedRange: newSelectedRange,
+      hasHeaders,
+    });
+  };
+
+  const setHasHeaders = (newHasHeaders) => {
+    setRawHasHeaders(newHasHeaders);
+
+    // TODO: potentially debounce this function if it becomes more
+    //  expensive (eg. contacting an API)
+    saveFieldStates({
+      fieldStates: textFieldState,
+      dropdownOptions,
+      selectedRange,
+      hasHeaders: newHasHeaders,
+    });
+  };
 
   useEffect(() => {
     if (startRow === -1 || startCol === -1 || endRow === -1 || endCol === -1)
@@ -109,6 +181,8 @@ export default function CSVConfigurationPane(
             id="instructions"
             title="Instructions"
             setMultipleSelection={props.setMultipleSelection}
+            expanded={expanded}
+            setExpanded={setExpanded}
           >
             <Typography>{instructionsForUse}</Typography>
           </CustomAccordion>
@@ -118,6 +192,8 @@ export default function CSVConfigurationPane(
                 id={category.id}
                 title={category.name}
                 setMultipleSelection={setMultipleSelection}
+                expanded={expanded}
+                setExpanded={setExpanded}
                 key={category.id}
               >
                 <>

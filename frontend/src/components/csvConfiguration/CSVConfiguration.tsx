@@ -3,22 +3,22 @@ import Papa from "papaparse";
 import { Box, useTheme } from "@mui/material";
 import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
-import {
-  Row,
-  SelectedData,
-  SetStateType,
-  emptySelection,
-} from "@src/interfaces";
+import { Row, SelectedData, emptySelection } from "@src/interfaces";
 import { MIN_ROW_COUNT } from "@src/constants";
 import { HotTable } from "./HotTable";
+import {
+  loadInvoiceItemsSelection,
+  saveInvoiceItemsSelection,
+} from "@src/persistence";
 
 interface ComponentProps {
   file: File;
-  setLoadedXML: SetStateType<string>;
+  setLoadedXML: (xml: string) => void;
 }
 
 /**
- * The main screen for the CSVConfiguration page, holding the table and configuration pane
+ * The main screen for the CSVConfiguration page, holding the table and
+ * configuration pane
  *
  * @param {ComponentProps} props - the required props
  * @returns {JSX.Element} - the returned component
@@ -28,8 +28,25 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const drawerWidth = theme.spacing(50);
 
   const [rows, setRows] = useState<Row[]>([]);
-  const [selection, setSelection] = useState<SelectedData>(emptySelection);
+  const [selection, setRawSelection] = useState<SelectedData>(emptySelection);
   const [multipleSelection, setMultipleSelection] = useState(false);
+
+  const loadSavedSelection = async () => {
+    const loaded = await loadInvoiceItemsSelection();
+
+    if (loaded !== null) {
+      setRawSelection(loaded);
+    }
+  };
+
+  useEffect(() => {
+    loadSavedSelection();
+  }, []);
+
+  const setSelection = (selection) => {
+    setRawSelection(selection);
+    saveInvoiceItemsSelection(selection);
+  };
 
   useEffect(() => {
     Papa.parse(props.file, {
@@ -121,7 +138,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
         <Box
           sx={{
             width: drawerWidth,
-            maxHeight: "100%",
+            overflowY: "scroll",
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
@@ -26,6 +26,7 @@ import { NextSeo } from "next-seo";
 import { TabPanel } from "@src/components/TabPanel";
 import * as EmailValidator from "email-validator";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { signIn } from "next-auth/react";
 
 export default function SignInSide() {
   const [textError, setTextError] = useState<string | null | undefined>(null);
@@ -66,13 +67,19 @@ export default function SignInSide() {
     setLoadingLogin(true);
 
     // server-side validation
-    const res = await Api.login(email, password);
-    if (res.status !== 200) {
-      setTextError(res.json?.error);
-      setLoadingLogin(false);
-    } else {
-      push("/editor");
-    }
+    await signIn("credentials", {
+      email: email,
+      password: password,
+      callbackUrl: "/editor",
+      redirect: false,
+    }).then((res) => {
+      if (res.status !== 200) {
+        setTextError("Invalid credentials.");
+        setLoadingLogin(false);
+      } else {
+        push("/editor");
+      }
+    });
   };
 
   const handleRegister = async (event: React.SyntheticEvent) => {
@@ -113,7 +120,19 @@ export default function SignInSide() {
       setTextError(res.json?.error);
       setLoadingRegister(false);
     } else {
-      push("/editor");
+      await signIn("credentials", {
+        email: email,
+        password: password,
+        callbackUrl: "/editor",
+        redirect: false,
+      }).then((res) => {
+        if (res.status !== 200) {
+          setTextError("Something went wrong. Please try again later.");
+          setLoadingRegister(false);
+        } else {
+          push("/editor");
+        }
+      });
     }
   };
 

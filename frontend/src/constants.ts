@@ -32,3 +32,9 @@ export const SUPPORTED_LANGUAGES = [
   { langCode: "es", language: "Spanish" },
   { langCode: "th", language: "Thai" },
 ];
+
+export const SAVE_FILE_KEY = "macroservices-save-file";
+export const SAVE_UBL_KEY = "macroservices-save-ubl";
+export const FIELD_STATES_KEY = "macroservices-save-field-states";
+export const SELECTED_INVOICE_ITEMS_KEY =
+  "macroservices-invoice-items-selection";

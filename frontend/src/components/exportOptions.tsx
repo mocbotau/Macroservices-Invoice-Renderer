@@ -1,10 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Drawer,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
 import ExportOptionsPanel from "./exportOptionsPanel";
 import { useEffect, useState } from "react";
 import { Api } from "@src/Api";
@@ -127,7 +121,7 @@ export default function ExportOptions(props: { ubl: string }) {
 
   return (
     <>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", height: "100%" }}>
         <Box
           component="main"
           sx={{
@@ -172,17 +166,17 @@ export default function ExportOptions(props: { ubl: string }) {
             />
           )}
         </Box>
-        <Drawer
+        <Box
           sx={{
             width: drawerWidth,
+            overflowY: "scroll",
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
+              alignContent: "right",
             },
           }}
-          variant="permanent"
-          anchor="right"
         >
           <ExportOptionsPanel
             ubl={props.ubl}
@@ -195,7 +189,7 @@ export default function ExportOptions(props: { ubl: string }) {
             iconFile={iconFile}
             setIconFile={setIconFile}
           />
-        </Drawer>
+        </Box>
       </Box>
     </>
   );

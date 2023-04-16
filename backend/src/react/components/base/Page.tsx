@@ -24,6 +24,9 @@ const Page = (props) => {
         style={{
           margin: "auto",
           width: PAGE_SIZES[userStyle["meta"].pageSize].INNER_WIDTH,
+          position: "relative",
+          backgroundColor: "white",
+          padding: PAGE_SIZES[userStyle["meta"].pageSize].MARGIN,
         }}
       >
         {props.children}

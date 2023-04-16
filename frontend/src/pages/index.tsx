@@ -21,7 +21,7 @@ export async function serverSideProps(user?: User) {
 }
 
 /**
- * Home (Index) page. Will redirect to /login if already signed in. Otherwise redirect to /editor
+ * Home (Index) page. Will redirect to /login if not already signed in. Otherwise redirect to /editor
  */
 // eslint-disable-next-line
 export default function Home(props: PageProps) {

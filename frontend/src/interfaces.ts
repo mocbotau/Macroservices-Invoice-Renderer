@@ -93,3 +93,7 @@ export const emptySelection = {
 };
 export type InvoiceSendOptions = "email" | "sms";
 export type InvoiceSendExtOptions = "json" | "pdf" | "html" | "xml";
+
+export interface Session {
+  email: string;
+}

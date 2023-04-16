@@ -101,7 +101,13 @@ const defaultStyle = {
     height: "64px",
     position: "absolute",
     top: 8,
-    right: 8,
+    right: 0,
+  },
+  iconHtml: {
+    height: "64px",
+    position: "absolute",
+    top: PAGE_SIZES.A4P.MARGIN,
+    right: PAGE_SIZES.A4P.MARGIN,
   },
 };
 

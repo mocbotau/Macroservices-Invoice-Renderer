@@ -25,7 +25,7 @@ export default function Upload(props: ComponentProps): JSX.Element {
   }, [props.snackbarMessage]);
 
   return (
-    <Box>
+    <Box sx={{ height: "100%" }}>
       <Snackbar
         open={showSnackbar}
         autoHideDuration={3000}

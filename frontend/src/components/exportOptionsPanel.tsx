@@ -198,9 +198,14 @@ export default function ExportOptionsPanel(props: ComponentProps) {
         height: "100%",
       }}
     >
-      <Box sx={{ overflowY: "auto" }} mb={2}>
-        <Typography textAlign="center" variant="h5" mb={2}>
-          Export Options
+      <Box mb={2}>
+        <Typography
+          variant="h6"
+          color="primary"
+          gutterBottom={true}
+          sx={{ textEmphasis: 20, paddingBottom: 1 }}
+        >
+          Export and Send
         </Typography>
 
         <FormControl fullWidth data-testid="export-method-form">

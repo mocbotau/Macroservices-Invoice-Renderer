@@ -15,6 +15,7 @@ import MacroLogo from "@public/MacroservicesLogo2.png";
 import Image from "next/image";
 import { Api } from "@src/Api";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 
 const pages = ["Products", "Pricing", "Blog"];
 
@@ -45,7 +46,7 @@ function NavBar() {
 
   const handleLogout = async () => {
     setAnchorElUser(null);
-    await Api.logout();
+    signOut();
     router.push("/");
   };
 
