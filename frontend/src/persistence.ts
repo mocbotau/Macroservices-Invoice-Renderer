@@ -1,4 +1,10 @@
-import { SAVE_FILE_KEY, SAVE_UBL_KEY } from "./constants";
+import {
+  FIELD_STATES_KEY,
+  SAVE_FILE_KEY,
+  SAVE_UBL_KEY,
+  SELECTED_INVOICE_ITEMS_KEY,
+} from "./constants";
+import { MultiSelectRange, SelectedData } from "./interfaces";
 
 /**
  * Saves a file locally
@@ -60,4 +66,77 @@ export async function loadUBL(): Promise<string | null> {
  */
 export async function clearUBL(): Promise<void> {
   localStorage.removeItem(SAVE_UBL_KEY);
+}
+
+interface AllFields {
+  fieldStates: Record<string, string>;
+  dropdownOptions: string[];
+  selectedRange: MultiSelectRange;
+  hasHeaders: boolean;
+}
+
+/**
+ * Saves the field states
+ *
+ * @param {AllFields} states - Field states
+ */
+export async function saveFieldStates(states: AllFields): Promise<void> {
+  localStorage.setItem(FIELD_STATES_KEY, JSON.stringify(states));
+}
+
+/**
+ * Loads the stored field states
+ *
+ * @returns {Promise<AllFields | null>} - Field states or null if
+ * they are not in storage
+ */
+export async function loadFieldStates(): Promise<AllFields | null> {
+  const fStates = localStorage.getItem(FIELD_STATES_KEY);
+
+  if (fStates === null) {
+    return null;
+  }
+
+  return JSON.parse(fStates);
+}
+
+/**
+ * Clears the stored file
+ */
+export async function clearFieldStates(): Promise<void> {
+  localStorage.removeItem(FIELD_STATES_KEY);
+}
+
+/**
+ * Saves the selected invoice items
+ *
+ * @param {SelectedData} states - Field states
+ */
+export async function saveInvoiceItemsSelection(
+  states: SelectedData
+): Promise<void> {
+  localStorage.setItem(SELECTED_INVOICE_ITEMS_KEY, JSON.stringify(states));
+}
+
+/**
+ * Loads the stored field states
+ *
+ * @returns {Promise<SelectedData | null>} - Field states or null if
+ * they are not in storage
+ */
+export async function loadInvoiceItemsSelection(): Promise<SelectedData | null> {
+  const states = localStorage.getItem(SELECTED_INVOICE_ITEMS_KEY);
+
+  if (states === null) {
+    return null;
+  }
+
+  return JSON.parse(states);
+}
+
+/**
+ * Clears the stored file
+ */
+export async function clearInvoiceItemsSelection(): Promise<void> {
+  localStorage.removeItem(SELECTED_INVOICE_ITEMS_KEY);
 }

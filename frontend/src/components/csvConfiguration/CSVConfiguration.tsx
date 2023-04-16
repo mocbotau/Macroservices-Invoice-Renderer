@@ -6,6 +6,10 @@ import { colFromNumber, checkBoundaries } from "@src/utils";
 import { Row, SelectedData, emptySelection } from "@src/interfaces";
 import { MIN_ROW_COUNT } from "@src/constants";
 import { HotTable } from "./HotTable";
+import {
+  loadInvoiceItemsSelection,
+  saveInvoiceItemsSelection,
+} from "@src/persistence";
 
 interface ComponentProps {
   file: File;
@@ -13,7 +17,8 @@ interface ComponentProps {
 }
 
 /**
- * The main screen for the CSVConfiguration page, holding the table and configuration pane
+ * The main screen for the CSVConfiguration page, holding the table and
+ * configuration pane
  *
  * @param {ComponentProps} props - the required props
  * @returns {JSX.Element} - the returned component
@@ -23,8 +28,25 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const drawerWidth = theme.spacing(50);
 
   const [rows, setRows] = useState<Row[]>([]);
-  const [selection, setSelection] = useState<SelectedData>(emptySelection);
+  const [selection, setRawSelection] = useState<SelectedData>(emptySelection);
   const [multipleSelection, setMultipleSelection] = useState(false);
+
+  const loadSavedSelection = async () => {
+    const loaded = await loadInvoiceItemsSelection();
+
+    if (loaded !== null) {
+      setRawSelection(loaded);
+    }
+  };
+
+  useEffect(() => {
+    loadSavedSelection();
+  }, []);
+
+  const setSelection = (selection) => {
+    setRawSelection(selection);
+    saveInvoiceItemsSelection(selection);
+  };
 
   useEffect(() => {
     Papa.parse(props.file, {

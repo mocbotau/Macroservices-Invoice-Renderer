@@ -7,7 +7,9 @@ import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 import { NextSeo } from "next-seo";
 import {
+  clearFieldStates,
   clearFile,
+  clearInvoiceItemsSelection,
   clearUBL,
   loadFile,
   loadUBL,
@@ -80,6 +82,8 @@ export default function Editor() {
     } else if (file) {
       setFile(null);
       setUploadSuccess(false);
+      clearFieldStates();
+      clearInvoiceItemsSelection();
       clearFile();
     }
   };
