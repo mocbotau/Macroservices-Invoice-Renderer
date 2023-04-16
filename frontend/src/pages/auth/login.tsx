@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import LoginImage from "../../public/D-6Zm37U0AAgVR7-2.jpg";
+import LoginImage from "../../../public/D-6Zm37U0AAgVR7-2.jpg";
 import Image from "next/image";
 import {
   Alert,
@@ -25,7 +25,7 @@ import { LoadingButton } from "@mui/lab";
 import { NextSeo } from "next-seo";
 import { TabPanel } from "@src/components/TabPanel";
 import * as EmailValidator from "email-validator";
-import { GitHub, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { signIn } from "next-auth/react";
 import RequestResetPassword from "@src/components/Login/RequestResetPassword";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -252,7 +252,7 @@ export default function SignInSide() {
                       <ThirdPartySignInButton
                         icon={<GoogleIcon />}
                         name="Google"
-                        onClick={() => signIn("google")}
+                        // onClick={() => signIn("google")}
                       />
                       {/* <ThirdPartySignInButton icon={<GitHub />} name="GitHub" /> */}
                       <Grid container>

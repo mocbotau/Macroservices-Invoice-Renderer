@@ -74,12 +74,16 @@ function NavBar() {
       sx: {
         bgcolor: stringToColor(name),
       },
-      children: `${name.split(" ")[0][0].toUpperCase()}${
-        name.split(" ").length <= 1 ? "" : name.split(" ")[1][0].toUpperCase()
-      }`,
+      children: data.user.image
+        ? undefined
+        : `${name.split(" ")[0][0].toUpperCase()}${
+            name.split(" ").length <= 1
+              ? ""
+              : name.split(" ")[1][0].toUpperCase()
+          }`,
+      src: data.user.image ? data.user.image : undefined,
     };
   }
-
   return (
     <AppBar position="static" id="navbar">
       <Container maxWidth="xl">

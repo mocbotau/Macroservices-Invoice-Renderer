@@ -10,7 +10,7 @@ export const authOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -33,7 +33,7 @@ export const authOptions = {
     }),
   ],
   pages: {
-    signIn: "/login",
+    signIn: "/auth/login",
   },
   callbacks: {
     async jwt({ token, user, account }) {

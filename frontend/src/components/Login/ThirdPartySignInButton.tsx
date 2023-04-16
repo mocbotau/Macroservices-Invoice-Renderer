@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 interface ComponentProps {
   icon: JSX.Element;
   name: string;
-  onClick: Function;
+  // onClick: Function;
 }
 
 export default function ThirdPartySignInButton(props: ComponentProps) {

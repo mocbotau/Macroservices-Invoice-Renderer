@@ -1,7 +1,7 @@
 import { AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import { SetStateType } from "@src/interfaces";
 
 interface ComponentProps {

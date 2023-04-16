@@ -3,7 +3,6 @@ import NodeMailer from "nodemailer";
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
-import { signOut } from "next-auth/react";
 
 /**
  *  This function sends the password reset email to the given email
