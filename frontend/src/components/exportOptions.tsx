@@ -5,6 +5,7 @@ import { Api } from "@src/Api";
 import { JsonViewer } from "@textea/json-viewer";
 import { toBase64 } from "@src/utils";
 import XMLViewer from "react-xml-viewer-2";
+import useWindowDimensions from "@src/pages/useWindowDimensions";
 
 const lightXMLTheme = {
   "attributeKeyColor": "#3492d5",
@@ -30,8 +31,10 @@ const darkXMLTheme = {
 
 export default function ExportOptions(props: { ubl: string }) {
   const theme = useTheme();
+  const { width } = useWindowDimensions();
 
   const drawerWidth = theme.spacing(50);
+
   const [error, setError] = useState("");
   const [previewData, setPreviewData] = useState("");
   const [outputType, setOutputType] = useState("pdf");
@@ -39,6 +42,8 @@ export default function ExportOptions(props: { ubl: string }) {
   const [style, setStyle] = useState(0);
   const [iconFile, setIconFile] = useState<File>();
   const [loading, setLoading] = useState(true);
+  const [previewHidden, setPreviewHidden] = useState(false);
+
   let optional = {};
 
   interface Response {
@@ -79,6 +84,10 @@ export default function ExportOptions(props: { ubl: string }) {
   };
 
   useEffect(() => {
+    setPreviewHidden(width <= 768);
+  }, [width]);
+
+  useEffect(() => {
     const fetchData = async () => {
       switch (outputType) {
         case "pdf":
@@ -115,9 +124,10 @@ export default function ExportOptions(props: { ubl: string }) {
           break;
       }
     };
+    if (previewHidden) return;
     fetchData();
     // eslint-disable-next-line
-  }, [style, language, outputType, iconFile]);
+  }, [style, language, outputType, iconFile, previewHidden]);
 
   return (
     <>
@@ -126,7 +136,7 @@ export default function ExportOptions(props: { ubl: string }) {
           component="main"
           sx={{
             flexGrow: 1,
-            display: "flex",
+            display: `${previewHidden ? "none" : "flex"}`,
             width: `calc(100% - ${drawerWidth})`,
           }}
         >
@@ -168,7 +178,7 @@ export default function ExportOptions(props: { ubl: string }) {
         </Box>
         <Box
           sx={{
-            width: drawerWidth,
+            minWidth: `${previewHidden ? "100%" : { drawerWidth }}`,
             overflowY: "scroll",
             flexShrink: 0,
             "& .MuiDrawer-paper": {

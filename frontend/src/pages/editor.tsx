@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { uploadFile } from "@src/utils";
 import ExportOptions from "@src/components/exportOptions";
 import { Box, CssBaseline, IconButton, useTheme } from "@mui/material";
-import ArrowBack from "@mui/icons-material/ArrowBack";
+import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 import { NextSeo } from "next-seo";
@@ -16,14 +16,15 @@ import {
   saveFile,
   saveUBL,
 } from "@src/persistence";
+import useWindowDimensions from "./useWindowDimensions";
 
 export default function Editor() {
-  const theme = useTheme();
-
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [file, setFile] = useState<File>();
   const [loadedXML, setLoadedXML] = useState("");
+
+  const { width } = useWindowDimensions();
 
   const handleCSVUpload = async () => {
     try {
@@ -100,21 +101,12 @@ export default function Editor() {
 
       <Box
         position="fixed"
-        ml={1}
-        mt={1}
-        display={loadedXML || uploadSuccess ? "block" : "none"}
+        mt={`${width <= 900 ? (width <= 600 ? "-48px" : "-52px") : "-55px"}`}
+        display="block"
         zIndex={999}
       >
-        <IconButton
-          sx={{
-            backgroundColor: theme.palette.background.default,
-            ":hover": {
-              backgroundColor: theme.palette.background.default,
-            },
-          }}
-          onClick={goBack}
-        >
-          <ArrowBack />
+        <IconButton onClick={goBack} disabled={!uploadSuccess && !loadedXML}>
+          <ArrowBackIosRoundedIcon />
         </IconButton>
       </Box>
 

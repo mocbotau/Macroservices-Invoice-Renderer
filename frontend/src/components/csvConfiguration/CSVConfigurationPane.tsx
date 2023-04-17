@@ -17,6 +17,7 @@ import { CustomAccordion } from "./paneComponents/Accordion";
 import { SelectRangeSection } from "./paneComponents/SelectRange";
 import { Snackbar } from "../Snackbar";
 import { loadFieldStates, saveFieldStates } from "@src/persistence";
+import { clearFieldStates, clearInvoiceItemsSelection } from "@src/persistence";
 
 interface ComponentProps {
   selection: SelectedData;
@@ -278,6 +279,8 @@ export default function CSVConfigurationPane(
               setDeliveryRequired(false);
               setShowRequired(false);
               setShowLoading(false);
+              clearFieldStates();
+              clearInvoiceItemsSelection();
             }}
           >
             RESET

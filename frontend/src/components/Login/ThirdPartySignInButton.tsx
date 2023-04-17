@@ -4,7 +4,6 @@ import { signIn } from "next-auth/react";
 interface ComponentProps {
   icon: JSX.Element;
   name: string;
-  // onClick: Function;
 }
 
 export default function ThirdPartySignInButton(props: ComponentProps) {
@@ -14,7 +13,7 @@ export default function ThirdPartySignInButton(props: ComponentProps) {
       startIcon={props.icon}
       fullWidth
       sx={{ my: 1, backgroundColor: "#292929" }}
-      onClick={() => signIn("google")}
+      onClick={() => signIn(props.name.toLowerCase())}
     >
       {`Sign In with ${props.name}`}
     </Button>

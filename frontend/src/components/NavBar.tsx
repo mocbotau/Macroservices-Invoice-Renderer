@@ -1,4 +1,3 @@
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -14,7 +13,9 @@ import MenuItem from "@mui/material/MenuItem";
 import MacroLogo from "@public/MacroservicesLogo2.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import AccountMenu from "./NavBar/AccountMenu";
+import React, { useState } from "react";
 
 const pages = ["Dashboard", "About Us"];
 
@@ -22,12 +23,8 @@ function NavBar() {
   const router = useRouter();
   const { data } = useSession();
 
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -38,16 +35,6 @@ function NavBar() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  const handleLogout = async () => {
-    setAnchorElUser(null);
-    signOut();
-    router.push("/");
   };
 
   function stringToColor(string: string) {
@@ -87,7 +74,7 @@ function NavBar() {
   return (
     <AppBar position="static" id="navbar">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters={router.pathname !== "/editor"}>
           <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
             <Image
               src={MacroLogo}
@@ -98,7 +85,6 @@ function NavBar() {
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
-              size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
@@ -132,7 +118,14 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}>
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              width: "100%",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
             <Image
               src={MacroLogo}
               alt="Macroservices Logo"
@@ -151,7 +144,6 @@ function NavBar() {
               </Button>
             ))}
           </Box>
-
           {router.pathname !== "/login" && (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
@@ -166,26 +158,11 @@ function NavBar() {
                   )}
                 </IconButton>
               </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                <MenuItem onClick={handleLogout}>
-                  <Typography textAlign="center">Logout</Typography>
-                </MenuItem>
-              </Menu>
+              <AccountMenu
+                showMenu={anchorElUser}
+                setShowMenu={setAnchorElUser}
+                name={data?.user?.name}
+              />
             </Box>
           )}
         </Toolbar>

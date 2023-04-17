@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { Box, useTheme } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Paper,
+  SwipeableDrawer,
+  useTheme,
+} from "@mui/material";
 import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
 import { Row, SelectedData, emptySelection } from "@src/interfaces";
@@ -10,6 +16,8 @@ import {
   loadInvoiceItemsSelection,
   saveInvoiceItemsSelection,
 } from "@src/persistence";
+import useWindowDimensions from "@src/pages/useWindowDimensions";
+import { DragHandle } from "@mui/icons-material";
 
 interface ComponentProps {
   file: File;
@@ -26,10 +34,14 @@ interface ComponentProps {
 export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const theme = useTheme();
   const drawerWidth = theme.spacing(50);
+  const { width } = useWindowDimensions();
 
   const [rows, setRows] = useState<Row[]>([]);
   const [selection, setRawSelection] = useState<SelectedData>(emptySelection);
   const [multipleSelection, setMultipleSelection] = useState(false);
+  const [showPane, setShowPane] = useState(false);
+
+  const drawerBleeding = 30;
 
   const loadSavedSelection = async () => {
     const loaded = await loadInvoiceItemsSelection();
@@ -107,7 +119,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
           id={"hot-table-box"}
           sx={{
             display: "flex",
-            width: `calc(100% - ${drawerWidth})`,
+            width: `${width <= 768 ? "100%" : `calc(100% - ${drawerWidth})`}`,
           }}
         >
           <HotTable
@@ -135,25 +147,70 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
             }}
           />
         </Box>
-        <Box
-          sx={{
-            width: drawerWidth,
-            overflowY: "scroll",
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
+        {width <= 768 ? (
+          <Box sx={{ justifyContent: "center", alignContent: "center" }}>
+            <IconButton
+              sx={{
+                position: "fixed",
+                zIndex: 999,
+                rotate: "90deg",
+                right: 0,
+                top: "50%",
+              }}
+              onClick={() => setShowPane(true)}
+            >
+              <DragHandle fontSize="large" />
+            </IconButton>
+            <SwipeableDrawer
+              open={showPane}
+              anchor="right"
+              onClose={() => setShowPane(false)}
+              onOpen={() => setShowPane(true)}
+              swipeAreaWidth={drawerBleeding}
+              disableSwipeToOpen={false}
+              sx={{ zIndex: 1000 }}
+            >
+              <IconButton
+                sx={{
+                  position: "fixed",
+                  zIndex: 1000,
+                  rotate: "90deg",
+                  left: -14,
+                  top: "50%",
+                }}
+                onClick={() => setShowPane(false)}
+              >
+                <DragHandle fontSize="large" />
+              </IconButton>
+              <CSVConfigurationPane
+                selection={selection}
+                multipleSelection={multipleSelection}
+                setMultipleSelection={setMultipleSelection}
+                setLoadedXML={props.setLoadedXML}
+              />
+            </SwipeableDrawer>
+          </Box>
+        ) : (
+          <Box
+            sx={{
               width: drawerWidth,
-              boxSizing: "border-box",
-              alignContent: "right",
-            },
-          }}
-        >
-          <CSVConfigurationPane
-            selection={selection}
-            multipleSelection={multipleSelection}
-            setMultipleSelection={setMultipleSelection}
-            setLoadedXML={props.setLoadedXML}
-          />
-        </Box>
+              overflowY: "scroll",
+              flexShrink: 0,
+              "& .MuiDrawer-paper": {
+                width: drawerWidth,
+                boxSizing: "border-box",
+                alignContent: "right",
+              },
+            }}
+          >
+            <CSVConfigurationPane
+              selection={selection}
+              multipleSelection={multipleSelection}
+              setMultipleSelection={setMultipleSelection}
+              setLoadedXML={props.setLoadedXML}
+            />
+          </Box>
+        )}
       </Box>
     </>
   );
