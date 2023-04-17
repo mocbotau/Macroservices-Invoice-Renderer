@@ -1,71 +1,96 @@
-import {
-  FIELD_STATES_KEY,
-  SAVE_FILE_KEY,
-  SAVE_UBL_KEY,
-  SELECTED_INVOICE_ITEMS_KEY,
-} from "./constants";
+import { GST_RATE, SAVE_FILE_KEY } from "./constants";
 import { MultiSelectRange, SelectedData } from "./interfaces";
+import { extractNumber, formatCurrency } from "./utils";
+import { ublToJSON } from "./utils/UBLParser";
 
 /**
- * Saves a file locally
+ * Saves an invoice locally
  *
- * @param {File} f - File to save
+ * @param {File} f
+ * @param {string} ubl
+ * @param {AllFields} states
+ * @param {SelectedDate} selected
  */
-export async function saveFile(f: File): Promise<void> {
-  const fText = await f.text();
-
-  localStorage.setItem(SAVE_FILE_KEY, fText);
+export async function newInvoice(
+  f: File,
+  states: AllFields,
+  selected: SelectedData
+): Promise<number> {
+  const fText = f ? await f.text() : null;
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const newId = (files.length === 0 ? 0 : files.slice(-1)[0].id) + 1;
+  localStorage.setItem(
+    SAVE_FILE_KEY,
+    JSON.stringify([
+      ...files,
+      { id: newId, file: fText, ubl: null, states: states, selected: selected },
+    ])
+  );
+  return newId;
 }
 
 /**
  * Loads the stored file
+ * @param {number} id - invoice ID to load
  *
  * @returns {File | null} - File if successfully loaded file, null if file did
  * not exist
  */
-export async function loadFile(): Promise<File | null> {
-  const fText = localStorage.getItem(SAVE_FILE_KEY);
+export function loadFile(id: number): File | null {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
 
-  if (fText === null) {
+  const result = files.find((x) => x.id === id);
+  if (result === undefined || result.file === null) {
     return null;
   }
 
-  return new File([new Blob([fText])], "loaded.csv");
+  return new File([new Blob([result.file])], "loaded.csv");
 }
 
 /**
- * Clears the stored file
- */
-export async function clearFile(): Promise<void> {
-  localStorage.removeItem(SAVE_FILE_KEY);
-}
-
-/**
- * Saves UBL locally
+ * Deletes the stored invoice
  *
- * @param {string} ubl - UBL to save
+ * @param {number} id - invoice ID to delete
  */
-export async function saveUBL(ubl: string): Promise<void> {
-  localStorage.setItem(SAVE_UBL_KEY, ubl);
+export function deleteInvoice(id: number): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+
+  localStorage.setItem(
+    SAVE_FILE_KEY,
+    JSON.stringify(files.filter((x) => x.id !== id))
+  );
+}
+
+/**
+ * Adds rendered UBL to an invoice
+ *
+ * @param {number} id - invoice ID to set UBL of
+ * @param {string | undefined} ubl - UBL string to save or undefined to clear
+ */
+export function setUBL(ubl: string | undefined, id: number): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const invoice = files.find((x) => x.id === id);
+  invoice.ubl = ubl;
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
 }
 
 /**
  * Loads the stored UBL
  *
+ * @param {number} id - invoice ID to load from
+ *
  * @returns {string | null} - UBL string if successfully loaded, null if ubl did
  * not exist
  */
-export async function loadUBL(): Promise<string | null> {
-  const ubl = localStorage.getItem(SAVE_UBL_KEY);
+export function loadUBL(id: number): string | null {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
 
-  return ubl;
-}
+  const result = files.find((x) => x.id === id);
+  if (result === undefined || result.ubl === undefined) {
+    return null;
+  }
 
-/**
- * Clears the stored UBL
- */
-export async function clearUBL(): Promise<void> {
-  localStorage.removeItem(SAVE_UBL_KEY);
+  return result.ubl;
 }
 
 interface AllFields {
@@ -78,33 +103,33 @@ interface AllFields {
 /**
  * Saves the field states
  *
+ * @param {number} id - invoice ID to set to
  * @param {AllFields} states - Field states
  */
-export async function saveFieldStates(states: AllFields): Promise<void> {
-  localStorage.setItem(FIELD_STATES_KEY, JSON.stringify(states));
+export function setFieldStates(states: AllFields, id: number): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const invoice = files.find((x) => x.id === id);
+  invoice.states = states;
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
 }
 
 /**
  * Loads the stored field states
  *
- * @returns {Promise<AllFields | null>} - Field states or null if
+ * @param {number} id - invoice ID to load from
+ *
+ * @returns {AllFields | null} - Field states or null if
  * they are not in storage
  */
-export async function loadFieldStates(): Promise<AllFields | null> {
-  const fStates = localStorage.getItem(FIELD_STATES_KEY);
+export function loadFieldStates(id: number): AllFields | null {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
 
-  if (fStates === null) {
+  const result = files.find((x) => x.id === id);
+  if (result === undefined || result.file === undefined) {
     return null;
   }
 
-  return JSON.parse(fStates);
-}
-
-/**
- * Clears the stored file
- */
-export async function clearFieldStates(): Promise<void> {
-  localStorage.removeItem(FIELD_STATES_KEY);
+  return result.states;
 }
 
 /**
@@ -112,31 +137,100 @@ export async function clearFieldStates(): Promise<void> {
  *
  * @param {SelectedData} states - Field states
  */
-export async function saveInvoiceItemsSelection(
-  states: SelectedData
-): Promise<void> {
-  localStorage.setItem(SELECTED_INVOICE_ITEMS_KEY, JSON.stringify(states));
+export function setInvoiceItemsSelection(
+  states: SelectedData,
+  id: number
+): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const invoice = files.find((x) => x.id === id);
+  invoice.selected = states;
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
 }
 
 /**
  * Loads the stored field states
  *
- * @returns {Promise<SelectedData | null>} - Field states or null if
+ * @param {number} id - invoice ID to set
+ *
+ * @returns {SelectedData | null} - Field states or null if
  * they are not in storage
  */
-export async function loadInvoiceItemsSelection(): Promise<SelectedData | null> {
-  const states = localStorage.getItem(SELECTED_INVOICE_ITEMS_KEY);
+export async function loadInvoiceItemsSelection(
+  id: number
+): Promise<SelectedData | null> {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
 
-  if (states === null) {
+  const result = files.find((x) => x.id === id);
+  if (result === undefined || result.file === undefined) {
     return null;
   }
 
-  return JSON.parse(states);
+  return result.selected;
+}
+
+interface InvoiceSummary {
+  customer: string;
+  amountDue: string;
+  issueDate: string;
+  dueDate: string;
+  paid: boolean;
 }
 
 /**
- * Clears the stored file
+ * Get all invoices
+ *
+ * @returns {} - Field states or null if
+ * they are not in storage
  */
-export async function clearInvoiceItemsSelection(): Promise<void> {
-  localStorage.removeItem(SELECTED_INVOICE_ITEMS_KEY);
+export function getInvoices(): InvoiceSummary[] {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  return files.map((file) => {
+    let result = {
+      id: file.id,
+      customer: "Not yet selected",
+      amountDue: "",
+      issueDate: "",
+      dueDate: "",
+      paid: false,
+    };
+    if (file.ubl) {
+      const ublObject = ublToJSON(file.ubl);
+      const party = ublObject["AccountingCustomerParty"]["Party"];
+      result.customer =
+        (party["PartyName"] ? party["PartyName"]["Name"] : undefined) ||
+        party["PartyLegalEntity"]["RegistrationName"];
+      result.amountDue = formatCurrency(
+        ublObject["LegalMonetaryTotal"]["PayableAmount"]
+      );
+      result.issueDate = ublObject["IssueDate"];
+      result.dueDate = ublObject["DueDate"];
+    } else if (file.states !== null) {
+      const fields = file.states.fieldStates;
+      result.customer = fields["to_party_name"];
+      if (fields["item_quantity"] !== "" && fields["item_unit_price"] !== "") {
+        const qtyIndex = file.states.dropdownOptions.indexOf(
+          fields["item_quantity"]
+        );
+        const priceIndex = file.states.dropdownOptions.indexOf(
+          fields["item_unit_price"]
+        );
+        const amt =
+          (1 + GST_RATE) *
+          file.states.selectedRange.data
+            .slice(file.states.hasHeaders ? 1 : 0)
+            .reduce(
+              (p, n) =>
+                p + extractNumber(n[priceIndex]) * parseInt(n[qtyIndex]),
+              0
+            );
+        result.amountDue = formatCurrency({
+          "_text": amt,
+          "$currencyID": "AUD",
+        });
+      }
+      result.issueDate = fields["invoice_issue_date"];
+      result.dueDate = fields["invoice_due_date"];
+    }
+    return result;
+  });
 }

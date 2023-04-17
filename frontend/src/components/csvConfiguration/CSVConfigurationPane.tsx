@@ -16,9 +16,10 @@ import { handleSubmit } from "@src/utils/handleSubmit";
 import { CustomAccordion } from "./paneComponents/Accordion";
 import { SelectRangeSection } from "./paneComponents/SelectRange";
 import { Snackbar } from "../Snackbar";
-import { loadFieldStates, saveFieldStates } from "@src/persistence";
+import { loadFieldStates, setFieldStates } from "@src/persistence";
 
 interface ComponentProps {
+  id: number;
   selection: SelectedData;
   multipleSelection: boolean;
   setMultipleSelection: SetStateType<boolean>;
@@ -56,8 +57,8 @@ export default function CSVConfigurationPane(
 
   const [selectedRange, setRawSelectedRange] = useState(emptySelectedRange);
 
-  const loadInitialState = async () => {
-    const initialState = await loadFieldStates();
+  const loadInitialState = () => {
+    const initialState = loadFieldStates(props.id);
 
     if (initialState !== null) {
       const { fieldStates, dropdownOptions, selectedRange, hasHeaders } =
@@ -79,12 +80,15 @@ export default function CSVConfigurationPane(
 
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: newTextFieldState,
-      dropdownOptions,
-      selectedRange,
-      hasHeaders,
-    });
+    setFieldStates(
+      {
+        fieldStates: newTextFieldState,
+        dropdownOptions,
+        selectedRange,
+        hasHeaders,
+      },
+      props.id
+    );
   };
 
   const setDropdownOptions = (newDropdownOptions) => {
@@ -92,12 +96,15 @@ export default function CSVConfigurationPane(
 
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: textFieldState,
-      dropdownOptions: newDropdownOptions,
-      selectedRange,
-      hasHeaders,
-    });
+    setFieldStates(
+      {
+        fieldStates: textFieldState,
+        dropdownOptions: newDropdownOptions,
+        selectedRange,
+        hasHeaders,
+      },
+      props.id
+    );
   };
 
   const setSelectedRange = (newSelectedRange) => {
@@ -105,12 +112,15 @@ export default function CSVConfigurationPane(
 
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: textFieldState,
-      dropdownOptions,
-      selectedRange: newSelectedRange,
-      hasHeaders,
-    });
+    setFieldStates(
+      {
+        fieldStates: textFieldState,
+        dropdownOptions,
+        selectedRange: newSelectedRange,
+        hasHeaders,
+      },
+      props.id
+    );
   };
 
   const setHasHeaders = (newHasHeaders) => {
@@ -118,12 +128,15 @@ export default function CSVConfigurationPane(
 
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: textFieldState,
-      dropdownOptions,
-      selectedRange,
-      hasHeaders: newHasHeaders,
-    });
+    setFieldStates(
+      {
+        fieldStates: textFieldState,
+        dropdownOptions,
+        selectedRange,
+        hasHeaders: newHasHeaders,
+      },
+      props.id
+    );
   };
 
   useEffect(() => {
