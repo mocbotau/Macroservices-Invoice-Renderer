@@ -4,6 +4,7 @@ import {
   Badge,
   Box,
   Button,
+  Chip,
   CssBaseline,
   Dialog,
   DialogActions,
@@ -13,6 +14,7 @@ import {
   Grid,
   Menu,
   MenuItem,
+  Paper,
   Select,
   Snackbar,
   Typography,
@@ -25,23 +27,44 @@ import {
   GridToolbar,
   GridValueGetterParams,
 } from "@mui/x-data-grid";
+
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
+import ErrorIcon from "@mui/icons-material/Error";
+import WarningIcon from "@mui/icons-material/Warning";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
+import UpdateIcon from "@mui/icons-material/Update";
+import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
+import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
+import PaidIcon from "@mui/icons-material/Paid";
 
 import { NextSeo } from "next-seo";
-import { uploadFile } from "@src/utils";
 import {
+  compareDate,
+  extractNumber,
+  formatCurrency,
+  uploadFile,
+} from "@src/utils";
+import {
+  InvoiceState,
   deleteInvoice,
   getInvoices,
   loadFieldStates,
+  loadFile,
+  loadInvoiceState,
   loadUBL,
   newInvoice,
-  setUBL,
+  setInvoiceState,
+  saveUBL,
 } from "@src/persistence";
 import { useRouter } from "next/router";
 import { Api } from "@src/Api";
+import { PAGE_WIDTH } from "@src/constants";
+import { useDebounce } from "use-debounce";
+import useWindowDimensions from "../utils/useWindowDimensions";
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -51,15 +74,94 @@ export default function Dashboard() {
   const [toBeDeletedId, setToBeDeletedId] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [rows, setRows] = useState([]);
+  const [currentId, setCurrentId] = useState(null);
   const [previewHtml, setPreviewHtml] = useState(null);
   const [previewError, setPreviewError] = useState(null);
+  const { width } = useWindowDimensions();
+  const [windowWidth] = useDebounce(width, 1000);
+
+  const invoiceSentOptions: {
+    name: string;
+    color:
+      | "default"
+      | "warning"
+      | "success"
+      | "error"
+      | "primary"
+      | "secondary"
+      | "info";
+  }[] = [
+    { name: "Draft", color: "default" },
+    { name: "Sent", color: "warning" },
+    { name: "Paid", color: "success" },
+  ];
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "#", flex: 1 },
-    { field: "customer", headerName: "Customer", flex: 5 },
-    { field: "amountDue", headerName: "Amount", flex: 3 },
-    { field: "issueDate", headerName: "Issued", flex: 3 },
-    { field: "dueDate", headerName: "Due", flex: 3 },
+    { field: "id", headerName: "#", flex: 1, minWidth: 30 },
+    { field: "customer", headerName: "Customer", flex: 5, minWidth: 150 },
+    { field: "amountDue", headerName: "Amount", flex: 3, minWidth: 90 },
+    { field: "issueDate", headerName: "Issued", flex: 3, minWidth: 90 },
+    {
+      field: "dueDate",
+      headerName: "Due",
+      flex: 3,
+      minWidth: 120,
+      renderCell: (params) => (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Typography sx={{ display: "inline", pr: 1 }}>
+            {params.formattedValue}
+          </Typography>
+          {compareDate(params.formattedValue, 0) < 0 &&
+          params.row.state !== InvoiceState.PAID ? (
+            params.row.state === InvoiceState.DRAFT ? (
+              <ErrorIcon color="error" />
+            ) : (
+              <WarningIcon color="error" />
+            )
+          ) : (
+            <></>
+          )}
+        </Box>
+      ),
+    },
+    {
+      field: "state",
+      headerName: "State",
+      flex: 3,
+      minWidth: 120,
+      renderCell: (params) => {
+        return (
+          <Select
+            sx={{ p: 1, width: "100%" }}
+            variant="standard"
+            value={loadInvoiceState(params.id.valueOf() as number)}
+            onChange={(e) => {
+              setInvoiceState(
+                e.target.value as number,
+                params.id.valueOf() as number
+              );
+              setRows(getInvoices());
+            }}
+            renderValue={(selected: number) => {
+              return (
+                <Chip
+                  sx={{ width: "100%" }}
+                  color={invoiceSentOptions[selected].color}
+                  label={invoiceSentOptions[selected].name}
+                  size="small"
+                  variant="filled"
+                />
+              );
+            }}
+            disableUnderline
+          >
+            {invoiceSentOptions.map((x, i) => (
+              <MenuItem value={i}>{x.name}</MenuItem>
+            ))}
+          </Select>
+        );
+      },
+    },
     {
       field: "actions",
       type: "actions",
@@ -84,9 +186,9 @@ export default function Dashboard() {
               </Badge>
             )
           }
-          disabled={loadFieldStates(params.id.valueOf() as number) === null}
+          disabled={loadFile(params.id.valueOf() as number) === null}
           onClick={() => {
-            setUBL(undefined, params.id.valueOf() as number);
+            saveUBL(undefined, params.id.valueOf() as number);
             push(`/editor/${params.id}`);
           }}
           label="Edit"
@@ -103,13 +205,23 @@ export default function Dashboard() {
           label="Delete"
         />,
       ],
+      minWidth: 120,
     },
   ];
 
   const handleCSVUpload = async () => {
     try {
       const f = await uploadFile(".csv");
-      const newId = await newInvoice(f, null, null);
+      const newId = await newInvoice(
+        f,
+        {
+          fieldStates: {},
+          dropdownOptions: [],
+          selectedRange: { rangeString: "", data: [] },
+          hasHeaders: false,
+        },
+        null
+      );
 
       push(`/editor/${newId}`);
     } catch (e) {
@@ -129,7 +241,7 @@ export default function Dashboard() {
     const bytes = await f.arrayBuffer();
     const xml = Buffer.from(bytes).toString();
     const newId = await newInvoice(null, null, null);
-    setUBL(xml, newId);
+    saveUBL(xml, newId);
 
     push(`/editor/${newId}`);
     /*} catch (e) {
@@ -142,23 +254,22 @@ export default function Dashboard() {
     }*/
   };
 
-  const generatePreview = async (params) => {
-    if (loadUBL(params.id.valueOf() as number) === null) {
+  const generatePreview = async (id) => {
+    if (loadUBL(id) === null) {
       setPreviewHtml(null);
       setPreviewError("Create this invoice to enable preview.");
       return;
     }
     try {
-      const resp = await Api.renderToHTML(
-        loadUBL(params.id.valueOf() as number),
-        0,
-        "en",
-        {}
-      );
+      const resp = await Api.renderToHTML(loadUBL(id), 0, "en", {});
       let rawHtml = await resp.blob.text();
-      rawHtml = `<!DOCTYPE html><html style="display:flex"><body style="transform:scale(0.6,0.6);transform-origin:top left;${rawHtml.substring(
+
+      // trust me bro
+      const scalingFactor = (windowWidth - 140) / 3.6 / PAGE_WIDTH;
+      rawHtml = `<!DOCTYPE html><html style="display:flex;height:0px"><body style="transform:scale(${scalingFactor},${scalingFactor});transform-origin:top left;${rawHtml.substring(
         '<!DOCTYPE html><html style="display:flex"><body style="'.length
       )}`;
+
       setPreviewHtml(
         URL.createObjectURL(new Blob([rawHtml], { type: "text/html" }))
       );
@@ -170,8 +281,48 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    generatePreview(currentId);
+  }, [currentId, windowWidth]);
+
+  useEffect(() => {
     setRows(getInvoices());
   }, []);
+
+  const unpaidOverdueAmount = rows
+    .filter(
+      (x) => compareDate(x.dueDate, 0) < 0 && x.state === InvoiceState.SENT
+    )
+    .reduce((p, n) => p + extractNumber(n.amountDue), 0);
+
+  const unsentOverdueInvoices = rows.filter(
+    (x) => compareDate(x.dueDate, 0) < 0 && x.state === InvoiceState.DRAFT
+  ).length;
+
+  const unpaidUpcomingAmount = rows
+    .filter(
+      (x) =>
+        compareDate(x.dueDate, 0) > 0 &&
+        compareDate(x.dueDate, 7) < 0 &&
+        x.state === InvoiceState.SENT
+    )
+    .reduce((p, n) => p + extractNumber(n.amountDue), 0);
+
+  const unsentUpcomingInvoices = rows.filter(
+    (x) =>
+      compareDate(x.dueDate, 0) > 0 &&
+      compareDate(x.dueDate, 7) < 0 &&
+      x.state === InvoiceState.DRAFT
+  ).length;
+
+  const totalInvoicedAmount = rows
+    .filter((x) => compareDate(x.dueDate, -30) > 0)
+    .reduce((p, n) => p + extractNumber(n.amountDue), 0);
+
+  const totalPaidAmount = rows
+    .filter(
+      (x) => compareDate(x.dueDate, -30) > 0 && x.state === InvoiceState.PAID
+    )
+    .reduce((p, n) => p + extractNumber(n.amountDue), 0);
 
   return (
     <>
@@ -201,6 +352,34 @@ export default function Dashboard() {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      <Menu
+        open={Boolean(menuAnchor)}
+        anchorEl={menuAnchor}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={() => setMenuAnchor(null)}
+      >
+        <MenuItem
+          onClick={() => {
+            setMenuAnchor(null);
+            handleCSVUpload();
+          }}
+        >
+          Upload CSV
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setMenuAnchor(null);
+            handleUBLUpload();
+          }}
+        >
+          Upload UBL
+        </MenuItem>
+      </Menu>
 
       <Dialog
         open={toBeDeletedId !== null}
@@ -232,43 +411,182 @@ export default function Dashboard() {
       </Dialog>
 
       <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography variant="h3">Invoices</Typography>
-        <Button
-          key="new_button"
-          sx={{ width: "10%", mt: 1 }}
-          variant="contained"
-          onClick={(e) => {
-            setMenuAnchor(e.target);
+        <Typography variant="h3" fontWeight={600}>
+          Invoices
+        </Typography>
+
+        <Grid
+          container
+          sx={{
+            mt: 2,
+            height: "30%",
           }}
+          gap={2}
+          wrap="nowrap"
         >
-          New
-          <ExpandMoreIcon sx={{ pointerEvents: "none" }} />
-        </Button>
-        <Menu
-          open={Boolean(menuAnchor)}
-          anchorEl={menuAnchor}
-          onClose={() => setMenuAnchor(null)}
-        >
-          <MenuItem
-            onClick={() => {
-              setMenuAnchor(null);
-              handleCSVUpload();
+          <Paper
+            elevation={6}
+            component={Grid}
+            item
+            xs={4}
+            sx={{
+              p: 2,
+              outline: "1px solid",
+              borderRadius: "5px",
+              outlineColor: theme.palette.divider,
+              height: "100%",
+              overflowY: "auto",
             }}
           >
-            Upload CSV
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              setMenuAnchor(null);
-              handleUBLUpload();
+            <Box sx={{ display: "flex", alignItems: "center", pb: 2 }}>
+              <NotificationImportantIcon />
+              <Typography variant="h5" pl={1}>
+                Overdues
+              </Typography>
+            </Box>
+            {unsentOverdueInvoices !== 0 && (
+              <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+                <ErrorIcon color="error" />
+                <Typography sx={{ display: "inline", pl: 1 }}>
+                  Expired invoices: {unsentOverdueInvoices}
+                </Typography>
+              </Box>
+            )}
+            {unpaidOverdueAmount !== 0 && (
+              <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+                <WarningIcon color="error" />
+                <Typography sx={{ display: "inline", pl: 1 }}>
+                  Unpaid total:{" "}
+                  {formatCurrency({
+                    "_text": unpaidOverdueAmount,
+                    "$currencyID": "AUD",
+                  })}
+                </Typography>
+              </Box>
+            )}
+            {unpaidOverdueAmount === 0 && unsentOverdueInvoices === 0 && (
+              <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+                <DoneAllIcon color="success" />
+                <Typography sx={{ display: "inline", pl: 1 }}>
+                  No overdue invoices!
+                </Typography>
+              </Box>
+            )}
+          </Paper>
+          <Paper
+            elevation={6}
+            component={Grid}
+            item
+            xs={4}
+            sx={{
+              p: 2,
+              outline: "1px solid",
+              borderRadius: "5px",
+              outlineColor: theme.palette.divider,
+              height: "100%",
+              overflowY: "auto",
             }}
           >
-            Upload UBL
-          </MenuItem>
-        </Menu>
+            <Box sx={{ display: "flex", alignItems: "center", pb: 2 }}>
+              <UpdateIcon />
+              <Typography variant="h5" pl={1}>
+                Upcoming
+              </Typography>
+            </Box>
+            {unsentUpcomingInvoices !== 0 && (
+              <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+                <ErrorIcon color="warning" />
+                <Typography sx={{ display: "inline", pl: 1 }}>
+                  Unsent invoices: {unsentUpcomingInvoices}
+                </Typography>
+              </Box>
+            )}
+            {unpaidUpcomingAmount !== 0 && (
+              <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+                <WarningIcon color="warning" />
+                <Typography sx={{ display: "inline", pl: 1 }}>
+                  Pending amount:{" "}
+                  {formatCurrency({
+                    "_text": unpaidUpcomingAmount,
+                    "$currencyID": "AUD",
+                  })}
+                </Typography>
+              </Box>
+            )}
+            {unpaidUpcomingAmount === 0 && unsentUpcomingInvoices === 0 && (
+              <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+                <DoneAllIcon color="success" />
+                <Typography sx={{ display: "inline", pl: 1 }}>
+                  No upcoming invoices!
+                </Typography>
+              </Box>
+            )}
+          </Paper>
+          <Paper
+            elevation={6}
+            component={Grid}
+            item
+            xs={4}
+            sx={{
+              p: 2,
+              outline: "1px solid",
+              borderRadius: "5px",
+              outlineColor: theme.palette.divider,
+              height: "100%",
+              overflowY: "auto",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", pb: 2 }}>
+              <CurrencyExchangeIcon />
+              <Typography variant="h5" pl={1}>
+                Monthly Cashflow
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+              <RequestQuoteIcon color="info" />
+              <Typography sx={{ display: "inline", pl: 1 }}>
+                Invoiced total:{" "}
+                {formatCurrency({
+                  "_text": totalInvoicedAmount,
+                  "$currencyID": "AUD",
+                })}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
+              <PaidIcon color="info" />
+              <Typography sx={{ display: "inline", pl: 1 }}>
+                Received total:{" "}
+                {formatCurrency({
+                  "_text": totalPaidAmount,
+                  "$currencyID": "AUD",
+                })}
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+
         <Grid container sx={{ pt: 2, height: "100%" }} spacing={2}>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={8} sx={{ position: "relative" }}>
+            <Button
+              key="new_button"
+              sx={{
+                minWidth: 80,
+                width: "10%",
+                mt: 1,
+                position: "absolute",
+                right: "8px",
+                zIndex: 999,
+              }}
+              variant="contained"
+              onClick={(e) => {
+                setMenuAnchor(e.target);
+              }}
+            >
+              New
+              <ExpandMoreIcon sx={{ pointerEvents: "none" }} />
+            </Button>
             <DataGrid
+              sx={{ boxShadow: "1px 3px 10px rgba(0, 0, 0, 0.3)" }}
               rows={rows}
               columns={columns}
               initialState={{
@@ -277,7 +595,9 @@ export default function Dashboard() {
                     pageSize: 5,
                   },
                 },
-                columns: { columnVisibilityModel: { id: false } },
+                columns: {
+                  columnVisibilityModel: { id: false, issueDate: false },
+                },
               }}
               pageSizeOptions={[5]}
               disableColumnMenu
@@ -294,7 +614,7 @@ export default function Dashboard() {
                       ),
                 },
               }}
-              onRowClick={generatePreview}
+              onRowClick={(params) => setCurrentId(params.id)}
             />
           </Grid>
           <Grid item display={{ xs: "none", md: "block" }} md={4}>
@@ -308,6 +628,7 @@ export default function Dashboard() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                boxShadow: "1px 3px 10px rgba(0, 0, 0, 0.3)",
               }}
             >
               {previewError ? (

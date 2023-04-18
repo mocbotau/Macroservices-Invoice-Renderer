@@ -16,7 +16,13 @@ import { handleSubmit } from "@src/utils/handleSubmit";
 import { CustomAccordion } from "./paneComponents/Accordion";
 import { SelectRangeSection } from "./paneComponents/SelectRange";
 import { Snackbar } from "../Snackbar";
-import { loadFieldStates, setFieldStates } from "@src/persistence";
+import {
+  loadFieldStates,
+  saveDropdownOptions,
+  saveHasHeaders,
+  saveSelectedRange,
+  saveTextFieldStates,
+} from "@src/persistence";
 
 interface ComponentProps {
   id: number;
@@ -76,67 +82,32 @@ export default function CSVConfigurationPane(
   }, []);
 
   const setTextFieldState = (newTextFieldState) => {
-    setRawTextFieldState(newTextFieldState);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    setFieldStates(
-      {
-        fieldStates: newTextFieldState,
-        dropdownOptions,
-        selectedRange,
-        hasHeaders,
-      },
-      props.id
-    );
+    console.log(newTextFieldState);
+    setRawTextFieldState(newTextFieldState);
+    saveTextFieldStates(newTextFieldState, props.id);
   };
 
   const setDropdownOptions = (newDropdownOptions) => {
-    setRawDropdownOptions(newDropdownOptions);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    setFieldStates(
-      {
-        fieldStates: textFieldState,
-        dropdownOptions: newDropdownOptions,
-        selectedRange,
-        hasHeaders,
-      },
-      props.id
-    );
+    setRawDropdownOptions(newDropdownOptions);
+    saveDropdownOptions(newDropdownOptions, props.id);
   };
 
   const setSelectedRange = (newSelectedRange) => {
-    setRawSelectedRange(newSelectedRange);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    setFieldStates(
-      {
-        fieldStates: textFieldState,
-        dropdownOptions,
-        selectedRange: newSelectedRange,
-        hasHeaders,
-      },
-      props.id
-    );
+    setRawSelectedRange(newSelectedRange);
+    saveSelectedRange(newSelectedRange, props.id);
   };
 
   const setHasHeaders = (newHasHeaders) => {
-    setRawHasHeaders(newHasHeaders);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    setFieldStates(
-      {
-        fieldStates: textFieldState,
-        dropdownOptions,
-        selectedRange,
-        hasHeaders: newHasHeaders,
-      },
-      props.id
-    );
+    setRawHasHeaders(newHasHeaders);
+    saveHasHeaders(newHasHeaders, props.id);
   };
 
   useEffect(() => {

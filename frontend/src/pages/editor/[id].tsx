@@ -4,7 +4,7 @@ import { Box, CssBaseline, IconButton, useTheme } from "@mui/material";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 import { NextSeo } from "next-seo";
-import { deleteInvoice, loadFile, loadUBL, setUBL } from "@src/persistence";
+import { deleteInvoice, loadFile, loadUBL, saveUBL } from "@src/persistence";
 import { useRouter } from "next/router";
 
 export const getServerSideProps = () => ({ props: {} });
@@ -41,7 +41,7 @@ export default function Editor() {
   const goBack = () => {
     if (loadedXML && file) {
       setLoadedXML("");
-      setUBL(undefined, id);
+      saveUBL(undefined, id);
     } else if (file) {
       setFile(null);
       deleteInvoice(id);
@@ -103,7 +103,7 @@ export default function Editor() {
             file={file}
             setLoadedXML={(loadedXML) => {
               setLoadedXML(loadedXML);
-              setUBL(loadedXML, id);
+              saveUBL(loadedXML, id);
             }}
           ></CSVConfiguration>
         )

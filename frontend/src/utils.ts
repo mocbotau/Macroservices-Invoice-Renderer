@@ -22,6 +22,7 @@ import {
 } from "./constants";
 import { Api } from "./Api";
 import currencyMap from "currency-symbol-map";
+import { parse, compareAsc, addDays } from "date-fns";
 
 /**
  * Prompts the user to upload a file
@@ -539,3 +540,9 @@ export function formatCurrency(currencyObject) {
   }`;
   return result;
 }
+
+export const compareDate = (date, offset) =>
+  compareAsc(
+    parse(date, "yyyy-MM-dd", new Date()),
+    addDays(Date.now(), offset)
+  );

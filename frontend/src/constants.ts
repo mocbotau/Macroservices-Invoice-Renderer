@@ -17,6 +17,7 @@ export const DEFAULT_CURRENCY = "AUD";
 export const DEFAULT_REFERENCE = "Generic";
 
 export const SEND_TIMEOUT_MS = 10000;
+export const PAGE_WIDTH = 547;
 
 export const SUPPORTED_LANGUAGES = [
   { langCode: "en", language: "English" },

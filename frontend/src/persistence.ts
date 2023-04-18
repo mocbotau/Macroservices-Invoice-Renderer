@@ -3,6 +3,12 @@ import { MultiSelectRange, SelectedData } from "./interfaces";
 import { extractNumber, formatCurrency } from "./utils";
 import { ublToJSON } from "./utils/UBLParser";
 
+export enum InvoiceState {
+  DRAFT,
+  SENT,
+  PAID,
+}
+
 /**
  * Saves an invoice locally
  *
@@ -23,7 +29,14 @@ export async function newInvoice(
     SAVE_FILE_KEY,
     JSON.stringify([
       ...files,
-      { id: newId, file: fText, ubl: null, states: states, selected: selected },
+      {
+        id: newId,
+        file: fText,
+        ubl: null,
+        states: states,
+        selected: selected,
+        state: InvoiceState.DRAFT,
+      },
     ])
   );
   return newId;
@@ -67,7 +80,7 @@ export function deleteInvoice(id: number): void {
  * @param {number} id - invoice ID to set UBL of
  * @param {string | undefined} ubl - UBL string to save or undefined to clear
  */
-export function setUBL(ubl: string | undefined, id: number): void {
+export function saveUBL(ubl: string | undefined, id: number): void {
   const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
   const invoice = files.find((x) => x.id === id);
   invoice.ubl = ubl;
@@ -101,15 +114,58 @@ interface AllFields {
 }
 
 /**
- * Saves the field states
+ * Saves the text field states
  *
- * @param {number} id - invoice ID to set to
- * @param {AllFields} states - Field states
+ * @param {Record<string, string>} value - value to set
+ * @param {number} id - Invoice to set
  */
-export function setFieldStates(states: AllFields, id: number): void {
+export function saveTextFieldStates(
+  value: Record<string, string>,
+  id: number
+): void {
   const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
   const invoice = files.find((x) => x.id === id);
-  invoice.states = states;
+  console.log(value);
+  invoice.states.fieldStates = value;
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
+}
+
+/**
+ * Saves the dropdown options
+ *
+ * @param {string[]} value - value to set
+ * @param {number} id - Invoice to set
+ */
+export function saveDropdownOptions(value: string[], id: number): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const invoice = files.find((x) => x.id === id);
+  invoice.states.dropdownOptions = value;
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
+}
+
+/**
+ * Saves the selected range
+ *
+ * @param {MultiSelectRange} value - value to set
+ * @param {number} id - Invoice to set
+ */
+export function saveSelectedRange(value: MultiSelectRange, id: number): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const invoice = files.find((x) => x.id === id);
+  invoice.states.selectedRange = value;
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
+}
+
+/**
+ * Saves whether the invoice has headers
+ *
+ * @param {boolean} value - value to set
+ * @param {number} id - Invoice to set
+ */
+export function saveHasHeaders(value: boolean, id: number): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const invoice = files.find((x) => x.id === id);
+  invoice.states.hasHeaders = value;
   localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
 }
 
@@ -133,7 +189,7 @@ export function loadFieldStates(id: number): AllFields | null {
 }
 
 /**
- * Saves the selected invoice items
+ * Saves the states of the selected invoice items
  *
  * @param {SelectedData} states - Field states
  */
@@ -155,9 +211,7 @@ export function setInvoiceItemsSelection(
  * @returns {SelectedData | null} - Field states or null if
  * they are not in storage
  */
-export async function loadInvoiceItemsSelection(
-  id: number
-): Promise<SelectedData | null> {
+export function loadInvoiceItemsSelection(id: number): SelectedData | null {
   const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
 
   const result = files.find((x) => x.id === id);
@@ -166,6 +220,37 @@ export async function loadInvoiceItemsSelection(
   }
 
   return result.selected;
+}
+
+/**
+ * Sets the state of the selected invoice item
+ *
+ * @param {InvoiceState} states - Field states
+ */
+export function setInvoiceState(state: InvoiceState, id: number): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+  const invoice = files.find((x) => x.id === id);
+  invoice.state = state;
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
+}
+
+/**
+ * Loads the invoice states
+ *
+ * @param {number} id - invoice ID to set
+ *
+ * @returns {InvoiceState | null} - Invoice state or null if
+ * they are not in storage
+ */
+export function loadInvoiceState(id: number): number {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+
+  const result = files.find((x) => x.id === id);
+  if (result === undefined || result.file === undefined) {
+    return null;
+  }
+
+  return result.state;
 }
 
 interface InvoiceSummary {
@@ -187,11 +272,11 @@ export function getInvoices(): InvoiceSummary[] {
   return files.map((file) => {
     let result = {
       id: file.id,
-      customer: "Not yet selected",
+      customer: "",
       amountDue: "",
       issueDate: "",
       dueDate: "",
-      paid: false,
+      state: file.state,
     };
     if (file.ubl) {
       const ublObject = ublToJSON(file.ubl);
@@ -231,6 +316,7 @@ export function getInvoices(): InvoiceSummary[] {
       result.issueDate = fields["invoice_issue_date"];
       result.dueDate = fields["invoice_due_date"];
     }
+    if (!result.customer) result.customer = "Not yet selected";
     return result;
   });
 }
