@@ -79,6 +79,7 @@ export default function CSVConfigurationPane(
 
   useEffect(() => {
     loadInitialState();
+    // eslint-disable-next-line
   }, []);
 
   const setTextFieldState = (newTextFieldState) => {

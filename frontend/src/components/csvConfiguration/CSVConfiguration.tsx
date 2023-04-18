@@ -42,6 +42,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
 
   useEffect(() => {
     loadSavedSelection();
+    // eslint-disable-next-line
   }, []);
 
   const setSelection = (selection) => {

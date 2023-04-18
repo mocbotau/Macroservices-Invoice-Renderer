@@ -270,7 +270,7 @@ interface InvoiceSummary {
 export function getInvoices(): InvoiceSummary[] {
   const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
   return files.map((file) => {
-    let result = {
+    const result = {
       id: file.id,
       customer: "",
       amountDue: "",

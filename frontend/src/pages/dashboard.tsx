@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Badge,
@@ -25,7 +25,6 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridToolbar,
-  GridValueGetterParams,
 } from "@mui/x-data-grid";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -156,7 +155,9 @@ export default function Dashboard() {
             disableUnderline
           >
             {invoiceSentOptions.map((x, i) => (
-              <MenuItem value={i}>{x.name}</MenuItem>
+              <MenuItem key={i} value={i}>
+                {x.name}
+              </MenuItem>
             ))}
           </Select>
         );
@@ -205,17 +206,20 @@ export default function Dashboard() {
             push(`/editor/${params.id}`);
           }}
           label="Edit"
+          key="Edit"
         />,
         <GridActionsCellItem
           icon={<ShareIcon />}
           disabled={loadUBL(params.id.valueOf() as number) === null}
           onClick={() => push(`/editor/${params.id}`)}
           label="Share"
+          key="Share"
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           onClick={() => setToBeDeletedId(params.id)}
           label="Delete"
+          key="Delete"
         />,
       ],
     },
@@ -266,35 +270,38 @@ export default function Dashboard() {
     }*/
   };
 
-  const generatePreview = async (id) => {
-    if (loadUBL(id) === null) {
-      setPreviewHtml(null);
-      setPreviewError("Create this invoice to enable preview.");
-      return;
-    }
-    try {
-      const resp = await Api.renderToHTML(loadUBL(id), 0, "en", {});
-      let rawHtml = await resp.blob.text();
+  const generatePreview = useCallback(
+    async (id) => {
+      if (loadUBL(id) === null) {
+        setPreviewHtml(null);
+        setPreviewError("Create this invoice to enable preview.");
+        return;
+      }
+      try {
+        const resp = await Api.renderToHTML(loadUBL(id), 0, "en", {});
+        let rawHtml = await resp.blob.text();
 
-      // trust me bro
-      const scalingFactor = (windowWidth - 140) / 3.6 / PAGE_WIDTH;
-      rawHtml = `<!DOCTYPE html><html style="display:flex;height:0px"><body style="transform:scale(${scalingFactor},${scalingFactor});transform-origin:top left;${rawHtml.substring(
-        '<!DOCTYPE html><html style="display:flex"><body style="'.length
-      )}`;
+        // trust me bro
+        const scalingFactor = (windowWidth - 140) / 3.6 / PAGE_WIDTH;
+        rawHtml = `<!DOCTYPE html><html style="display:flex;height:0px"><body style="transform:scale(${scalingFactor},${scalingFactor});transform-origin:top left;${rawHtml.substring(
+          '<!DOCTYPE html><html style="display:flex"><body style="'.length
+        )}`;
 
-      setPreviewHtml(
-        URL.createObjectURL(new Blob([rawHtml], { type: "text/html" }))
-      );
-      setPreviewError(null);
-    } catch {
-      setPreviewHtml(null);
-      setPreviewError("Could not render preview.");
-    }
-  };
+        setPreviewHtml(
+          URL.createObjectURL(new Blob([rawHtml], { type: "text/html" }))
+        );
+        setPreviewError(null);
+      } catch {
+        setPreviewHtml(null);
+        setPreviewError("Could not render preview.");
+      }
+    },
+    [setPreviewHtml, setPreviewError, windowWidth]
+  );
 
   useEffect(() => {
     generatePreview(currentId);
-  }, [currentId, windowWidth]);
+  }, [currentId, generatePreview]);
 
   useEffect(() => {
     setRows(getInvoices());

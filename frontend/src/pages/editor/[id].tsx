@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import ExportOptions from "@src/components/exportOptions";
-import { Box, CssBaseline, IconButton, useTheme } from "@mui/material";
-import ArrowBack from "@mui/icons-material/ArrowBack";
+import { CssBaseline } from "@mui/material";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
 import { NextSeo } from "next-seo";
-import { deleteInvoice, loadFile, loadUBL, saveUBL } from "@src/persistence";
+import { loadFile, loadUBL, saveUBL } from "@src/persistence";
 import { useRouter } from "next/router";
 
 export const getServerSideProps = () => ({ props: {} });
 
 export default function Editor() {
   const router = useRouter();
-  const theme = useTheme();
 
   const id = parseInt(router.query.id as string);
 
@@ -38,16 +36,16 @@ export default function Editor() {
     return false;
   };
 
-  const goBack = () => {
-    if (loadedXML && file) {
-      setLoadedXML("");
-      saveUBL(undefined, id);
-    } else if (file) {
-      setFile(null);
-      deleteInvoice(id);
-      router.push("/dashboard");
-    }
-  };
+  // const goBack = () => {
+  //   if (loadedXML && file) {
+  //     setLoadedXML("");
+  //     saveUBL(undefined, id);
+  //   } else if (file) {
+  //     setFile(null);
+  //     deleteInvoice(id);
+  //     router.push("/dashboard");
+  //   }
+  // };
 
   useEffect(() => {
     const hasCSV = loadCSV();
@@ -55,6 +53,7 @@ export default function Editor() {
     if (!hasCSV && !hasXML) {
       router.push("/dashboard");
     }
+    // eslint-disable-next-line
   }, []);
 
   return (
