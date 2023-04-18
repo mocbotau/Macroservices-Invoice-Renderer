@@ -60,7 +60,7 @@ export default async function reset_password_handler(
         return res.status(400).json({ error: "Email must be provided" });
       }
       if (
-        !(await DBGet("SELECT Email FROM Users WHERE Email = ?", [
+        !(await DBGet("SELECT Identifier FROM Users WHERE Identifier = ?", [
           req.body.email,
         ]))
       ) {

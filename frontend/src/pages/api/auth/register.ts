@@ -25,11 +25,11 @@ export default async function register_handler(
   if (req.method !== "POST")
     return res.status(405).json({ error: "Only POST requests allowed" });
   const body = req.body;
-  if (!body.email || !body.password || !body.name) {
+  if (!body.identifier || !body.password || !body.name) {
     res.status(400).json({ error: "Fields cannot be empty." });
     return;
   }
-  if (!EmailValidator.validate(body.email)) {
+  if (!EmailValidator.validate(body.identifier)) {
     res.status(400).json({ error: "Email is not a valid form." });
     return;
   }
@@ -42,19 +42,19 @@ export default async function register_handler(
   const hashedPassword = createHash("sha256")
     .update(body.password)
     .digest("hex");
-  const user = await DBGet("SELECT Email FROM Users WHERE Email = ?", [
-    body.email,
-  ]);
+  const user = await DBGet(
+    "SELECT Identifier FROM Users WHERE Identifier = ?",
+    [body.identifier]
+  );
   if (user) {
     res.status(409).json({ error: "User already exists." });
   } else {
-    await DBRun("INSERT INTO Users (Email, Password, Name) VALUES (?,?,?)", [
-      body.email,
-      hashedPassword,
-      body.name,
-    ]);
+    await DBRun(
+      "INSERT INTO Users (Identifier, Password, Name) VALUES (?,?,?)",
+      [body.identifier, hashedPassword, body.name]
+    );
     const session: Session = {
-      email: body.email as string,
+      email: body.identifier as string,
       name: body.name as string,
     };
     res.status(200).json({ user: session });

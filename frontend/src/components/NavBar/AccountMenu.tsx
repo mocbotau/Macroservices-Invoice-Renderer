@@ -28,8 +28,7 @@ export default function AccountMenu(props: ComponentProps) {
 
   const handleLogout = async () => {
     setShowMenu(null);
-    signOut();
-    router.push("/");
+    signOut({ callbackUrl: "/" });
   };
 
   return (

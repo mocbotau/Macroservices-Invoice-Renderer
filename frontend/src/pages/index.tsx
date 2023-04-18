@@ -3,7 +3,6 @@ import { DefaultSession } from "next-auth";
 import { getSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import BackgroundImage from "@src/components/BackgroundImage";
 
 export interface ServerSideProps {

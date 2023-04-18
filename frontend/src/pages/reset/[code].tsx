@@ -7,7 +7,6 @@ import {
   Container,
   Snackbar,
   Alert,
-  useTheme,
   createTheme,
   ThemeProvider,
 } from "@mui/material";

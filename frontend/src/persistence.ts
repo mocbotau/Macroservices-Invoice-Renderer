@@ -125,7 +125,6 @@ export function saveTextFieldStates(
 ): void {
   const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
   const invoice = files.find((x) => x.id === id);
-  console.log(value);
   invoice.states.fieldStates = value;
   localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
 }

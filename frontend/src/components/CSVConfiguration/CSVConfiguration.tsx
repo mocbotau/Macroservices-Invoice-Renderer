@@ -151,7 +151,6 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
               });
             }}
           />
-          MOBILE_WIDTH
         </Box>
         {width <= MOBILE_WIDTH ? (
           <Box sx={{ justifyContent: "center", alignContent: "center" }}>

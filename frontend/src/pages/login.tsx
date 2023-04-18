@@ -18,6 +18,8 @@ import {
   Tab,
   Tabs,
   Button,
+  useTheme,
+  Divider,
 } from "@mui/material";
 import { Api } from "@src/Api";
 import { useRouter } from "next/router";
@@ -44,6 +46,8 @@ export default function SignInSide() {
   const [showResetPassword, setShowResetPassword] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const theme = useTheme();
 
   const handleShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (
@@ -215,13 +219,14 @@ export default function SignInSide() {
                         sx={{ marginY: 2 }}
                       >
                         <InputLabel htmlFor="login_password">
-                          Password
+                          Password *
                         </InputLabel>
                         <OutlinedInput
                           id="login_password"
                           label="Password"
                           autoComplete="current-password"
                           type={showPassword ? "text" : "password"}
+                          required
                           endAdornment={
                             <InputAdornment position="end">
                               <IconButton
@@ -240,6 +245,18 @@ export default function SignInSide() {
                           }
                         />
                       </FormControl>
+                      <Grid container>
+                        <Grid item xs>
+                          <Button
+                            variant="text"
+                            onClick={() => setShowResetPassword(true)}
+                            size="small"
+                          >
+                            Forgot password?
+                          </Button>
+                        </Grid>
+                        <Grid item></Grid>
+                      </Grid>
                       <LoadingButton
                         type="submit"
                         data-testid="LoginButton"
@@ -250,22 +267,12 @@ export default function SignInSide() {
                       >
                         Login
                       </LoadingButton>
+                      <Divider sx={{ marginBottom: 1 }}>OR</Divider>
                       <ThirdPartySignInButton
                         icon={<GoogleIcon />}
                         name="Google"
                       />
                       <ThirdPartySignInButton icon={<GitHub />} name="GitHub" />
-                      <Grid container>
-                        <Grid item xs>
-                          <Button
-                            variant="text"
-                            onClick={() => setShowResetPassword(true)}
-                          >
-                            Forgot password?
-                          </Button>
-                        </Grid>
-                        <Grid item></Grid>
-                      </Grid>
                     </Box>
                   </TabPanel>
                   <TabPanel value={tabValue} index={1}>
@@ -308,11 +315,12 @@ export default function SignInSide() {
                         sx={{ marginY: 2 }}
                       >
                         <InputLabel htmlFor="register_password">
-                          Password
+                          Password *
                         </InputLabel>
                         <OutlinedInput
                           id="register_password"
                           label="Password"
+                          required
                           type={showPassword ? "text" : "password"}
                           error={registerPasswordError.length > 0}
                           onFocus={() => setRegisterPasswordError("")}

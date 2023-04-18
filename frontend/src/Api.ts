@@ -3,6 +3,7 @@ import {
   InvoiceSendExtOptions,
   InvoiceSendOptions,
 } from "@src/interfaces";
+import { reject } from "lodash";
 
 export class Api {
   /**
@@ -148,16 +149,16 @@ export class Api {
    * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
   static async register(
-    email: string,
+    identifier: string,
     password: string,
-    name: string
+    name: string,
+    github = false
   ): Promise<APIResponse> {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name }),
+      body: JSON.stringify({ identifier, password, name, github }),
     });
-    console.log("a", res);
     return { status: res.status, json: await res.json() };
   }
 
@@ -193,7 +194,6 @@ export class Api {
    * @param {string} xml - the UBL data to send
    * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
-
   static async sendInvoiceExternal(
     contact: string,
     type: InvoiceSendOptions,
@@ -213,6 +213,49 @@ export class Api {
     if (res.status !== 200) {
       return { status: res.status, json: {} };
     }
+    return { status: res.status, json: await res.json() };
+  }
+
+  /**
+   * Gets all the contacts for an account
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async getContacts(account: string): Promise<APIResponse> {
+    const res = await fetch(`/api/contacts/getcontacts/?account=${account}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    return { status: res.status, json: await res.json() };
+  }
+
+  /**
+   * Edits an existing contact given an ID
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async editContact(
+    id: number,
+    account: string,
+    name: string,
+    email: string,
+    phone: string
+  ): Promise<APIResponse> {
+    const res = await fetch(`/api/contacts/editcontact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, account, name, email, phone }),
+    });
+    return { status: res.status, json: await res.json() };
+  }
+
+  /**
+   * Deletes the given ID's contact from an account
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async deleteContact(id: string): Promise<APIResponse> {
+    const res = await fetch(`/api/contacts/deletecontact/?id=${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
     return { status: res.status, json: await res.json() };
   }
 }

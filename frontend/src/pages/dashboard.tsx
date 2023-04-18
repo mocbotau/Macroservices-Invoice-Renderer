@@ -432,8 +432,8 @@ export default function Dashboard() {
         p={3}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
-        <Typography variant="h3" fontWeight={600}>
-          Invoices
+        <Typography variant="h4" fontWeight={600} color="primary">
+          Dashboard
         </Typography>
 
         <Grid

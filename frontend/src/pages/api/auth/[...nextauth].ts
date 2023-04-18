@@ -2,6 +2,8 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
+import { Api } from "@src/Api";
+import { DBGet, DBRun } from "@src/utils/DBHandler";
 
 export const authOptions = {
   providers: [
@@ -22,6 +24,7 @@ export const authOptions = {
         });
 
         const user = (await res.json()).user;
+        console.log(user);
         return user || null;
       },
     }),
@@ -44,6 +47,21 @@ export const authOptions = {
     signIn: "/login",
   },
   callbacks: {
+    async signIn({ account }) {
+      if (account.provider === "github") {
+        const res = await DBGet(
+          "SELECT Identifier FROM Users WHERE Identifier = (?) AND GitHub = true",
+          [account.providerAccountId]
+        );
+        if (res) return true;
+
+        await DBRun(
+          "INSERT INTO Users (Identifier, Password, Name, GitHub) VALUES (?,?,?,?)",
+          [account.providerAccountId, "", "", true]
+        ).catch(() => {});
+      }
+      return true;
+    },
     async jwt({ token, user, account }) {
       if (account && user) {
         return {
@@ -58,9 +76,10 @@ export const authOptions = {
 
     async session({ session, token }) {
       session.user.accessToken = token.accessToken;
-
+      session.user.sub = token.sub;
       return session;
     },
   },
 };
+
 export default NextAuth(authOptions);

@@ -39,7 +39,7 @@ export default async function handler(
   if (!user) {
     return res.status(404).json({ error: "Code is invalid." });
   }
-  await DBRun("UPDATE Users SET Password = ? WHERE Email = ?", [
+  await DBRun("UPDATE Users SET Password = ? WHERE Identifier = ?", [
     hashedPassword,
     user.Email as string,
   ]);

@@ -97,7 +97,6 @@ export default function CSVConfigurationPane(
   const setTextFieldState = (newTextFieldState) => {
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    console.log(newTextFieldState);
     setRawTextFieldState(newTextFieldState);
     saveTextFieldStates(newTextFieldState, props.id);
   };

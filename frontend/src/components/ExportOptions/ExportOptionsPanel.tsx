@@ -93,8 +93,6 @@ export default function ExportOptionsPanel(props: ComponentProps) {
       setTextError(err.message);
     },
     onDropRejected: (fileRejections: Array<FileRejection>) => {
-      console.log(fileRejections[0]);
-
       const errors = fileRejections[0].errors.map((obj) => {
         switch (obj.code) {
           case "file-invalid-type":

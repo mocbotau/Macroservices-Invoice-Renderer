@@ -9,8 +9,6 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  console.log();
-
   switch (req.nextUrl.pathname) {
     case "/dashboard":
     case req.nextUrl.pathname.match(/^\/editor\/(.+)$/)?.input:

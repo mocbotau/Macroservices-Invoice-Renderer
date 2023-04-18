@@ -18,6 +18,9 @@ export default function App({
       createTheme({
         palette: {
           mode: darkMode ? "dark" : "light",
+          background: {
+            default: darkMode ? "#191919" : "#fff",
+          },
           primary: { main: "#ab47bc" },
           secondary: { main: "#90caf9" },
         },

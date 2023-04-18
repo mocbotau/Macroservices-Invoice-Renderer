@@ -95,6 +95,7 @@ export type InvoiceSendOptions = "email" | "sms";
 export type InvoiceSendExtOptions = "json" | "pdf" | "html" | "xml";
 
 export interface Session {
-  email: string;
-  name: string;
+  email?: string;
+  name?: string;
+  sub?: string;
 }

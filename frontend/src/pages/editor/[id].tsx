@@ -6,8 +6,6 @@ import { NextSeo } from "next-seo";
 import { loadFile, loadUBL, saveUBL } from "@src/persistence";
 import { useRouter } from "next/router";
 
-export const getServerSideProps = () => ({ props: {} });
-
 export default function Editor() {
   const router = useRouter();
 
