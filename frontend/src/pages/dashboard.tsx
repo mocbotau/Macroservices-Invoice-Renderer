@@ -163,9 +163,22 @@ export default function Dashboard() {
       },
     },
     {
+      field: "fileType",
+      headerName: "File",
+      width: 80,
+      renderCell: (params) => (
+        <Box sx={{ display: "flex" }}>
+          <Chip
+            size="small"
+            label={loadFile(params.row.id) === null ? "XML" : "CSV"}
+          />
+        </Box>
+      ),
+    },
+    {
       field: "actions",
       type: "actions",
-      flex: 4,
+      width: 150,
       getActions: (params) => [
         <GridActionsCellItem
           icon={
@@ -205,7 +218,6 @@ export default function Dashboard() {
           label="Delete"
         />,
       ],
-      minWidth: 120,
     },
   ];
 
@@ -609,9 +621,7 @@ export default function Dashboard() {
                   getTogglableColumns: () =>
                     columns
                       .map((x) => x.field)
-                      .filter(
-                        (x) => !["customer", "actions", "id"].includes(x)
-                      ),
+                      .filter((x) => !["customer", "actions"].includes(x)),
                 },
               }}
               onRowClick={(params) => setCurrentId(params.id)}
