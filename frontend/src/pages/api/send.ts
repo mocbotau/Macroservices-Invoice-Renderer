@@ -27,7 +27,7 @@ async function sendEmail(
         to: toEmail,
         subject: "Macroservices Invoice Rendering",
         html: fs
-          .readFileSync("public/emailTemplate.html", {
+          .readFileSync("public/invoice_email_template.html", {
             flag: "r",
             encoding: "utf-8",
           })

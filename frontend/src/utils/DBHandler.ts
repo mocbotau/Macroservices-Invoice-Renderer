@@ -8,6 +8,9 @@ DB.serialize(() => {
   DB.run(
     "CREATE TABLE IF NOT EXISTS 'Users' ('ID' INTEGER NOT NULL UNIQUE, 'Email' TEXT NOT NULL, 'Password' TEXT NOT NULL, PRIMARY KEY('ID' AUTOINCREMENT))"
   );
+  DB.run(
+    "CREATE TABLE IF NOT EXISTS 'ResetCodes'('Email' TEXT NOT NULL, 'Code' TEXT, FOREIGN KEY('Email') REFERENCES 'Users'('Email') )"
+  );
 });
 
 export async function DBRun(

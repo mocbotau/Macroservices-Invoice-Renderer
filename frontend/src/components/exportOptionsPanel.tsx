@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
   useTheme,
+  Card,
 } from "@mui/material";
 import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
 import { Api } from "@src/Api";
@@ -24,8 +25,15 @@ import { SUPPORTED_LANGUAGES } from "@src/constants";
 import { Email, Phone, Delete } from "@mui/icons-material";
 import { SEND_TIMEOUT_MS } from "@src/constants";
 import { toBase64 } from "@src/utils";
+import { useDropzone } from "react-dropzone";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { FileRejection } from "react-dropzone";
 
 type CustomSendType = InvoiceSendOptions | "";
+
+interface DragDropFile extends File {
+  path: string;
+}
 
 interface ComponentProps {
   ubl: string;
@@ -54,6 +62,7 @@ export default function ExportOptionsPanel(props: ComponentProps) {
   const theme = useTheme();
 
   const [textError, setTextError] = useState("");
+  const [fileErrors, setFileErrors] = useState(null);
   const [textSuccess, setTextSuccess] = useState("");
   const [exportMethod, setExportMethod] = useState("download");
   const [recipient, setRecipient] = useState("");
@@ -62,6 +71,37 @@ export default function ExportOptionsPanel(props: ComponentProps) {
   const [exporting, setExporting] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendTimeout, setSendTimeout] = useState<number>(0);
+
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+    },
+    maxFiles: 1,
+    maxSize: 5000000,
+    onDropAccepted: (files: Array<File>) => {
+      setFileErrors(null);
+      setIconFile(files[0]);
+    },
+    onError: (err: Error) => {
+      setTextError(err.message);
+    },
+    onDropRejected: (fileRejections: Array<FileRejection>) => {
+      console.log(fileRejections[0]);
+
+      const errors = fileRejections[0].errors.map((obj) => {
+        switch (obj.code) {
+          case "file-invalid-type":
+            return "File must be .jpg, .jpeg or .png";
+          case "file-too-large":
+            return "File must be less than 5MB";
+          default:
+            return obj.message;
+        }
+      });
+      setFileErrors(errors);
+    },
+  });
 
   useEffect(() => {
     if (EmailValidator.validate(recipient)) {
@@ -339,41 +379,64 @@ export default function ExportOptionsPanel(props: ComponentProps) {
           <Typography textAlign="center" variant="h6" mt={2} mb={1}>
             Optional Components
           </Typography>
-          <Grid container sx={{ width: "95%" }}>
-            <Grid item xs={3}>
-              <Button variant="contained" component="label">
-                Icon
-                <input
-                  hidden
-                  type="file"
-                  accept=".jpg,.png"
-                  onChange={(e) => setIconFile(e.target.files[0])}
-                />
-              </Button>
-            </Grid>
-            <Grid item xs={8} sx={{ display: "flex", alignItems: "center" }}>
-              <Typography
-                pl={1}
-                pr={1}
+          <Grid container sx={{ width: "100%" }} gap={2}>
+            <Grid item xs={12}>
+              <Card
+                variant="outlined"
                 sx={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+                  p: 3,
+                  position: "relative",
+                  display: "flex",
+                  gap: 2,
+                  alignItems: "center",
                 }}
               >
-                {iconFile?.name}
-              </Typography>
-            </Grid>
-            <Grid item xs={1}>
-              {iconFile && (
-                <IconButton
-                  onClick={() => setIconFile(undefined)}
-                  sx={{ height: "auto" }}
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    alignItems: "center",
+                    cursor: "pointer",
+                    width: "90%",
+                  }}
+                  {...getRootProps({ className: "dropzone" })}
                 >
-                  <Delete />
-                </IconButton>
-              )}
+                  <input {...getInputProps()} />
+                  <UploadFileIcon />
+                  <Typography>
+                    {acceptedFiles.length > 0
+                      ? (acceptedFiles[0] as DragDropFile).path
+                      : "Upload or drag and drop your logo."}
+                  </Typography>
+                </Box>
+                {acceptedFiles.length > 0 && (
+                  <IconButton
+                    onClick={() => {
+                      acceptedFiles.splice(0, 1);
+                      setIconFile(undefined);
+                    }}
+                    sx={{
+                      height: "auto",
+                      position: "absolute",
+                      right: 10,
+                      ":hover": {
+                        color: "red",
+                      },
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                )}
+              </Card>
             </Grid>
+            {fileErrors &&
+              fileErrors.map((message: string, index: number) => {
+                return (
+                  <Grid item xs={12} key={index}>
+                    <Alert severity="error">{message}</Alert>
+                  </Grid>
+                );
+              })}
           </Grid>
         </Box>
       </Box>
