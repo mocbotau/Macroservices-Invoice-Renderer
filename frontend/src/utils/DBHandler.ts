@@ -49,13 +49,13 @@ export async function DBGet(
 export async function DBAll(
   query: string,
   params?: (string | number | boolean)[]
-): Promise<Object[] | undefined> {
+): Promise<object[] | undefined> {
   return new Promise((res) => {
     DB.all(query, params, (err, row) => {
       if (err) {
         throw err;
       } else {
-        res(row as Object[]);
+        res(row as object[]);
       }
     });
   });

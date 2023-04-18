@@ -5,8 +5,42 @@ import CSVConfiguration from "@src/components/CSVConfiguration/CSVConfiguration"
 import { NextSeo } from "next-seo";
 import { loadFile, loadUBL, saveUBL } from "@src/persistence";
 import { useRouter } from "next/router";
+import { Emails, PhoneNumbers, SessionWithSub } from "@src/interfaces";
+import { getSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
+import { DBAll } from "@src/utils/DBHandler";
 
-export default function Editor() {
+export interface ServerSideProps {
+  emails: Emails[];
+  phones: PhoneNumbers[];
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session: SessionWithSub = await getSession(context);
+
+  let emails: Emails[] = (await DBAll(
+    "SELECT ID AS id, Name AS name, EmailAddress AS email FROM ContactDetails WHERE Account = ?",
+    [session?.user?.email || session?.user?.sub]
+  )) as Emails[];
+
+  let phones: PhoneNumbers[] = (await DBAll(
+    "SELECT ID AS id, Name AS name, PhoneNumber AS phone FROM ContactDetails WHERE Account = ?",
+    [session?.user?.email || session?.user?.sub]
+  )) as PhoneNumbers[];
+
+  emails = emails.filter((email) => email.email.length !== 0);
+  phones = phones.filter((phone) => phone.phone.length !== 0);
+
+  return {
+    props: { emails, phones }, // will be passed to the page component as props
+  };
+}
+
+export const ContactsContext = React.createContext<ServerSideProps | null>(
+  null
+);
+
+export default function Editor(props: ServerSideProps) {
   const router = useRouter();
 
   const id = parseInt(router.query.id as string);
@@ -34,23 +68,13 @@ export default function Editor() {
     return false;
   };
 
-  // const goBack = () => {
-  //   if (loadedXML && file) {
-  //     setLoadedXML("");
-  //     saveUBL(undefined, id);
-  //   } else if (file) {
-  //     setFile(null);
-  //     deleteInvoice(id);
-  //     router.push("/dashboard");
-  //   }
-  // };
-
   useEffect(() => {
     const hasCSV = loadCSV();
     const hasXML = loadXMLData();
     if (!hasCSV && !hasXML) {
       router.push("/dashboard");
     }
+
     // eslint-disable-next-line
   }, []);
 
@@ -59,40 +83,10 @@ export default function Editor() {
       <NextSeo title="Editor" />
       <CssBaseline />
 
-      {/*<Box
-        position="fixed"
-        ml={1}
-        mt={1}
-        display={loadedXML ? "block" : "none"}
-        zIndex={999}
-      >
-        <IconButton
-          sx={{
-            backgroundColor: theme.palette.background.default,
-            ":hover": {
-              backgroundColor: theme.palette.background.default,
-            },
-          }}
-          onClick={goBack}
-        >
-          <ArrowBack />
-        </IconButton>
-      </Box>*/}
-
-      {/* Create full height app */}
-      {/* https://gist.github.com/dmurawsky/d45f068097d181c733a53687edce1919 */}
-      <style global jsx>{`
-        html,
-        body,
-        body > div:first-child,
-        div#__next,
-        div#__next > div {
-          height: 100%;
-        }
-      `}</style>
-
       {loadedXML ? (
-        <ExportOptions ubl={loadedXML} />
+        <ContactsContext.Provider value={props}>
+          <ExportOptions ubl={loadedXML} />
+        </ContactsContext.Provider>
       ) : (
         file && (
           <CSVConfiguration

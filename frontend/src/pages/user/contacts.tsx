@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { getSession } from "next-auth/react";
 import { stringAvatar } from "@src/utils";
-import { ISODateString } from "next-auth";
 import { GetServerSidePropsContext } from "next";
 import * as React from "react";
 import AddIcon from "@mui/icons-material/Add";
@@ -44,23 +43,14 @@ import { DBAll } from "@src/utils/DBHandler";
 import { Api } from "@src/Api";
 import * as EmailValidator from "email-validator";
 import { INTERNATIONAL_NUMBER_REGEX } from "@src/constants";
-
-interface Session {
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    sub?: string | null;
-  };
-  expires: ISODateString;
-}
+import { SessionWithSub } from "@src/interfaces";
 
 export interface ServerSideProps {
-  user: Session["user"];
+  user: SessionWithSub["user"];
   initialRows: GridRowsProp;
 }
 
-let session: Session;
+let session: SessionWithSub;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   session = await getSession(context);
@@ -213,18 +203,22 @@ export default function FullFeaturedCrudGrid(props: ServerSideProps) {
   const preProcessEmailCellProps = async (
     params: GridPreProcessEditCellProps
   ) => {
-    const errorMessage = EmailValidator.validate(params.props.value)
-      ? null
-      : "Please enter a valid email";
+    const errorMessage =
+      EmailValidator.validate(params.props.value) ||
+      params.props.value.length === 0
+        ? null
+        : "Please enter a valid email";
     return { ...params.props, error: errorMessage };
   };
 
   const preProcessPhoneCellProps = async (
     params: GridPreProcessEditCellProps
   ) => {
-    const errorMessage = INTERNATIONAL_NUMBER_REGEX.test(params.props.value)
-      ? null
-      : "Enter a valid number. Include the country code with +.";
+    const errorMessage =
+      INTERNATIONAL_NUMBER_REGEX.test(params.props.value) ||
+      params.props.value.length === 0
+        ? null
+        : "Enter a valid number. Include the country code with +.";
     return { ...params.props, error: errorMessage };
   };
 
@@ -267,12 +261,14 @@ export default function FullFeaturedCrudGrid(props: ServerSideProps) {
         if (isInEditMode) {
           return [
             <GridActionsCellItem
+              key="Save"
               icon={<SaveIcon />}
               label="Save"
               onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
               icon={<CancelIcon />}
+              key="Cancel"
               label="Cancel"
               className="textPrimary"
               onClick={handleCancelClick(id)}
@@ -284,6 +280,7 @@ export default function FullFeaturedCrudGrid(props: ServerSideProps) {
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
+            key="Edit"
             label="Edit"
             className="textPrimary"
             onClick={handleEditClick(id)}
@@ -291,6 +288,7 @@ export default function FullFeaturedCrudGrid(props: ServerSideProps) {
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
+            key="Delete"
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
@@ -316,7 +314,7 @@ export default function FullFeaturedCrudGrid(props: ServerSideProps) {
         <Box display={"flex"} sx={{ padding: 3 }}>
           <Avatar
             alt={props.user.name}
-            {...stringAvatar(props.user as Session["user"])}
+            {...stringAvatar(props.user as SessionWithSub["user"])}
           />
           <Typography variant="h4" fontWeight={600} sx={{ marginLeft: 3 }}>
             Hello

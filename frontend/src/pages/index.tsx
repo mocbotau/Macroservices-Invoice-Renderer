@@ -1,4 +1,4 @@
-import { Container, Typography, Button, Box, Paper } from "@mui/material";
+import { Container, Typography, Button, Box } from "@mui/material";
 import { DefaultSession } from "next-auth";
 import { getSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";

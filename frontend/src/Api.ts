@@ -3,7 +3,6 @@ import {
   InvoiceSendExtOptions,
   InvoiceSendOptions,
 } from "@src/interfaces";
-import { reject } from "lodash";
 
 export class Api {
   /**
@@ -213,18 +212,6 @@ export class Api {
     if (res.status !== 200) {
       return { status: res.status, json: {} };
     }
-    return { status: res.status, json: await res.json() };
-  }
-
-  /**
-   * Gets all the contacts for an account
-   * @returns {Promise<APIResponse>} - The status and JSON of the return
-   */
-  static async getContacts(account: string): Promise<APIResponse> {
-    const res = await fetch(`/api/contacts/getcontacts/?account=${account}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
     return { status: res.status, json: await res.json() };
   }
 

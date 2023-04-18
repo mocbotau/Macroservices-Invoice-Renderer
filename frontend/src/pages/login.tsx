@@ -18,7 +18,6 @@ import {
   Tab,
   Tabs,
   Button,
-  useTheme,
   Divider,
 } from "@mui/material";
 import { Api } from "@src/Api";
@@ -46,8 +45,6 @@ export default function SignInSide() {
   const [showResetPassword, setShowResetPassword] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const theme = useTheme();
 
   const handleShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (

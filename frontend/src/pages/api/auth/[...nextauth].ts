@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import { Api } from "@src/Api";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
 
 export const authOptions = {
@@ -58,7 +57,9 @@ export const authOptions = {
         await DBRun(
           "INSERT INTO Users (Identifier, Password, Name, GitHub) VALUES (?,?,?,?)",
           [account.providerAccountId, "", "", true]
-        ).catch(() => {});
+        ).catch((err) => {
+          console.error(err);
+        });
       }
       return true;
     },

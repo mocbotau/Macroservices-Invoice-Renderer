@@ -5,7 +5,6 @@ import {
   InvoiceAddress,
 } from "./interfaces";
 import xml from "xml";
-import { NextApiRequest } from "next";
 import { invoiceOptions } from "./components/CSVConfiguration/CSVConfigurationFields";
 import {
   INVOICE_ITEMS,
@@ -372,16 +371,6 @@ export function generateXML(
   return xml(xmlObject, true);
 }
 
-export function getSession(req: NextApiRequest) {
-  return process.env.NODE_ENV !== "test"
-    ? req.session
-    : {
-        user: {},
-        destroy: () => Promise.resolve(),
-        save: () => Promise.resolve(),
-      };
-}
-
 /**
  * Returns the corresponding spreadsheet column name based on an inputted number
  * Code retrieved from https://stackoverflow.com/questions/8240637/convert-numbers-to-letters-beyond-the-26-character-alphabet
@@ -578,9 +567,9 @@ function stringToColor(string: string): string {
  * and a background colour determined by their name
  *
  * @param {Session["user"]} user
- * @returns {Object} - props and children for the Avatar component
+ * @returns {object} - props and children for the Avatar component
  */
-export function stringAvatar(user: Session["user"]): Object {
+export function stringAvatar(user: Session["user"]): object {
   if (!user) return {};
   const { name, image } = user;
 

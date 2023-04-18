@@ -179,7 +179,7 @@ export default function ExportOptions(props: { ubl: string }) {
         </Box>
         <Box
           sx={{
-            width: `${!previewHidden ? { drawerWidth } : "100%"}`,
+            width: `${!previewHidden ? `${drawerWidth}` : "100%"}`,
             overflowY: "scroll",
             flexShrink: 0,
             "& .MuiDrawer-paper": {

@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import {
-  Box,
-  IconButton,
-  Paper,
-  SwipeableDrawer,
-  useTheme,
-} from "@mui/material";
+import { Box, IconButton, SwipeableDrawer, useTheme } from "@mui/material";
 import CSVConfigurationPane from "@src/components/CSVConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
 import { Row, SelectedData, emptySelection } from "@src/interfaces";
