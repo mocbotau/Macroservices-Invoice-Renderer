@@ -1,38 +1,15 @@
 import React from "react";
-import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
-import Image from "next/image";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import BackgroundImage from "@src/components/BackgroundImage";
 
 const API_DOCS_URL = "https://macroservices.masterofcubesau.com/docs";
 const GETTING_STARTED_URL =
   "https://macroservices.masterofcubesau.com/docs/getting-started";
 
-const Developers: React.FC = () => {
+function Developers(): JSX.Element {
   return (
     <>
-      <Paper
-        sx={{
-          zIndex: "-1000",
-          backgroundColor: "#111",
-          position: "absolute",
-          height: "calc(100% - 70px)",
-          width: "100%",
-        }}
-      />
-      <Image
-        src="#"
-        loader={() => {
-          return "https://picsum.photos/1920/1080";
-        }}
-        alt={"Background"}
-        priority
-        fill
-        style={{
-          zIndex: "-999",
-          boxShadow: "0 0 200px rgba(0,0,0,0.99) inset",
-          filter: "blur(5px) opacity(0.6)",
-          objectFit: "cover",
-        }}
-      />
+      <BackgroundImage opacity={0.6} />
       <Box
         sx={{
           display: "flex",
@@ -88,6 +65,6 @@ const Developers: React.FC = () => {
       </Box>
     </>
   );
-};
+}
 
 export default Developers;

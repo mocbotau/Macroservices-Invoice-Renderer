@@ -7,20 +7,21 @@ import {
   SwipeableDrawer,
   useTheme,
 } from "@mui/material";
-import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurationPane";
+import CSVConfigurationPane from "@src/components/CSVConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
 import { Row, SelectedData, emptySelection } from "@src/interfaces";
 import { MIN_ROW_COUNT } from "@src/constants";
 import { HotTable } from "./HotTable";
 import {
   loadInvoiceItemsSelection,
-  saveInvoiceItemsSelection,
+  setInvoiceItemsSelection,
 } from "@src/persistence";
 import useWindowDimensions from "@src/utils/useWindowDimensions";
 import { DragHandle } from "@mui/icons-material";
 import { MOBILE_WIDTH } from "@src/constants";
 
 interface ComponentProps {
+  id: number;
   file: File;
   setLoadedXML: (xml: string) => void;
 }
@@ -45,7 +46,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const drawerBleeding = 40;
 
   const loadSavedSelection = async () => {
-    const loaded = await loadInvoiceItemsSelection();
+    const loaded = await loadInvoiceItemsSelection(props.id);
 
     if (loaded !== null) {
       setRawSelection(loaded);
@@ -54,11 +55,12 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
 
   useEffect(() => {
     loadSavedSelection();
+    // eslint-disable-next-line
   }, []);
 
   const setSelection = (selection) => {
     setRawSelection(selection);
-    saveInvoiceItemsSelection(selection);
+    setInvoiceItemsSelection(selection, props.id);
   };
 
   useEffect(() => {
@@ -187,6 +189,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
                 <DragHandle fontSize="large" />
               </IconButton>
               <CSVConfigurationPane
+                id={props.id}
                 selection={selection}
                 multipleSelection={multipleSelection}
                 setMultipleSelection={setMultipleSelection}
@@ -208,6 +211,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
             }}
           >
             <CSVConfigurationPane
+              id={props.id}
               selection={selection}
               multipleSelection={multipleSelection}
               setMultipleSelection={setMultipleSelection}

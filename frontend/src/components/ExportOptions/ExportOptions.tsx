@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
-import ExportOptionsPanel from "./exportOptionsPanel";
+import ExportOptionsPanel from "./ExportOptionsPanel";
 import { useEffect, useState } from "react";
 import { Api } from "@src/Api";
 import { JsonViewer } from "@textea/json-viewer";

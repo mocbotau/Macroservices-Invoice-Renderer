@@ -3,6 +3,7 @@ import { DBRun, DBGet } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import * as EmailValidator from "email-validator";
 import { Session } from "@src/interfaces";
+import { PASSWORD_MIN_LENGTH } from "@src/constants";
 
 /**
  * This function attempts to register a user, creating a session.
@@ -32,7 +33,7 @@ export default async function register_handler(
     res.status(400).json({ error: "Email is not a valid form." });
     return;
   }
-  if (body.password < 6) {
+  if (body.password < PASSWORD_MIN_LENGTH) {
     res
       .status(400)
       .json({ error: "Password must be at least 6 characters long." });

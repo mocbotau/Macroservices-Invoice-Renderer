@@ -30,6 +30,7 @@ import { signIn } from "next-auth/react";
 import RequestResetPassword from "@src/components/Login/RequestResetPassword";
 import GoogleIcon from "@mui/icons-material/Google";
 import ThirdPartySignInButton from "@src/components/Login/ThirdPartySignInButton";
+import { PASSWORD_MIN_LENGTH } from "@src/constants";
 
 export default function SignInSide() {
   const [textError, setTextError] = useState<string | null | undefined>(null);
@@ -74,14 +75,14 @@ export default function SignInSide() {
     await signIn("credentials", {
       email: email,
       password: password,
-      callbackUrl: "/editor",
+      callbackUrl: "/dashboard",
       redirect: false,
     }).then((res) => {
       if (res.status !== 200) {
         setTextError("Invalid credentials.");
         setLoadingLogin(false);
       } else {
-        push("/editor");
+        push("/dashboard");
       }
     });
   };
@@ -104,7 +105,7 @@ export default function SignInSide() {
       setRegisterEmailError("Please enter a valid email.");
       errorCondition = true;
     }
-    if (password.length < 6) {
+    if (password.length < PASSWORD_MIN_LENGTH) {
       setRegisterPasswordError("Password must be at least 6 characters.");
       errorCondition = true;
     }
@@ -127,14 +128,14 @@ export default function SignInSide() {
       await signIn("credentials", {
         email: email,
         password: password,
-        callbackUrl: "/editor",
+        callbackUrl: "/dashboard",
         redirect: false,
       }).then((res) => {
         if (res.status !== 200) {
           setTextError("Something went wrong. Please try again later.");
           setLoadingRegister(false);
         } else {
-          push("/editor");
+          push("/dashboard");
         }
       });
     }

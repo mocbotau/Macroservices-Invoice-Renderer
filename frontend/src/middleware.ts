@@ -9,12 +9,16 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  console.log();
+
   switch (req.nextUrl.pathname) {
-    case "/editor":
+    case "/dashboard":
+    case req.nextUrl.pathname.match(/^\/editor\/(.+)$/)?.input:
+    case "/user/contacts":
       if (!token) return NextResponse.redirect(new URL("/login", req.url));
       break;
     case "/login":
-      if (token) return NextResponse.redirect(new URL("/editor", req.url));
+      if (token) return NextResponse.redirect(new URL("/dashboard", req.url));
       break;
     default:
       break;
@@ -23,5 +27,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/editor", "/login"],
+  matcher: ["/dashboard", "/login", "/editor/(.+)", "/user/contacts"],
 };

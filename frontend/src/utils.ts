@@ -6,7 +6,7 @@ import {
 } from "./interfaces";
 import xml from "xml";
 import { NextApiRequest } from "next";
-import { invoiceOptions } from "./components/csvConfiguration/csvConfigurationFields";
+import { invoiceOptions } from "./components/CSVConfiguration/CSVConfigurationFields";
 import {
   INVOICE_ITEMS,
   ABN_ID,
@@ -21,6 +21,8 @@ import {
   DEFAULT_COUNTRY,
 } from "./constants";
 import { Api } from "./Api";
+import currencyMap from "currency-symbol-map";
+import { parse, compareAsc, addDays } from "date-fns";
 
 /**
  * Prompts the user to upload a file
@@ -516,3 +518,31 @@ export const toBase64 = (file: File) =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+
+/**
+ * Given a currency object, returns a human readable formatted string.
+ * @param {object} currencyObject  - A currency object
+ * @returns {str} - The formatted string (e.g "$10.10", "-$87.21")
+ */
+export function formatCurrency(currencyObject) {
+  let result = "";
+
+  if (currencyObject["_text"] < 0) result = "-";
+
+  let foundCurrency = false;
+  if (currencyMap(currencyObject["$currencyID"])) {
+    foundCurrency = true;
+    result += currencyMap(currencyObject["$currencyID"]);
+  }
+
+  result += `${Math.abs(currencyObject["_text"]).toFixed(2)}${
+    foundCurrency ? "" : ` ${currencyObject["$currencyID"]}`
+  }`;
+  return result;
+}
+
+export const compareDate = (date, offset) =>
+  compareAsc(
+    parse(date, "yyyy-MM-dd", new Date()),
+    addDays(Date.now(), offset)
+  );

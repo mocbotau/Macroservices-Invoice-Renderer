@@ -14,7 +14,7 @@ import MacroLogo from "@public/MacroservicesLogo2.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import AccountMenu from "./NavBar/AccountMenu";
+import AccountMenu from "./AccountMenu";
 import React, { useState } from "react";
 import SpaceDashboardIcon from "@mui/icons-material/Dashboard";
 import CodeIcon from "@mui/icons-material/Code";
@@ -93,7 +93,7 @@ function NavBar() {
   return (
     <AppBar position="static" id="navbar" sx={{}}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters={router.pathname !== "/editor"}>
+        <Toolbar>
           <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
             <Link href={"/"} style={{ display: "flex" }}>
               <Image

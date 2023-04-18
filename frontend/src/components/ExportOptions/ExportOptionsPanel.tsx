@@ -18,7 +18,7 @@ import {
   Chip,
   Stack,
 } from "@mui/material";
-import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
+import { CircularProgressWithLabel } from "../CircularProgressWithLabel";
 import { Api } from "@src/Api";
 import { downloadFile } from "@src/utils";
 import { useEffect, useState } from "react";

@@ -1,3 +1,4 @@
+import { PASSWORD_MIN_LENGTH } from "@src/constants";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -21,6 +22,12 @@ export default async function handler(
   const body = req.body;
   if (!body.password) {
     res.status(400).json({ error: "Code/Password can not be empty." });
+    return;
+  }
+  if (body.password < PASSWORD_MIN_LENGTH) {
+    res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters long." });
     return;
   }
   const hashedPassword = createHash("sha256")

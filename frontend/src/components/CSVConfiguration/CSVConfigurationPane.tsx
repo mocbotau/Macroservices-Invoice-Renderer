@@ -13,8 +13,8 @@ import {
   Tab,
   Tabs,
 } from "@mui/material";
-import { instructionsForUse, invoiceOptions } from "./csvConfigurationFields";
-import { AllFieldInputs } from "./paneComponents/AllFieldInputs";
+import { instructionsForUse, invoiceOptions } from "./CSVConfigurationFields";
+import { AllFieldInputs } from "./PaneComponents/AllFieldInputs";
 import { TabPanel } from "../TabPanel";
 import {
   colFromNumber,
@@ -23,13 +23,19 @@ import {
 } from "@src/utils";
 import { MultiSelectRange, SelectedData, SetStateType } from "@src/interfaces";
 import { handleSubmit } from "@src/utils/handleSubmit";
-import { CustomAccordion } from "./paneComponents/Accordion";
-import { SelectRangeSection } from "./paneComponents/SelectRange";
+import { CustomAccordion } from "./PaneComponents/Accordion";
+import { SelectRangeSection } from "./PaneComponents/SelectRange";
 import { Snackbar } from "../Snackbar";
-import { loadFieldStates, saveFieldStates } from "@src/persistence";
-import { clearFieldStates, clearInvoiceItemsSelection } from "@src/persistence";
+import {
+  loadFieldStates,
+  saveDropdownOptions,
+  saveHasHeaders,
+  saveSelectedRange,
+  saveTextFieldStates,
+} from "@src/persistence";
 
 interface ComponentProps {
+  id: number;
   selection: SelectedData;
   multipleSelection: boolean;
   setMultipleSelection: SetStateType<boolean>;
@@ -69,8 +75,8 @@ export default function CSVConfigurationPane(
 
   const [selectedRange, setRawSelectedRange] = useState(emptySelectedRange);
 
-  const loadInitialState = async () => {
-    const initialState = await loadFieldStates();
+  const loadInitialState = () => {
+    const initialState = loadFieldStates(props.id);
 
     if (initialState !== null) {
       const { fieldStates, dropdownOptions, selectedRange, hasHeaders } =
@@ -85,58 +91,36 @@ export default function CSVConfigurationPane(
 
   useEffect(() => {
     loadInitialState();
+    // eslint-disable-next-line
   }, []);
 
   const setTextFieldState = (newTextFieldState) => {
-    setRawTextFieldState(newTextFieldState);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: newTextFieldState,
-      dropdownOptions,
-      selectedRange,
-      hasHeaders,
-    });
+    console.log(newTextFieldState);
+    setRawTextFieldState(newTextFieldState);
+    saveTextFieldStates(newTextFieldState, props.id);
   };
 
   const setDropdownOptions = (newDropdownOptions) => {
-    setRawDropdownOptions(newDropdownOptions);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: textFieldState,
-      dropdownOptions: newDropdownOptions,
-      selectedRange,
-      hasHeaders,
-    });
+    setRawDropdownOptions(newDropdownOptions);
+    saveDropdownOptions(newDropdownOptions, props.id);
   };
 
   const setSelectedRange = (newSelectedRange) => {
-    setRawSelectedRange(newSelectedRange);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: textFieldState,
-      dropdownOptions,
-      selectedRange: newSelectedRange,
-      hasHeaders,
-    });
+    setRawSelectedRange(newSelectedRange);
+    saveSelectedRange(newSelectedRange, props.id);
   };
 
   const setHasHeaders = (newHasHeaders) => {
-    setRawHasHeaders(newHasHeaders);
-
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    saveFieldStates({
-      fieldStates: textFieldState,
-      dropdownOptions,
-      selectedRange,
-      hasHeaders: newHasHeaders,
-    });
+    setRawHasHeaders(newHasHeaders);
+    saveHasHeaders(newHasHeaders, props.id);
   };
 
   useEffect(() => {
@@ -170,8 +154,6 @@ export default function CSVConfigurationPane(
     setDeliveryRequired(false);
     setShowRequired(false);
     setShowLoading(false);
-    clearFieldStates();
-    clearInvoiceItemsSelection();
     setShowResetDialog(false);
   };
 

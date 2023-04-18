@@ -1,4 +1,4 @@
-import { invoiceOptions } from "@src/components/csvConfiguration/csvConfigurationFields";
+import { invoiceOptions } from "@src/components/CSVConfiguration/CSVConfigurationFields";
 import { INVOICE_DELIVERY } from "@src/constants";
 import {
   AllInvoiceObjectTypes,
