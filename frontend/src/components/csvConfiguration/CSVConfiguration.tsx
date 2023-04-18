@@ -16,8 +16,9 @@ import {
   loadInvoiceItemsSelection,
   saveInvoiceItemsSelection,
 } from "@src/persistence";
-import useWindowDimensions from "@src/pages/useWindowDimensions";
+import useWindowDimensions from "@src/utils/useWindowDimensions";
 import { DragHandle } from "@mui/icons-material";
+import { MOBILE_WIDTH } from "@src/constants";
 
 interface ComponentProps {
   file: File;
@@ -41,7 +42,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const [multipleSelection, setMultipleSelection] = useState(false);
   const [showPane, setShowPane] = useState(false);
 
-  const drawerBleeding = 30;
+  const drawerBleeding = 40;
 
   const loadSavedSelection = async () => {
     const loaded = await loadInvoiceItemsSelection();
@@ -119,7 +120,9 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
           id={"hot-table-box"}
           sx={{
             display: "flex",
-            width: `${width <= 768 ? "100%" : `calc(100% - ${drawerWidth})`}`,
+            width: `${
+              width <= MOBILE_WIDTH ? "100%" : `calc(100% - ${drawerWidth})`
+            }`,
           }}
         >
           <HotTable
@@ -146,15 +149,16 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
               });
             }}
           />
+          MOBILE_WIDTH
         </Box>
-        {width <= 768 ? (
+        {width <= MOBILE_WIDTH ? (
           <Box sx={{ justifyContent: "center", alignContent: "center" }}>
             <IconButton
               sx={{
                 position: "fixed",
                 zIndex: 999,
                 rotate: "90deg",
-                right: 0,
+                right: 5,
                 top: "50%",
               }}
               onClick={() => setShowPane(true)}

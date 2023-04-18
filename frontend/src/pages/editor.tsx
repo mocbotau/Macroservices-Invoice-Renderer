@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { uploadFile } from "@src/utils";
 import ExportOptions from "@src/components/exportOptions";
-import { Box, CssBaseline, IconButton, useTheme } from "@mui/material";
+import { Box, CssBaseline, IconButton } from "@mui/material";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import Upload from "@src/components/Upload";
 import CSVConfiguration from "@src/components/csvConfiguration/CSVConfiguration";
@@ -16,7 +16,7 @@ import {
   saveFile,
   saveUBL,
 } from "@src/persistence";
-import useWindowDimensions from "./useWindowDimensions";
+import useWindowDimensions from "../utils/useWindowDimensions";
 
 export default function Editor() {
   const [snackbarMessage, setSnackbarMessage] = useState("");

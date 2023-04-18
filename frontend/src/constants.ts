@@ -33,6 +33,8 @@ export const SUPPORTED_LANGUAGES = [
   { langCode: "th", language: "Thai" },
 ];
 
+export const MOBILE_WIDTH = 768;
+
 export const SAVE_FILE_KEY = "macroservices-save-file";
 export const SAVE_UBL_KEY = "macroservices-save-ubl";
 export const FIELD_STATES_KEY = "macroservices-save-field-states";

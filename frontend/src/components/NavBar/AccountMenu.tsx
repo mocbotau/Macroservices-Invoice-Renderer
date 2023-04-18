@@ -8,6 +8,7 @@ import Logout from "@mui/icons-material/Logout";
 import { SetStateType } from "@src/interfaces";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
+import ContactsIcon from "@mui/icons-material/Contacts";
 
 interface ComponentProps {
   showMenu: null | HTMLElement;
@@ -32,13 +33,12 @@ export default function AccountMenu(props: ComponentProps) {
   };
 
   return (
-    <React.Fragment>
+    <>
       <Menu
         anchorEl={showMenu}
         id="account-menu"
         open={open}
         onClose={handleClose}
-        onClick={handleClose}
         PaperProps={{
           elevation: 4,
           sx: {
@@ -56,11 +56,22 @@ export default function AccountMenu(props: ComponentProps) {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose} disabled>
+        <MenuItem sx={{ pointerEvents: "none" }}>
           <ListItemIcon>
             <PersonIcon fontSize="small" />
           </ListItemIcon>
           {`Hi, ${name}!`}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            router.push("/user/contacts");
+          }}
+        >
+          <ListItemIcon>
+            <ContactsIcon fontSize="small" />
+          </ListItemIcon>
+          Manage Contacts
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>
@@ -70,6 +81,6 @@ export default function AccountMenu(props: ComponentProps) {
           Logout
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </>
   );
 }

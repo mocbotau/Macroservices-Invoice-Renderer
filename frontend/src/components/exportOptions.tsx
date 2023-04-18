@@ -5,7 +5,8 @@ import { Api } from "@src/Api";
 import { JsonViewer } from "@textea/json-viewer";
 import { toBase64 } from "@src/utils";
 import XMLViewer from "react-xml-viewer-2";
-import useWindowDimensions from "@src/pages/useWindowDimensions";
+import useWindowDimensions from "@src/utils/useWindowDimensions";
+import { MOBILE_WIDTH } from "@src/constants";
 
 const lightXMLTheme = {
   "attributeKeyColor": "#3492d5",
@@ -84,7 +85,7 @@ export default function ExportOptions(props: { ubl: string }) {
   };
 
   useEffect(() => {
-    setPreviewHidden(width <= 768);
+    setPreviewHidden(width <= MOBILE_WIDTH);
   }, [width]);
 
   useEffect(() => {
@@ -136,7 +137,7 @@ export default function ExportOptions(props: { ubl: string }) {
           component="main"
           sx={{
             flexGrow: 1,
-            display: `${previewHidden ? "none" : "flex"}`,
+            display: `${!previewHidden ? "flex" : "none"}`,
             width: `calc(100% - ${drawerWidth})`,
           }}
         >
@@ -178,7 +179,7 @@ export default function ExportOptions(props: { ubl: string }) {
         </Box>
         <Box
           sx={{
-            minWidth: `${previewHidden ? "100%" : { drawerWidth }}`,
+            minWidth: `${!previewHidden ? { drawerWidth } : "100%"}`,
             overflowY: "scroll",
             flexShrink: 0,
             "& .MuiDrawer-paper": {

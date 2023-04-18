@@ -14,6 +14,9 @@ import {
   Typography,
   useTheme,
   Card,
+  Autocomplete,
+  Chip,
+  Stack,
 } from "@mui/material";
 import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
 import { Api } from "@src/Api";
@@ -22,12 +25,13 @@ import { useEffect, useState } from "react";
 import * as EmailValidator from "email-validator";
 import { InvoiceSendOptions, SetStateType } from "@src/interfaces";
 import { SUPPORTED_LANGUAGES } from "@src/constants";
-import { Email, Phone, Delete } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { SEND_TIMEOUT_MS } from "@src/constants";
 import { toBase64 } from "@src/utils";
 import { useDropzone } from "react-dropzone";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { FileRejection } from "react-dropzone";
+import useWindowDimensions from "@src/utils/useWindowDimensions";
 
 type CustomSendType = InvoiceSendOptions | "";
 
@@ -60,6 +64,7 @@ export default function ExportOptionsPanel(props: ComponentProps) {
     ubl,
   } = props;
   const theme = useTheme();
+  const drawerWidth = theme.spacing(50);
 
   const [textError, setTextError] = useState("");
   const [fileErrors, setFileErrors] = useState(null);
@@ -71,6 +76,7 @@ export default function ExportOptionsPanel(props: ComponentProps) {
   const [exporting, setExporting] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendTimeout, setSendTimeout] = useState<number>(0);
+  const { width } = useWindowDimensions();
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -228,6 +234,17 @@ export default function ExportOptionsPanel(props: ComponentProps) {
     };
   }, [sendTimeout]);
 
+  interface Emails {
+    name: string;
+    email: string;
+  }
+
+  const emails: readonly Emails[] = [
+    { name: "Samuel Zheng", email: "samuel.zheng1357@gmail.com" },
+    { name: "Brandon", email: "brandon@brandon.com" },
+    { name: "Jason", email: "jason@jason.com" },
+  ];
+
   return (
     <Box
       p={2}
@@ -243,11 +260,11 @@ export default function ExportOptionsPanel(props: ComponentProps) {
           variant="h6"
           color="primary"
           gutterBottom={true}
-          sx={{ textEmphasis: 20, paddingBottom: 1 }}
+          fontWeight={600}
+          sx={{ paddingBottom: 1 }}
         >
           Export and Send
         </Typography>
-
         <FormControl fullWidth data-testid="export-method-form">
           <InputLabel id="export-method-label">Export Method</InputLabel>
           <Select
@@ -267,31 +284,51 @@ export default function ExportOptionsPanel(props: ComponentProps) {
 
         <Box height={theme.spacing(2)} />
 
-        <Box display={exportMethod === "send" ? "block" : "none"} mb={2}>
-          <TextField
-            label="Recipient"
-            variant="outlined"
-            fullWidth
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            data-testid="recipient-textfield"
-            placeholder="Email or phone number"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  {sendType !== "" ? (
-                    sendType === "sms" ? (
-                      <Phone />
-                    ) : (
-                      <Email />
-                    )
-                  ) : null}
-                </InputAdornment>
-              ),
-            }}
-            required={true}
-            error={invalidRecipient}
-          />
+        <Box
+          display={exportMethod === "send" ? "block" : "none"}
+          mb={2}
+          maxWidth={`${width <= 768 ? width : `calc(${drawerWidth} - 57px)`}`}
+        >
+          {/* <Autocomplete
+            multiple
+            id="tags-filled"
+            options={emails}
+            autoHighlight
+            getOptionLabel={(option: Emails) => option.name}
+            renderOption={(props, option) => (
+              <Box component="li" {...props}>
+                <>
+                  <Typography>
+                    {option.name}
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ fontStyle: "italic" }}
+                    >
+                      {option.email}
+                    </Typography>
+                  </Typography>
+                </>
+              </Box>
+            )}
+            freeSolo
+            renderTags={(value, getTagProps) =>
+              value.map((option: Emails | string[], index: number) => (
+                <Chip
+                  variant="filled"
+                  label={(option.email as Emails["email"]) || option}
+                  {...getTagProps({ index })}
+                />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Email"
+                placeholder="Enter emails..."
+              />
+            )}
+          /> */}
         </Box>
         {sendType === "sms" && exportMethod === "send" ? (
           <Alert severity="info">

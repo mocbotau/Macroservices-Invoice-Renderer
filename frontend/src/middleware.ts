@@ -10,10 +10,6 @@ export async function middleware(req: NextRequest) {
   });
 
   switch (req.nextUrl.pathname) {
-    case "/":
-      return NextResponse.redirect(
-        new URL(token ? "/editor" : "/login", req.url)
-      );
     case "/editor":
       if (!token) return NextResponse.redirect(new URL("/login", req.url));
       break;
@@ -27,5 +23,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/editor", "/", "/login"],
+  matcher: ["/editor", "/login"],
 };

@@ -2,7 +2,17 @@ import React, { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Box } from "@mui/system";
-import { Button, Divider, Tab, Tabs } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import { instructionsForUse, invoiceOptions } from "./csvConfigurationFields";
 import { AllFieldInputs } from "./paneComponents/AllFieldInputs";
 import { TabPanel } from "../TabPanel";
@@ -52,6 +62,7 @@ export default function CSVConfigurationPane(
   const [showLoading, setShowLoading] = useState(false);
   const [deliveryRequired, setDeliveryRequired] = useState(false);
   const [expanded, setExpanded] = React.useState<string | false>(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   const initialState = createTextStateObject();
   const [textFieldState, setRawTextFieldState] = useState(initialState);
@@ -152,8 +163,34 @@ export default function CSVConfigurationPane(
     setTabValue(newValue);
   };
 
+  const handleReset = () => {
+    setTextFieldState(initialState);
+    setSelectedRange(emptySelectedRange);
+    setDropdownOptions([]);
+    setDeliveryRequired(false);
+    setShowRequired(false);
+    setShowLoading(false);
+    clearFieldStates();
+    clearInvoiceItemsSelection();
+    setShowResetDialog(false);
+  };
+
   return (
     <>
+      <Dialog open={showResetDialog} onClose={() => setShowResetDialog(false)}>
+        <DialogTitle>{"Reset"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to reset all fields? This cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowResetDialog(false)}>No</Button>
+          <Button onClick={handleReset} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         showSnackbar={showSnackbar}
         setShowSnackbar={setShowSnackbar}
@@ -174,7 +211,7 @@ export default function CSVConfigurationPane(
             variant="h6"
             color="primary"
             gutterBottom={true}
-            sx={{ textEmphasis: 20 }}
+            fontWeight={600}
           >
             CSV Configurator
           </Typography>
@@ -273,14 +310,7 @@ export default function CSVConfigurationPane(
             variant="outlined"
             sx={{ margin: 1, flexGrow: 1 }}
             onClick={() => {
-              setTextFieldState(initialState);
-              setSelectedRange(emptySelectedRange);
-              setDropdownOptions([]);
-              setDeliveryRequired(false);
-              setShowRequired(false);
-              setShowLoading(false);
-              clearFieldStates();
-              clearInvoiceItemsSelection();
+              setShowResetDialog(true);
             }}
           >
             RESET

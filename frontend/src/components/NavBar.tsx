@@ -16,8 +16,22 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import AccountMenu from "./NavBar/AccountMenu";
 import React, { useState } from "react";
+import SpaceDashboardIcon from "@mui/icons-material/Dashboard";
+import CodeIcon from "@mui/icons-material/Code";
+import Link from "next/link";
 
-const pages = ["Dashboard", "About Us"];
+const pages = [
+  {
+    name: "Dashboard",
+    link: "/dashboard",
+    icon: <SpaceDashboardIcon sx={{ marginRight: 2 }} />,
+  },
+  {
+    name: "Developers",
+    link: "/developers",
+    icon: <CodeIcon sx={{ marginRight: 2 }} />,
+  },
+];
 
 function NavBar() {
   const router = useRouter();
@@ -34,6 +48,11 @@ function NavBar() {
   };
 
   const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleNavigatePage = (link: string) => {
+    router.push(link);
     setAnchorElNav(null);
   };
 
@@ -72,16 +91,18 @@ function NavBar() {
     };
   }
   return (
-    <AppBar position="static" id="navbar">
+    <AppBar position="static" id="navbar" sx={{}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters={router.pathname !== "/editor"}>
           <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
-            <Image
-              src={MacroLogo}
-              alt="Macroservices Logo"
-              width="30"
-              height="30"
-            />
+            <Link href={"/"} style={{ display: "flex" }}>
+              <Image
+                src={MacroLogo}
+                alt="Macroservices Logo"
+                width="30"
+                height="30"
+              />
+            </Link>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -112,8 +133,12 @@ function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem
+                  key={page.name}
+                  onClick={() => handleNavigatePage(page.link)}
+                >
+                  {page.icon}
+                  <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -126,38 +151,49 @@ function NavBar() {
               alignContent: "center",
             }}
           >
-            <Image
-              src={MacroLogo}
-              alt="Macroservices Logo"
-              width="30"
-              height="30"
-            />
+            <Link href={"/"} style={{ display: "flex" }}>
+              <Image
+                src={MacroLogo}
+                alt="Macroservices Logo"
+                width="30"
+                height="30"
+              />
+            </Link>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.name}
+                onClick={() => handleNavigatePage(page.link)}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
           {router.pathname !== "/login" && (
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  {data ? (
+              {data ? (
+                <Tooltip title="User Menu">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt={data.user.name}
                       {...stringAvatar(data.user.name)}
                     />
-                  ) : (
-                    <Typography>LOGIN</Typography>
-                  )}
-                </IconButton>
-              </Tooltip>
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Button
+                  variant="text"
+                  onClick={() => router.push("/login")}
+                  color="inherit"
+                  sx={{
+                    p: 0,
+                  }}
+                >
+                  LOGIN
+                </Button>
+              )}
               <AccountMenu
                 showMenu={anchorElUser}
                 setShowMenu={setAnchorElUser}
