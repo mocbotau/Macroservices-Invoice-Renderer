@@ -8,10 +8,11 @@ import { MIN_ROW_COUNT } from "@src/constants";
 import { HotTable } from "./HotTable";
 import {
   loadInvoiceItemsSelection,
-  saveInvoiceItemsSelection,
+  setInvoiceItemsSelection,
 } from "@src/persistence";
 
 interface ComponentProps {
+  id: number;
   file: File;
   setLoadedXML: (xml: string) => void;
 }
@@ -32,7 +33,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const [multipleSelection, setMultipleSelection] = useState(false);
 
   const loadSavedSelection = async () => {
-    const loaded = await loadInvoiceItemsSelection();
+    const loaded = await loadInvoiceItemsSelection(props.id);
 
     if (loaded !== null) {
       setRawSelection(loaded);
@@ -41,11 +42,12 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
 
   useEffect(() => {
     loadSavedSelection();
+    // eslint-disable-next-line
   }, []);
 
   const setSelection = (selection) => {
     setRawSelection(selection);
-    saveInvoiceItemsSelection(selection);
+    setInvoiceItemsSelection(selection, props.id);
   };
 
   useEffect(() => {
@@ -143,6 +145,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
           anchor="right"
         >
           <CSVConfigurationPane
+            id={props.id}
             selection={selection}
             multipleSelection={multipleSelection}
             setMultipleSelection={setMultipleSelection}

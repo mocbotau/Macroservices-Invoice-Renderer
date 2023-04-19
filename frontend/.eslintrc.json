@@ -18,7 +18,7 @@
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
     "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "double"],
+    "quotes": "off",
     "semi": ["error", "always"],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",

@@ -59,33 +59,34 @@ export const Party = (props: { party: JSONValue }) => {
 
       {partyName && <Text style={userStyle["bold"]}>{partyName}</Text>}
       {ABN && <Text>ABN: {ABN}</Text>}
+
+      <Break height={8} />
+
+      {postalAddress["AdditionalStreetName"] && (
+        <Text>{postalAddress["AdditionalStreetName"]}</Text>
+      )}
+      {postalAddress["StreetName"] && (
+        <Text>{postalAddress["StreetName"]}</Text>
+      )}
+      <Text>
+        {[
+          postalAddress["CityName"],
+          postalAddress["CountrySubentity"],
+          postalAddress["PostalZone"],
+        ]
+          .filter((x) => x !== undefined)
+          .join(" ")}
+      </Text>
+      <Text>
+        {countryMap.isValid(countryCode)
+          ? countryMap.getName(countryCode, i18next.language || "en")
+          : countryCode}
+      </Text>
+      {postalAddress["AddressLine"] && (
+        <Text>{postalAddress["AddressLine"]["Line"]}</Text>
+      )}
+
       <Show min={Detail.DEFAULT}>
-        <Break height={8} />
-
-        {postalAddress["AdditionalStreetName"] && (
-          <Text>{postalAddress["AdditionalStreetName"]}</Text>
-        )}
-        {postalAddress["StreetName"] && (
-          <Text>{postalAddress["StreetName"]}</Text>
-        )}
-        <Text>
-          {[
-            postalAddress["CityName"],
-            postalAddress["CountrySubentity"],
-            postalAddress["PostalZone"],
-          ]
-            .filter((x) => x !== undefined)
-            .join(" ")}
-        </Text>
-        <Text>
-          {countryMap.isValid(countryCode)
-            ? countryMap.getName(countryCode, i18next.language || "en")
-            : countryCode}
-        </Text>
-        {postalAddress["AddressLine"] && (
-          <Text>{postalAddress["AddressLine"]["Line"]}</Text>
-        )}
-
         {party["PartyIdentification"] && (
           <Show min={Detail.DETAILED}>
             <Break height={8} />
