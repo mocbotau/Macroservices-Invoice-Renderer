@@ -30,8 +30,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     [session?.user?.email || session?.user?.sub]
   )) as PhoneNumbers[];
 
-  emails = emails.filter((email) => email.email.length !== 0);
-  phones = phones.filter((phone) => phone.phone.length !== 0);
+  emails = emails.filter((email) => email.email);
+  phones = phones.filter((phone) => phone.phone);
 
   return {
     props: { emails, phones }, // will be passed to the page component as props

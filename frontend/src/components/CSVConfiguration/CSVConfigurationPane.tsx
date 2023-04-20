@@ -79,7 +79,8 @@ export default function CSVConfigurationPane(
     const initialState = loadFieldStates(props.id);
 
     if (initialState !== null) {
-      const { fieldStates, dropdownOptions, selectedRange } = initialState;
+      const { fieldStates, dropdownOptions, selectedRange, hasHeaders } =
+        initialState;
 
       setRawHasHeaders(hasHeaders);
       setRawSelectedRange(selectedRange);

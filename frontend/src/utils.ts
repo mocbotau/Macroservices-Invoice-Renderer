@@ -520,12 +520,18 @@ export function formatCurrency(currencyObject) {
   if (currencyObject["_text"] < 0) result = "-";
 
   let foundCurrency = false;
+  const value = Math.abs(currencyObject["_text"]).toFixed(2);
+
+  if (isNaN(Number(value))) {
+    return "N/A";
+  }
+
   if (currencyMap(currencyObject["$currencyID"])) {
     foundCurrency = true;
     result += currencyMap(currencyObject["$currencyID"]);
   }
 
-  result += `${Math.abs(currencyObject["_text"]).toFixed(2)}${
+  result += `${value}${
     foundCurrency ? "" : ` ${currencyObject["$currencyID"]}`
   }`;
   return result;

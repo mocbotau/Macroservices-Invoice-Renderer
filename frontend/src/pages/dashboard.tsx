@@ -110,7 +110,7 @@ export default function Dashboard() {
       minWidth: 120,
       renderCell: (params) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ display: "inline", pr: 1 }}>
+          <Typography variant="body2" sx={{ display: "inline", pr: 1 }}>
             {params.formattedValue}
           </Typography>
           {compareDate(params.formattedValue, 0) < 0 &&
@@ -684,17 +684,18 @@ export default function Dashboard() {
               sx={{ boxShadow: "1px 3px 10px rgba(0, 0, 0, 0.3)" }}
               rows={rows}
               columns={columns}
+              density="comfortable"
               initialState={{
                 pagination: {
                   paginationModel: {
-                    pageSize: 5,
+                    pageSize: 10,
                   },
                 },
                 columns: {
                   columnVisibilityModel: { id: false, issueDate: false },
                 },
               }}
-              pageSizeOptions={[5]}
+              pageSizeOptions={[5, 10, 20]}
               disableColumnMenu
               slots={{
                 toolbar: GridToolbar,

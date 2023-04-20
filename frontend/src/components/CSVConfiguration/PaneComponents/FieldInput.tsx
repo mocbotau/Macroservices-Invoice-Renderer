@@ -68,6 +68,7 @@ export const FieldInput = (props: NewTextFieldProps): JSX.Element => {
         (useDropdown && props.dropdownOptions.length === 0) ||
         props.multipleSelect
       }
+      placeholder={`${props.id.includes("date") ? "yyyy-mm-dd" : ""}`}
       inputProps={{ "data-testid": props.id }}
       InputProps={
         useDropdown
