@@ -199,7 +199,9 @@ function convertItems(
     });
   } else {
     selectedColumnIndexes = selectedColumnNames.map((name) => {
-      return lettersToNumber(name.replace("Column ", "")) - 1;
+      return (
+        lettersToNumber(name.replace("Column ", "")) - 1 - selection.startCol
+      );
     });
   }
 
