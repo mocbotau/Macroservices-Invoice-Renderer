@@ -272,7 +272,6 @@ export function updateInvoiceName(id: number, name: string): void {
   } else {
     result.name = name;
   }
-  console.log(files);
   localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
 }
 
