@@ -27,6 +27,7 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridToolbar,
+  GridValueSetterParams,
 } from "@mui/x-data-grid";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -62,6 +63,7 @@ import {
   newInvoice,
   setInvoiceState,
   saveUBL,
+  updateInvoiceName,
 } from "@src/persistence";
 import { useRouter } from "next/router";
 import { Api } from "@src/Api";
@@ -104,6 +106,18 @@ export default function Dashboard() {
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "#", flex: 1, minWidth: 30 },
+    {
+      field: "name",
+      headerName: "Invoice Name",
+      flex: 4,
+      minWidth: 120,
+      editable: true,
+      valueSetter: (params: GridValueSetterParams) => {
+        const name = params.value;
+        updateInvoiceName(params.row?.id, name);
+        return { ...params.row, name };
+      },
+    },
     { field: "customer", headerName: "Customer", flex: 5, minWidth: 150 },
     { field: "amountDue", headerName: "Amount", flex: 3, minWidth: 90 },
     { field: "issueDate", headerName: "Issued", flex: 3, minWidth: 90 },
