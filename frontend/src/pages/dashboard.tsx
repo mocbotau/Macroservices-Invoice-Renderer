@@ -288,7 +288,7 @@ export default function Dashboard() {
   };
 
   const generatePreview = useCallback(
-    async (id) => {
+    async (id: number) => {
       if (loadUBL(id) === null) {
         setPreviewHtml(null);
         setPreviewError("Create this invoice to enable preview.");
