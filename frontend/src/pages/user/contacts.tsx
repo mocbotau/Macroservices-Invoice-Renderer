@@ -204,8 +204,7 @@ export default function FullFeaturedCrudGrid(props: ServerSideProps) {
     params: GridPreProcessEditCellProps
   ) => {
     const errorMessage =
-      EmailValidator.validate(params.props.value) ||
-      !params.props.value
+      EmailValidator.validate(params.props.value) || !params.props.value
         ? null
         : "Please enter a valid email";
     return { ...params.props, error: errorMessage };
@@ -215,8 +214,7 @@ export default function FullFeaturedCrudGrid(props: ServerSideProps) {
     params: GridPreProcessEditCellProps
   ) => {
     const errorMessage =
-      INTERNATIONAL_NUMBER_REGEX.test(params.props.value) ||
-      !params.props.value
+      INTERNATIONAL_NUMBER_REGEX.test(params.props.value) || !params.props.value
         ? null
         : "Enter a valid number. Include the country code with +.";
     return { ...params.props, error: errorMessage };
