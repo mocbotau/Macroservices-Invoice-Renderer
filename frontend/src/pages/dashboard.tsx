@@ -11,6 +11,7 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  LinearProgress,
   ListItemIcon,
   Menu,
   MenuItem,
@@ -78,9 +79,12 @@ export default function Dashboard() {
   const [rows, setRows] = useState([]);
   const [currentId, setCurrentId] = useState(null);
   const [previewHtml, setPreviewHtml] = useState(null);
-  const [previewError, setPreviewError] = useState(null);
+  const [previewError, setPreviewError] = useState(
+    "Select an invoice to enable preview."
+  );
   const { width } = useWindowDimensions();
   const [windowWidth] = useDebounce(width, 1000);
+  const [showLoading, setShowLoading] = useState(false);
 
   const invoiceSentOptions: {
     name: string;
@@ -116,12 +120,27 @@ export default function Dashboard() {
           {compareDate(params.formattedValue, 0) < 0 &&
           params.row.state !== InvoiceState.PAID ? (
             params.row.state === InvoiceState.DRAFT ? (
-              <ErrorIcon color="error" />
+              <Tooltip title="Expired Invoice">
+                <ErrorIcon color="error" />
+              </Tooltip>
             ) : (
-              <WarningIcon color="error" />
+              <Tooltip title="Expired Unpaid Invoice">
+                <WarningIcon color="error" />
+              </Tooltip>
             )
           ) : (
-            <></>
+            compareDate(params.formattedValue, 0) > 0 &&
+            compareDate(params.formattedValue, 7) < 0 &&
+            params.row.state !== InvoiceState.PAID &&
+            (params.row.state === InvoiceState.DRAFT ? (
+              <Tooltip title="Upcoming Unsent Invoice">
+                <ErrorIcon color="warning" />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Upcoming Unpaid Invoice">
+                <WarningIcon color="warning" />
+              </Tooltip>
+            ))
           )}
         </Box>
       ),
@@ -211,6 +230,7 @@ export default function Dashboard() {
           }
           disabled={loadFile(params.id.valueOf() as number) === null}
           onClick={() => {
+            setShowLoading(true);
             saveUBL(undefined, params.id.valueOf() as number);
             push(`/editor/${params.id}`);
           }}
@@ -224,7 +244,10 @@ export default function Dashboard() {
             </Tooltip>
           }
           disabled={loadUBL(params.id.valueOf() as number) === null}
-          onClick={() => push(`/editor/${params.id}`)}
+          onClick={() => {
+            setShowLoading(true);
+            push(`/editor/${params.id}`);
+          }}
           label="Share"
           key="Share"
         />,
@@ -245,6 +268,7 @@ export default function Dashboard() {
   const handleCSVUpload = async () => {
     try {
       const f = await uploadFile(".csv");
+      setShowLoading(true);
       const newId = await newInvoice(
         f,
         {
@@ -264,12 +288,15 @@ export default function Dashboard() {
         setSnackbarMessage(e.toString());
       }
       setShowSnackbar(true);
+      setShowLoading(false);
     }
   };
 
   const handleUBLUpload = async () => {
     //try {
+
     const f = await uploadFile(".xml");
+    setShowLoading(true);
 
     const bytes = await f.arrayBuffer();
     const xml = Buffer.from(bytes).toString();
@@ -317,7 +344,9 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    generatePreview(currentId);
+    if (currentId === null)
+      setPreviewError("Select an invoice to enable preview.");
+    else generatePreview(currentId);
   }, [currentId, generatePreview]);
 
   useEffect(() => {
@@ -443,8 +472,22 @@ export default function Dashboard() {
 
       <Box
         p={3}
-        sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          position: "relative",
+        }}
       >
+        <LinearProgress
+          color="primary"
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: `${showLoading ? "100%" : "0%"}`,
+          }}
+        />
         <Typography variant="h4" fontWeight={600} color="primary">
           Dashboard
         </Typography>
@@ -486,8 +529,14 @@ export default function Dashboard() {
             </Box>
             {unsentOverdueInvoices !== 0 && (
               <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-                <ErrorIcon color="error" />
-                <Typography sx={{ display: "inline", pl: 1 }}>
+                <ErrorIcon
+                  color="error"
+                  fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+                />
+                <Typography
+                  variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                  sx={{ display: "inline", pl: 1 }}
+                >
                   Expired invoices: {unsentOverdueInvoices}
                 </Typography>
               </Box>
@@ -617,7 +666,7 @@ export default function Dashboard() {
                 fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
               />
               <Typography
-                variant={`${width <= MOBILE_WIDTH ? "body1" : "h5"}`}
+                variant={`${width <= MOBILE_WIDTH ? "body1" : "h6"}`}
                 pl={1}
                 fontWeight={600}
               >
