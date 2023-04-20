@@ -1,28 +1,9 @@
 import { Container, Typography, Button, Box } from "@mui/material";
-import { DefaultSession } from "next-auth";
-import { getSession } from "next-auth/react";
-import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import BackgroundImage from "@src/components/BackgroundImage";
 
-export interface ServerSideProps {
-  user: DefaultSession["user"];
-}
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession(context);
-
-  return {
-    props: { user: session?.user || null }, // will be passed to the page component as props
-  };
-}
-
-function LandingPage(props: ServerSideProps) {
+function FourOFour() {
   const router = useRouter();
-
-  const handleRedirect = () => {
-    router.push(props.user ? "/dashboard" : "/login");
-  };
 
   return (
     <>
@@ -43,7 +24,7 @@ function LandingPage(props: ServerSideProps) {
             gutterBottom
             sx={{ fontWeight: 700, color: "white" }}
           >
-            Easy Invoicing for Your Business
+            404 Not Found
           </Typography>
           <Typography
             variant="h5"
@@ -51,16 +32,15 @@ function LandingPage(props: ServerSideProps) {
             gutterBottom
             sx={{ color: "white" }}
           >
-            Send professional invoices, convert any CSV to an invoice, and get
-            paid faster with our invoicing service.
+            {"We lost this page :("}
           </Typography>
           <Button
             variant="contained"
             color="primary"
             sx={{ fontWeight: 700, marginTop: "1rem" }}
-            onClick={handleRedirect}
+            onClick={() => router.push("/")}
           >
-            Get Started for Free
+            Return to Home
           </Button>
         </Container>
       </Box>
@@ -68,4 +48,4 @@ function LandingPage(props: ServerSideProps) {
   );
 }
 
-export default LandingPage;
+export default FourOFour;

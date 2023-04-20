@@ -5,18 +5,19 @@ import {
   Box,
   Button,
   Chip,
-  CssBaseline,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Grid,
+  ListItemIcon,
   Menu,
   MenuItem,
   Paper,
   Select,
   Snackbar,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -39,6 +40,8 @@ import UpdateIcon from "@mui/icons-material/Update";
 import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import PaidIcon from "@mui/icons-material/Paid";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import TableViewIcon from "@mui/icons-material/TableView";
 
 import { NextSeo } from "next-seo";
 import {
@@ -61,7 +64,7 @@ import {
 } from "@src/persistence";
 import { useRouter } from "next/router";
 import { Api } from "@src/Api";
-import { PAGE_WIDTH } from "@src/constants";
+import { MOBILE_WIDTH, PAGE_WIDTH } from "@src/constants";
 import { useDebounce } from "use-debounce";
 import useWindowDimensions from "../utils/useWindowDimensions";
 
@@ -107,7 +110,7 @@ export default function Dashboard() {
       minWidth: 120,
       renderCell: (params) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ display: "inline", pr: 1 }}>
+          <Typography variant="body2" sx={{ display: "inline", pr: 1 }}>
             {params.formattedValue}
           </Typography>
           {compareDate(params.formattedValue, 0) < 0 &&
@@ -144,7 +147,9 @@ export default function Dashboard() {
             renderValue={(selected: number) => {
               return (
                 <Chip
-                  sx={{ width: "100%" }}
+                  sx={{
+                    width: "100%",
+                  }}
                   color={invoiceSentOptions[selected].color}
                   label={invoiceSentOptions[selected].name}
                   size="small"
@@ -184,7 +189,9 @@ export default function Dashboard() {
         <GridActionsCellItem
           icon={
             loadFieldStates(params.id.valueOf() as number) === null ? (
-              <EditIcon />
+              <Tooltip title="Configure CSV">
+                <EditIcon />
+              </Tooltip>
             ) : (
               <Badge
                 color="primary"
@@ -196,7 +203,9 @@ export default function Dashboard() {
                     : 0)
                 }
               >
-                <EditIcon />
+                <Tooltip title="Configure CSV">
+                  <EditIcon />
+                </Tooltip>
               </Badge>
             )
           }
@@ -209,14 +218,22 @@ export default function Dashboard() {
           key="Edit"
         />,
         <GridActionsCellItem
-          icon={<ShareIcon />}
+          icon={
+            <Tooltip title="Export & Send">
+              <ShareIcon />
+            </Tooltip>
+          }
           disabled={loadUBL(params.id.valueOf() as number) === null}
           onClick={() => push(`/editor/${params.id}`)}
           label="Share"
           key="Share"
         />,
         <GridActionsCellItem
-          icon={<DeleteIcon />}
+          icon={
+            <Tooltip title="Delete Invoice">
+              <DeleteIcon />
+            </Tooltip>
+          }
           onClick={() => setToBeDeletedId(params.id)}
           label="Delete"
           key="Delete"
@@ -271,7 +288,7 @@ export default function Dashboard() {
   };
 
   const generatePreview = useCallback(
-    async (id) => {
+    async (id: number) => {
       if (loadUBL(id) === null) {
         setPreviewHtml(null);
         setPreviewError("Create this invoice to enable preview.");
@@ -346,17 +363,6 @@ export default function Dashboard() {
   return (
     <>
       <NextSeo title="Dashboard" />
-      <CssBaseline />
-
-      <style global jsx>{`
-        html,
-        body,
-        body > div:first-child,
-        div#__next,
-        div#__next > div {
-          height: 100%;
-        }
-      `}</style>
 
       <Snackbar
         open={showSnackbar}
@@ -388,6 +394,9 @@ export default function Dashboard() {
             handleCSVUpload();
           }}
         >
+          <ListItemIcon>
+            <TableViewIcon fontSize="small" />
+          </ListItemIcon>
           Upload CSV
         </MenuItem>
         <MenuItem
@@ -396,6 +405,9 @@ export default function Dashboard() {
             handleUBLUpload();
           }}
         >
+          <ListItemIcon>
+            <ReceiptIcon fontSize="small" />
+          </ListItemIcon>
           Upload UBL
         </MenuItem>
       </Menu>
@@ -429,9 +441,12 @@ export default function Dashboard() {
         </DialogActions>
       </Dialog>
 
-      <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography variant="h3" fontWeight={600}>
-          Invoices
+      <Box
+        p={3}
+        sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+      >
+        <Typography variant="h4" fontWeight={600} color="primary">
+          Dashboard
         </Typography>
 
         <Grid
@@ -458,8 +473,14 @@ export default function Dashboard() {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", pb: 2 }}>
-              <NotificationImportantIcon />
-              <Typography variant="h5" pl={1}>
+              <NotificationImportantIcon
+                fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+              />
+              <Typography
+                variant={`${width <= MOBILE_WIDTH ? "body1" : "h5"}`}
+                pl={1}
+                fontWeight={600}
+              >
                 Overdues
               </Typography>
             </Box>
@@ -473,8 +494,14 @@ export default function Dashboard() {
             )}
             {unpaidOverdueAmount !== 0 && (
               <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-                <WarningIcon color="error" />
-                <Typography sx={{ display: "inline", pl: 1 }}>
+                <WarningIcon
+                  color="error"
+                  fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+                />
+                <Typography
+                  variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                  sx={{ display: "inline", pl: 1 }}
+                >
                   Unpaid total:{" "}
                   {formatCurrency({
                     "_text": unpaidOverdueAmount,
@@ -485,8 +512,14 @@ export default function Dashboard() {
             )}
             {unpaidOverdueAmount === 0 && unsentOverdueInvoices === 0 && (
               <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-                <DoneAllIcon color="success" />
-                <Typography sx={{ display: "inline", pl: 1 }}>
+                <DoneAllIcon
+                  color="success"
+                  fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+                />
+                <Typography
+                  variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                  sx={{ display: "inline", pl: 1 }}
+                >
                   No overdue invoices!
                 </Typography>
               </Box>
@@ -507,23 +540,41 @@ export default function Dashboard() {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", pb: 2 }}>
-              <UpdateIcon />
-              <Typography variant="h5" pl={1}>
+              <UpdateIcon
+                fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+              />
+              <Typography
+                variant={`${width <= MOBILE_WIDTH ? "body1" : "h5"}`}
+                pl={1}
+                fontWeight={600}
+              >
                 Upcoming
               </Typography>
             </Box>
             {unsentUpcomingInvoices !== 0 && (
               <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-                <ErrorIcon color="warning" />
-                <Typography sx={{ display: "inline", pl: 1 }}>
+                <ErrorIcon
+                  color="warning"
+                  fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+                />
+                <Typography
+                  variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                  sx={{ display: "inline", pl: 1 }}
+                >
                   Unsent invoices: {unsentUpcomingInvoices}
                 </Typography>
               </Box>
             )}
             {unpaidUpcomingAmount !== 0 && (
               <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-                <WarningIcon color="warning" />
-                <Typography sx={{ display: "inline", pl: 1 }}>
+                <WarningIcon
+                  color="warning"
+                  fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+                />
+                <Typography
+                  variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                  sx={{ display: "inline", pl: 1 }}
+                >
                   Pending amount:{" "}
                   {formatCurrency({
                     "_text": unpaidUpcomingAmount,
@@ -534,8 +585,14 @@ export default function Dashboard() {
             )}
             {unpaidUpcomingAmount === 0 && unsentUpcomingInvoices === 0 && (
               <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-                <DoneAllIcon color="success" />
-                <Typography sx={{ display: "inline", pl: 1 }}>
+                <DoneAllIcon
+                  color="success"
+                  fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+                />
+                <Typography
+                  variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                  sx={{ display: "inline", pl: 1 }}
+                >
                   No upcoming invoices!
                 </Typography>
               </Box>
@@ -556,14 +613,26 @@ export default function Dashboard() {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", pb: 2 }}>
-              <CurrencyExchangeIcon />
-              <Typography variant="h5" pl={1}>
+              <CurrencyExchangeIcon
+                fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+              />
+              <Typography
+                variant={`${width <= MOBILE_WIDTH ? "body1" : "h5"}`}
+                pl={1}
+                fontWeight={600}
+              >
                 Monthly Cashflow
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-              <RequestQuoteIcon color="info" />
-              <Typography sx={{ display: "inline", pl: 1 }}>
+              <RequestQuoteIcon
+                color="info"
+                fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+              />
+              <Typography
+                variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                sx={{ display: "inline", pl: 1 }}
+              >
                 Invoiced total:{" "}
                 {formatCurrency({
                   "_text": totalInvoicedAmount,
@@ -572,8 +641,14 @@ export default function Dashboard() {
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", pb: 1 }}>
-              <PaidIcon color="info" />
-              <Typography sx={{ display: "inline", pl: 1 }}>
+              <PaidIcon
+                color="info"
+                fontSize={`${width <= MOBILE_WIDTH ? "small" : "medium"}`}
+              />
+              <Typography
+                variant={`${width <= MOBILE_WIDTH ? "body2" : "body1"}`}
+                sx={{ display: "inline", pl: 1 }}
+              >
                 Received total:{" "}
                 {formatCurrency({
                   "_text": totalPaidAmount,
@@ -588,6 +663,7 @@ export default function Dashboard() {
           <Grid item xs={12} md={8} sx={{ position: "relative" }}>
             <Button
               key="new_button"
+              size="small"
               sx={{
                 minWidth: 80,
                 width: "10%",
@@ -608,17 +684,18 @@ export default function Dashboard() {
               sx={{ boxShadow: "1px 3px 10px rgba(0, 0, 0, 0.3)" }}
               rows={rows}
               columns={columns}
+              density="comfortable"
               initialState={{
                 pagination: {
                   paginationModel: {
-                    pageSize: 5,
+                    pageSize: 10,
                   },
                 },
                 columns: {
                   columnVisibilityModel: { id: false, issueDate: false },
                 },
               }}
-              pageSizeOptions={[5]}
+              pageSizeOptions={[5, 10, 20]}
               disableColumnMenu
               slots={{
                 toolbar: GridToolbar,

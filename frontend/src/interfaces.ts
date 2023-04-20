@@ -1,3 +1,5 @@
+import { ISODateString } from "next-auth";
+
 export type JSONValue =
   | string
   | number
@@ -93,3 +95,29 @@ export const emptySelection = {
 };
 export type InvoiceSendOptions = "email" | "sms";
 export type InvoiceSendExtOptions = "json" | "pdf" | "html" | "xml";
+
+export interface Session {
+  email?: string;
+  name?: string;
+  sub?: string;
+}
+
+export interface Emails {
+  id: string;
+  name: string;
+  email: string;
+}
+export interface PhoneNumbers {
+  id: string;
+  name: string;
+  phone: string;
+}
+export interface SessionWithSub {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    sub?: string | null;
+  };
+  expires: ISODateString;
+}

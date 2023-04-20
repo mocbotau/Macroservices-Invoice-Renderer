@@ -1,24 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getIronSession } from "iron-session/edge";
-import { IronOptions } from "../iron_session.config";
+import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  const session = await getIronSession(req, res, IronOptions);
-  const { user } = session;
+  const token = await getToken({
+    req: req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
   switch (req.nextUrl.pathname) {
-    case "/":
-      return NextResponse.redirect(
-        new URL(user ? "/editor" : "/login", req.url)
-      );
-    case "/editor":
-      if (!user) return NextResponse.redirect(new URL("/login", req.url));
+    case "/dashboard":
+    case req.nextUrl.pathname.match(/^\/editor\/(.+)$/)?.input:
+    case "/user/contacts":
+      if (!token) return NextResponse.redirect(new URL("/login", req.url));
       break;
     case "/login":
-      if (user) return NextResponse.redirect(new URL("/editor", req.url));
+      if (token) return NextResponse.redirect(new URL("/dashboard", req.url));
       break;
+    case "/editor":
+      if (!token) return NextResponse.redirect(new URL("/login", req.url));
+      else return NextResponse.redirect(new URL("/dashboard", req.url));
     default:
       break;
   }
@@ -26,5 +28,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/editor", "/", "/login"],
+  matcher: ["/dashboard", "/login", "/editor(/.+)?", "/user/contacts"],
 };

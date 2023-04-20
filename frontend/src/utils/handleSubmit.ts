@@ -1,4 +1,4 @@
-import { invoiceOptions } from "@src/components/csvConfiguration/csvConfigurationFields";
+import { invoiceOptions } from "@src/components/CSVConfiguration/CSVConfigurationFields";
 import { INVOICE_DELIVERY } from "@src/constants";
 import {
   AllInvoiceObjectTypes,
@@ -61,13 +61,13 @@ export function handleSubmit(
   hasHeaders: boolean
 ): void {
   const emptyFields = requiredFields.some((field) => {
-    return textFieldsState[field].length === 0;
+    return !textFieldsState[field];
   });
 
   const deliveryNameEmpty =
     deliveryDependentFields.some((field) => {
-      return textFieldsState[field].length !== 0;
-    }) && textFieldsState["delivery_name"].length === 0;
+      return textFieldsState[field];
+    }) && !textFieldsState["delivery_name"];
 
   if (emptyFields || deliveryNameEmpty) {
     setShowRequired(emptyFields);

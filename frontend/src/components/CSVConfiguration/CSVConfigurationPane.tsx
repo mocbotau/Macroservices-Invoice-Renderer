@@ -2,10 +2,20 @@ import React, { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Box } from "@mui/system";
-import { Button, Divider, Tab, Tabs } from "@mui/material";
-import { instructionsForUse, invoiceOptions } from "./csvConfigurationFields";
-import { AllFieldInputs } from "./paneComponents/AllFieldInputs";
-import { TabPanel } from "./paneComponents/TabPanel";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Tab,
+  Tabs,
+} from "@mui/material";
+import { instructionsForUse, invoiceOptions } from "./CSVConfigurationFields";
+import { AllFieldInputs } from "./PaneComponents/AllFieldInputs";
+import { TabPanel } from "../TabPanel";
 import {
   colFromNumber,
   convertToCellRefs,
@@ -13,8 +23,8 @@ import {
 } from "@src/utils";
 import { MultiSelectRange, SelectedData, SetStateType } from "@src/interfaces";
 import { handleSubmit } from "@src/utils/handleSubmit";
-import { CustomAccordion } from "./paneComponents/Accordion";
-import { SelectRangeSection } from "./paneComponents/SelectRange";
+import { CustomAccordion } from "./PaneComponents/Accordion";
+import { SelectRangeSection } from "./PaneComponents/SelectRange";
 import { Snackbar } from "../Snackbar";
 import {
   loadFieldStates,
@@ -57,6 +67,8 @@ export default function CSVConfigurationPane(
   const [hasHeaders, setRawHasHeaders] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [deliveryRequired, setDeliveryRequired] = useState(false);
+  const [expanded, setExpanded] = React.useState<string | false>(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   const initialState = createTextStateObject();
   const [textFieldState, setRawTextFieldState] = useState(initialState);
@@ -70,10 +82,14 @@ export default function CSVConfigurationPane(
       const { fieldStates, dropdownOptions, selectedRange, hasHeaders } =
         initialState;
 
-      setRawTextFieldState(fieldStates);
-      setRawDropdownOptions(dropdownOptions);
-      setRawSelectedRange(selectedRange);
       setRawHasHeaders(hasHeaders);
+      setRawSelectedRange(selectedRange);
+      setRawDropdownOptions(dropdownOptions);
+      setRawTextFieldState(
+        Object.keys(fieldStates).length === 0
+          ? createTextStateObject()
+          : fieldStates
+      );
     }
   };
 
@@ -85,7 +101,6 @@ export default function CSVConfigurationPane(
   const setTextFieldState = (newTextFieldState) => {
     // TODO: potentially debounce this function if it becomes more
     //  expensive (eg. contacting an API)
-    console.log(newTextFieldState);
     setRawTextFieldState(newTextFieldState);
     saveTextFieldStates(newTextFieldState, props.id);
   };
@@ -135,12 +150,37 @@ export default function CSVConfigurationPane(
     setTabValue(newValue);
   };
 
+  const handleReset = () => {
+    setTextFieldState(initialState);
+    setSelectedRange(emptySelectedRange);
+    setDropdownOptions([]);
+    setDeliveryRequired(false);
+    setShowRequired(false);
+    setShowLoading(false);
+    setShowResetDialog(false);
+  };
+
   return (
     <>
+      <Dialog open={showResetDialog} onClose={() => setShowResetDialog(false)}>
+        <DialogTitle>{"Reset"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to reset all fields? This cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowResetDialog(false)}>No</Button>
+          <Button onClick={handleReset} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         showSnackbar={showSnackbar}
         setShowSnackbar={setShowSnackbar}
         message="Please fill in all required fields."
+        severity="error"
       />
       <Box
         sx={{
@@ -156,7 +196,7 @@ export default function CSVConfigurationPane(
             variant="h6"
             color="primary"
             gutterBottom={true}
-            sx={{ textEmphasis: 20 }}
+            fontWeight={600}
           >
             CSV Configurator
           </Typography>
@@ -164,6 +204,8 @@ export default function CSVConfigurationPane(
             id="instructions"
             title="Instructions"
             setMultipleSelection={props.setMultipleSelection}
+            expanded={expanded}
+            setExpanded={setExpanded}
           >
             <Typography>{instructionsForUse}</Typography>
           </CustomAccordion>
@@ -173,6 +215,8 @@ export default function CSVConfigurationPane(
                 id={category.id}
                 title={category.name}
                 setMultipleSelection={setMultipleSelection}
+                expanded={expanded}
+                setExpanded={setExpanded}
                 key={category.id}
               >
                 <>
@@ -251,12 +295,7 @@ export default function CSVConfigurationPane(
             variant="outlined"
             sx={{ margin: 1, flexGrow: 1 }}
             onClick={() => {
-              setTextFieldState(initialState);
-              setSelectedRange(emptySelectedRange);
-              setDropdownOptions([]);
-              setDeliveryRequired(false);
-              setShowRequired(false);
-              setShowLoading(false);
+              setShowResetDialog(true);
             }}
           >
             RESET

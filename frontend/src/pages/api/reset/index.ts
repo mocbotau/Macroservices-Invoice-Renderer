@@ -1,12 +1,8 @@
-import { withIronSessionApiRoute } from "iron-session/next";
-import { IronOptions } from "@src/../iron_session.config";
 import { NextApiRequest, NextApiResponse } from "next/types";
 import NodeMailer from "nodemailer";
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
-
-export default withIronSessionApiRoute(reset_password_handler, IronOptions);
 
 /**
  *  This function sends the password reset email to the given email
@@ -54,18 +50,17 @@ async function sendResetEmail(toEmail: string, url: string) {
  * @param {NextApiResponse} res  -The response object
  * @returns {void}
  */
-export async function reset_password_handler(
+export default async function reset_password_handler(
   req: NextApiRequest,
   res: NextApiResponse
-) {
+): Promise<void> {
   switch (req.method) {
     case "POST": {
       if (!req.body?.email) {
         return res.status(400).json({ error: "Email must be provided" });
       }
-      req.session.destroy();
       if (
-        !(await DBGet("SELECT Email FROM Users WHERE Email = ?", [
+        !(await DBGet("SELECT Identifier FROM Users WHERE Identifier = ?", [
           req.body.email,
         ]))
       ) {

@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  InputAdornment,
   Grid,
   IconButton,
   InputLabel,
@@ -14,22 +13,27 @@ import {
   Typography,
   useTheme,
   Card,
+  Autocomplete,
+  Chip,
 } from "@mui/material";
-import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
+import { CircularProgressWithLabel } from "../CircularProgressWithLabel";
 import { Api } from "@src/Api";
 import { downloadFile } from "@src/utils";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import * as EmailValidator from "email-validator";
-import { InvoiceSendOptions, SetStateType } from "@src/interfaces";
-import { SUPPORTED_LANGUAGES } from "@src/constants";
-import { Email, Phone, Delete } from "@mui/icons-material";
+import { Emails, PhoneNumbers, SetStateType } from "@src/interfaces";
+import {
+  INTERNATIONAL_NUMBER_REGEX,
+  SUPPORTED_LANGUAGES,
+} from "@src/constants";
+import { Delete } from "@mui/icons-material";
 import { SEND_TIMEOUT_MS } from "@src/constants";
 import { toBase64 } from "@src/utils";
 import { useDropzone } from "react-dropzone";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { FileRejection } from "react-dropzone";
-
-type CustomSendType = InvoiceSendOptions | "";
+import { ContactsContext } from "@src/pages/editor/[id]";
+import Link from "next/link";
 
 interface DragDropFile extends File {
   path: string;
@@ -65,86 +69,92 @@ export default function ExportOptionsPanel(props: ComponentProps) {
   const [fileErrors, setFileErrors] = useState(null);
   const [textSuccess, setTextSuccess] = useState("");
   const [exportMethod, setExportMethod] = useState("download");
-  const [recipient, setRecipient] = useState("");
-  const [sendType, setSendType] = useState<CustomSendType>("email");
-  const [invalidRecipient, setInvalidRecipient] = useState(false);
+  const [emailList, setEmailList] = useState<string[]>([]);
+  const [smsRecipient, setSMSRecipient] = useState("");
+  const [invalidEmails, setInvalidEmails] = useState("");
+  const [invalidPhone, setInvalidPhone] = useState("");
   const [exporting, setExporting] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendTimeout, setSendTimeout] = useState<number>(0);
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/jpeg": [],
-      "image/png": [],
-    },
-    maxFiles: 1,
-    maxSize: 5000000,
-    onDropAccepted: (files: Array<File>) => {
-      setFileErrors(null);
-      setIconFile(files[0]);
-    },
-    onError: (err: Error) => {
-      setTextError(err.message);
-    },
-    onDropRejected: (fileRejections: Array<FileRejection>) => {
-      console.log(fileRejections[0]);
+  const { emails, phones } = useContext(ContactsContext);
 
-      const errors = fileRejections[0].errors.map((obj) => {
-        switch (obj.code) {
-          case "file-invalid-type":
-            return "File must be .jpg, .jpeg or .png";
-          case "file-too-large":
-            return "File must be less than 5MB";
-          default:
-            return obj.message;
-        }
-      });
-      setFileErrors(errors);
-    },
-  });
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({
+      accept: {
+        "image/jpeg": [],
+        "image/png": [],
+      },
+      maxFiles: 1,
+      maxSize: 5000000,
+      onDropAccepted: (files: Array<File>) => {
+        setFileErrors(null);
+        setIconFile(files[0]);
+      },
+      onError: (err: Error) => {
+        setTextError(err.message);
+      },
+      onDropRejected: (fileRejections: Array<FileRejection>) => {
+        const errors = fileRejections[0].errors.map((obj) => {
+          switch (obj.code) {
+            case "file-invalid-type":
+              return "File must be .jpg, .jpeg or .png";
+            case "file-too-large":
+              return "File must be less than 5MB";
+            default:
+              return obj.message;
+          }
+        });
+        setFileErrors(errors);
+      },
+    });
 
   useEffect(() => {
-    if (EmailValidator.validate(recipient)) {
-      setSendType("email");
-      setOutputType("pdf");
-      setInvalidRecipient(false);
-    } else if (
-      /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/.test(recipient)
+    if (emailList.some((email) => !EmailValidator.validate(email))) {
+      setInvalidEmails("Invalid emails detected.");
+    } else {
+      setInvalidEmails("");
+    }
+  }, [emailList]);
+
+  useEffect(() => {
+    if (
+      !INTERNATIONAL_NUMBER_REGEX.test(smsRecipient) &&
+      smsRecipient.length !== 0
     ) {
-      if (/^[0-9]{10}$/.test(recipient)) {
-        setRecipient(`+61${recipient.substring(1)}`);
-      }
-      setSendType("sms");
-      setOutputType("xml");
-      setInvalidRecipient(false);
+      setInvalidPhone("Invalid phone number. Include country code with +.");
     } else {
-      setOutputType("pdf");
-      setSendType("");
+      setInvalidPhone("");
     }
-    // eslint-disable-next-line
-  }, [recipient]);
+  }, [smsRecipient]);
 
-  useEffect(() => {
-    if (exportMethod === "send" && sendType === "sms") {
-      setOutputType("xml");
-    } else {
-      setOutputType("pdf");
-    }
-    // eslint-disable-next-line
-  }, [exportMethod]);
+  const handleEmailBoxChange = (
+    event: React.SyntheticEvent,
+    value: Emails[]
+  ) => {
+    setEmailList(value.map((email) => email.email || `${email}`));
+  };
+
+  const handlePhoneBoxChange = (event: React.SyntheticEvent, value: string) => {
+    setSMSRecipient(value);
+  };
 
   const exportDocument = async () => {
     setTextError("");
     setTextSuccess("");
 
-    if (exportMethod === "send") {
-      if (!recipient) {
-        setTextError("Recipient is required");
-        setInvalidRecipient(true);
+    if (exportMethod === "send-export") {
+      if (emailList.length === 0) {
+        setInvalidEmails("At least one recipient is required.");
         return;
-      } else if (sendType === "") {
-        setTextError("Invalid recipient, must be an email or phone number");
-        setInvalidRecipient(true);
+      } else if (invalidEmails.length !== 0) {
+        return;
+      }
+    } else if (exportMethod === "send-sms") {
+      if (smsRecipient.length === 0) {
+        setInvalidPhone("Please provide a phone number.");
+        return;
+      } else if (invalidPhone.length !== 0) {
         return;
       }
     }
@@ -191,8 +201,8 @@ export default function ExportOptionsPanel(props: ComponentProps) {
         } else {
           setSending(true);
           const { status } = await Api.sendInvoice(
-            recipient,
-            sendType as InvoiceSendOptions,
+            exportMethod === "send-email" ? emailList.join(",") : smsRecipient,
+            exportMethod === "send-sms" ? "sms" : "email",
             outputType,
             response.blob
           );
@@ -236,64 +246,161 @@ export default function ExportOptionsPanel(props: ComponentProps) {
         flexDirection: "column",
         justifyContent: "space-between",
         height: "100%",
+        width: "100%",
       }}
     >
-      <Box sx={{ overflowY: "auto" }} mb={2}>
-        <Typography textAlign="center" variant="h5" mb={2}>
-          Export Options
+      <Box mb={2}>
+        <Typography
+          variant="h6"
+          color="primary"
+          gutterBottom={true}
+          fontWeight={600}
+          sx={{ paddingBottom: 1, width: "100%" }}
+        >
+          Export and Send
         </Typography>
-
-        <FormControl fullWidth data-testid="export-method-form">
-          <InputLabel id="export-method-label">Export Method</InputLabel>
-          <Select
-            labelId="export-method-label"
-            value={exportMethod}
-            label="Export Method"
-            onChange={(e) => setExportMethod(e.target.value)}
-          >
-            <MenuItem value="download" data-testid="download-option">
-              Download
-            </MenuItem>
-            <MenuItem value="send" data-testid="send-option">
-              Send
-            </MenuItem>
-          </Select>
-        </FormControl>
+        <Box display="flex">
+          <FormControl fullWidth data-testid="export-method-form">
+            <InputLabel id="export-method-label">Export Method</InputLabel>
+            <Select
+              labelId="export-method-label"
+              value={exportMethod}
+              label="Export Method"
+              onChange={(e) => {
+                setExportMethod(e.target.value);
+                if (e.target.value === "send-sms") {
+                  setOutputType("xml");
+                } else {
+                  setOutputType("pdf");
+                }
+              }}
+            >
+              <MenuItem value="download" data-testid="download-option">
+                Download
+              </MenuItem>
+              <MenuItem value="send-email" data-testid="send-email-option">
+                Send Email
+              </MenuItem>
+              <MenuItem value="send-sms" data-testid="send-sms-option">
+                Send SMS
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
         <Box height={theme.spacing(2)} />
 
-        <Box display={exportMethod === "send" ? "block" : "none"} mb={2}>
-          <TextField
-            label="Recipient"
-            variant="outlined"
-            fullWidth
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            data-testid="recipient-textfield"
-            placeholder="Email or phone number"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  {sendType !== "" ? (
-                    sendType === "sms" ? (
-                      <Phone />
-                    ) : (
-                      <Email />
-                    )
-                  ) : null}
-                </InputAdornment>
-              ),
-            }}
-            required={true}
-            error={invalidRecipient}
-          />
+        <Box display={exportMethod.includes("send") ? "block" : "none"} mb={2}>
+          {exportMethod === "send-email" && (
+            <>
+              <Alert severity="info" sx={{ marginBottom: 2 }}>
+                {`Search for and select contacts to email. Alternatively, type a new email and press enter. `}
+                <Link
+                  href={"/user/contacts"}
+                  style={{ color: "rgb(184, 231, 251)" }}
+                >
+                  You can manage your contacts here.
+                </Link>
+              </Alert>
+              <Autocomplete
+                multiple
+                options={emails}
+                autoHighlight
+                limitTags={2}
+                disableCloseOnSelect
+                getOptionLabel={(option: Emails) => option?.name || `${option}`}
+                onChange={handleEmailBoxChange}
+                renderOption={(props, option) => (
+                  <Box component="li" {...props}>
+                    <>
+                      <Typography>
+                        {option.name}
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ fontStyle: "italic" }}
+                        >
+                          {option.email}
+                        </Typography>
+                      </Typography>
+                    </>
+                  </Box>
+                )}
+                freeSolo
+                renderTags={(value, getTagProps) =>
+                  value.map((option: Emails | string, index: number) => (
+                    <Chip
+                      variant="filled"
+                      key={(option as Emails).email || (option as string)}
+                      label={(option as Emails).email || (option as string)}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Email"
+                    helperText={invalidEmails}
+                    error={!!invalidEmails}
+                  />
+                )}
+                sx={{ flex: 1 }}
+              />
+            </>
+          )}
+          {exportMethod === "send-sms" && (
+            <>
+              <Alert severity="info" sx={{ marginBottom: 2 }}>
+                {`Search for and select a phone number to send a message to. Alternatively, type a new number. `}
+                <Link
+                  href={"/user/contacts"}
+                  style={{ color: "rgb(184, 231, 251)" }}
+                >
+                  You can manage your contacts here.
+                </Link>
+                {
+                  " This invoice will be sent as a summary to the specified recipient."
+                }
+              </Alert>
+              <Autocomplete
+                options={phones}
+                autoHighlight
+                getOptionLabel={(option: PhoneNumbers) =>
+                  option?.phone || `${option}`
+                }
+                renderOption={(props, option) => (
+                  <Box component="li" {...props}>
+                    <>
+                      <Typography>
+                        {option.name}
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ fontStyle: "italic" }}
+                        >
+                          {option.phone}
+                        </Typography>
+                      </Typography>
+                    </>
+                  </Box>
+                )}
+                freeSolo
+                onInputChange={handlePhoneBoxChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Phone Number"
+                    helperText={invalidPhone}
+                    error={!!invalidPhone}
+                  />
+                )}
+                sx={{ flex: 1 }}
+              />
+            </>
+          )}
         </Box>
-        {sendType === "sms" && exportMethod === "send" ? (
-          <Alert severity="info">
-            This invoice will be sent as a summary to the specified recipient
-            above.
-          </Alert>
-        ) : (
+        {exportMethod !== "send-sms" && (
           <FormControl fullWidth data-testid="output-type-form">
             <InputLabel id="output-type-label">Output Type</InputLabel>
             <Select
@@ -320,8 +427,7 @@ export default function ExportOptionsPanel(props: ComponentProps) {
 
         <Box
           display={
-            ["json", "xml"].includes(outputType) ||
-            (exportMethod === "send" && sendType === "sms")
+            ["json", "xml"].includes(outputType) || exportMethod === "send-sms"
               ? "none"
               : "block"
           }
@@ -376,7 +482,7 @@ export default function ExportOptionsPanel(props: ComponentProps) {
             </Select>
           </FormControl>
 
-          <Typography textAlign="center" variant="h6" mt={2} mb={1}>
+          <Typography variant="h6" mt={2} mb={1} color="primary">
             Optional Components
           </Typography>
           <Grid container sx={{ width: "100%" }} gap={2}>
@@ -389,8 +495,13 @@ export default function ExportOptionsPanel(props: ComponentProps) {
                   display: "flex",
                   gap: 2,
                   alignItems: "center",
+                  borderColor: `${isDragActive ? "#ab47bc" : ""}`,
+                  borderWidth: "2px",
+                  transition: "border-color 0.15s ease-in-out",
                 }}
+                {...getRootProps({ className: "dropzone" })}
               >
+                <input {...getInputProps()} />
                 <Box
                   sx={{
                     display: "flex",
@@ -399,13 +510,15 @@ export default function ExportOptionsPanel(props: ComponentProps) {
                     cursor: "pointer",
                     width: "90%",
                   }}
-                  {...getRootProps({ className: "dropzone" })}
                 >
-                  <input {...getInputProps()} />
                   <UploadFileIcon />
                   <Typography>
                     {acceptedFiles.length > 0
-                      ? (acceptedFiles[0] as DragDropFile).path
+                      ? (acceptedFiles[0] as DragDropFile).path.length >= 25
+                        ? (acceptedFiles[0] as DragDropFile).path
+                            .slice(0, 25)
+                            .concat("...")
+                        : (acceptedFiles[0] as DragDropFile).path
                       : "Upload or drag and drop your logo."}
                   </Typography>
                 </Box>
@@ -453,7 +566,7 @@ export default function ExportOptionsPanel(props: ComponentProps) {
           ) : exportMethod === "download" ? (
             "Export"
           ) : (
-            `Send ${sendType === "sms" ? "SMS" : "Email"}`
+            `Send ${exportMethod === "send-sms" ? "SMS" : "Email"}`
           )}
         </Button>
       </Box>

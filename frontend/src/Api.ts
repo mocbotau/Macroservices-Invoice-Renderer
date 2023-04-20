@@ -107,7 +107,7 @@ export class Api {
    * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
   static async requestResetPassword(email: string): Promise<APIResponse> {
-    const res = await fetch("/api/auth/reset", {
+    const res = await fetch("/api/reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -122,7 +122,7 @@ export class Api {
     code: string,
     password: string
   ): Promise<APIResponse> {
-    const res = await fetch(`/api/auth/reset/${code}`, {
+    const res = await fetch(`/api/reset/${code}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password }),
@@ -142,25 +142,21 @@ export class Api {
     });
     return { status: res.status, json: await res.json() };
   }
-  /**
-   * Logs a user out (clears session)
-   * @returns {Promise<APIResponse>} - The status and JSON of the return
-   */
-  static async logout(): Promise<APIResponse> {
-    const res = await fetch("/api/auth/logout", {
-      method: "GET",
-    });
-    return { status: res.status, json: await res.json() };
-  }
+
   /**
    * Registers a user
    * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
-  static async register(email: string, password: string): Promise<APIResponse> {
+  static async register(
+    identifier: string,
+    password: string,
+    name: string,
+    github = false
+  ): Promise<APIResponse> {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ identifier, password, name, github }),
     });
     return { status: res.status, json: await res.json() };
   }
@@ -197,7 +193,6 @@ export class Api {
    * @param {string} xml - the UBL data to send
    * @returns {Promise<APIResponse>} - The status and JSON of the return
    */
-
   static async sendInvoiceExternal(
     contact: string,
     type: InvoiceSendOptions,
@@ -217,6 +212,37 @@ export class Api {
     if (res.status !== 200) {
       return { status: res.status, json: {} };
     }
+    return { status: res.status, json: await res.json() };
+  }
+
+  /**
+   * Edits an existing contact given an ID
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async editContact(
+    id: number,
+    account: string,
+    name: string,
+    email: string,
+    phone: string
+  ): Promise<APIResponse> {
+    const res = await fetch(`/api/contacts/editcontact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, account, name, email, phone }),
+    });
+    return { status: res.status, json: await res.json() };
+  }
+
+  /**
+   * Deletes the given ID's contact from an account
+   * @returns {Promise<APIResponse>} - The status and JSON of the return
+   */
+  static async deleteContact(id: string): Promise<APIResponse> {
+    const res = await fetch(`/api/contacts/deletecontact/?id=${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
     return { status: res.status, json: await res.json() };
   }
 }

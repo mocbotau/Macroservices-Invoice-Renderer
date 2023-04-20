@@ -1,16 +1,12 @@
-import {
-  Box,
-  CircularProgress,
-  Drawer,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import ExportOptionsPanel from "./exportOptionsPanel";
+import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
+import ExportOptionsPanel from "./ExportOptionsPanel";
 import { useEffect, useState } from "react";
 import { Api } from "@src/Api";
 import { JsonViewer } from "@textea/json-viewer";
 import { toBase64 } from "@src/utils";
 import XMLViewer from "react-xml-viewer-2";
+import useWindowDimensions from "@src/utils/useWindowDimensions";
+import { MOBILE_WIDTH } from "@src/constants";
 
 const lightXMLTheme = {
   "attributeKeyColor": "#3492d5",
@@ -36,8 +32,10 @@ const darkXMLTheme = {
 
 export default function ExportOptions(props: { ubl: string }) {
   const theme = useTheme();
+  const { width } = useWindowDimensions();
 
   const drawerWidth = theme.spacing(50);
+
   const [error, setError] = useState("");
   const [previewData, setPreviewData] = useState("");
   const [outputType, setOutputType] = useState("pdf");
@@ -45,6 +43,8 @@ export default function ExportOptions(props: { ubl: string }) {
   const [style, setStyle] = useState(0);
   const [iconFile, setIconFile] = useState<File>();
   const [loading, setLoading] = useState(true);
+  const [previewHidden, setPreviewHidden] = useState(false);
+
   let optional = {};
 
   interface Response {
@@ -85,6 +85,10 @@ export default function ExportOptions(props: { ubl: string }) {
   };
 
   useEffect(() => {
+    setPreviewHidden(width <= MOBILE_WIDTH);
+  }, [width]);
+
+  useEffect(() => {
     const fetchData = async () => {
       switch (outputType) {
         case "pdf":
@@ -121,18 +125,19 @@ export default function ExportOptions(props: { ubl: string }) {
           break;
       }
     };
+    if (previewHidden) return;
     fetchData();
     // eslint-disable-next-line
-  }, [style, language, outputType, iconFile]);
+  }, [style, language, outputType, iconFile, previewHidden]);
 
   return (
     <>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", height: "100%" }}>
         <Box
           component="main"
           sx={{
             flexGrow: 1,
-            display: "flex",
+            display: `${!previewHidden ? "flex" : "none"}`,
             width: `calc(100% - ${drawerWidth})`,
           }}
         >
@@ -172,17 +177,17 @@ export default function ExportOptions(props: { ubl: string }) {
             />
           )}
         </Box>
-        <Drawer
+        <Box
           sx={{
-            width: drawerWidth,
+            width: `${!previewHidden ? `${drawerWidth}` : "100%"}`,
+            overflowY: "scroll",
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
+              alignContent: "right",
             },
           }}
-          variant="permanent"
-          anchor="right"
         >
           <ExportOptionsPanel
             ubl={props.ubl}
@@ -195,7 +200,7 @@ export default function ExportOptions(props: { ubl: string }) {
             iconFile={iconFile}
             setIconFile={setIconFile}
           />
-        </Drawer>
+        </Box>
       </Box>
     </>
   );

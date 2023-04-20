@@ -3,17 +3,24 @@ import { CssBaseline, useMediaQuery } from "@mui/material";
 import React from "react";
 import { AppProps } from "next/app";
 import "@src/styles/handsontableStyles.css";
+import Layout from "@src/components/Layout/Layout";
 import Head from "next/head";
 import { DefaultSeo } from "next-seo";
+import { SessionProvider } from "next-auth/react";
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   const darkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
   const theme = React.useMemo(
     () =>
       createTheme({
         palette: {
           mode: darkMode ? "dark" : "light",
+          background: {
+            default: darkMode ? "#191919" : "#fff",
+          },
           primary: { main: "#ab47bc" },
           secondary: { main: "#90caf9" },
         },
@@ -21,7 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
     [darkMode]
   );
   return (
-    <>
+    <SessionProvider session={session}>
       <Head>
         <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
       </Head>
@@ -31,8 +38,10 @@ export default function App({ Component, pageProps }: AppProps) {
       />
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </ThemeProvider>
-    </>
+    </SessionProvider>
   );
 }

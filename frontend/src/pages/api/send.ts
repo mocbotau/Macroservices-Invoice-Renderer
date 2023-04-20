@@ -24,7 +24,8 @@ async function sendEmail(
     transporter.sendMail(
       {
         from: `Macroservices <${process.env.MAIL_USER}>`,
-        to: toEmail,
+        to: toEmail.includes(",") ? process.env.MAIL_USER : toEmail,
+        bcc: toEmail.includes(",") ? toEmail : "",
         subject: "Macroservices Invoice Rendering",
         html: fs
           .readFileSync("public/invoice_email_template.html", {

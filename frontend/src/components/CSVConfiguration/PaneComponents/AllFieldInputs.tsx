@@ -1,5 +1,5 @@
 import { Grid, Box, Tooltip, IconButton } from "@mui/material";
-import { InvoiceOptionItems } from "../csvConfigurationFields";
+import { InvoiceOptionItems } from "../CSVConfigurationFields";
 import { SelectedData, SetStateType } from "@src/interfaces";
 import { InfoRounded, WarningRounded } from "@mui/icons-material";
 import { FieldInput } from "./FieldInput";

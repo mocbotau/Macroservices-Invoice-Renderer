@@ -5,8 +5,7 @@ import {
   InvoiceAddress,
 } from "./interfaces";
 import xml from "xml";
-import { NextApiRequest } from "next";
-import { invoiceOptions } from "./components/csvConfiguration/csvConfigurationFields";
+import { invoiceOptions } from "./components/CSVConfiguration/CSVConfigurationFields";
 import {
   INVOICE_ITEMS,
   ABN_ID,
@@ -23,6 +22,7 @@ import {
 import { Api } from "./Api";
 import currencyMap from "currency-symbol-map";
 import { parse, compareAsc, addDays } from "date-fns";
+import { Session } from "next-auth";
 
 /**
  * Prompts the user to upload a file
@@ -371,16 +371,6 @@ export function generateXML(
   return xml(xmlObject, true);
 }
 
-export function getSession(req: NextApiRequest) {
-  return process.env.NODE_ENV !== "test"
-    ? req.session
-    : {
-        user: {},
-        destroy: () => Promise.resolve(),
-        save: () => Promise.resolve(),
-      };
-}
-
 /**
  * Returns the corresponding spreadsheet column name based on an inputted number
  * Code retrieved from https://stackoverflow.com/questions/8240637/convert-numbers-to-letters-beyond-the-26-character-alphabet
@@ -530,12 +520,18 @@ export function formatCurrency(currencyObject) {
   if (currencyObject["_text"] < 0) result = "-";
 
   let foundCurrency = false;
+  const value = Math.abs(currencyObject["_text"]).toFixed(2);
+
+  if (isNaN(Number(value))) {
+    return "N/A";
+  }
+
   if (currencyMap(currencyObject["$currencyID"])) {
     foundCurrency = true;
     result += currencyMap(currencyObject["$currencyID"]);
   }
 
-  result += `${Math.abs(currencyObject["_text"]).toFixed(2)}${
+  result += `${value}${
     foundCurrency ? "" : ` ${currencyObject["$currencyID"]}`
   }`;
   return result;
@@ -546,3 +542,52 @@ export const compareDate = (date, offset) =>
     parse(date, "yyyy-MM-dd", new Date()),
     addDays(Date.now(), offset)
   );
+
+/**
+ * Takes a string and converts it to a colour
+ *
+ * @param {string} string - the string to convert
+ * @returns {string} - the hexcode of the colour
+ */
+function stringToColor(string: string): string {
+  let hash = 0;
+
+  /* eslint-disable no-bitwise */
+  for (let i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+
+  for (let i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+/**
+ * Given valid session data, return either the profile picture or a picture with their initials
+ * and a background colour determined by their name
+ *
+ * @param {Session["user"]} user
+ * @returns {object} - props and children for the Avatar component
+ */
+export function stringAvatar(user: Session["user"]): object {
+  if (!user) return {};
+  const { name, image } = user;
+
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: image
+      ? undefined
+      : `${name.split(" ")[0][0].toUpperCase()}${
+          name.split(" ").length <= 1 ? "" : name.split(" ")[1][0].toUpperCase()
+        }`,
+    src: image ? image : undefined,
+  };
+}

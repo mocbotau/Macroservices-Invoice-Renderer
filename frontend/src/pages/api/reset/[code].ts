@@ -1,3 +1,4 @@
+import { PASSWORD_MIN_LENGTH } from "@src/constants";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
 import { createHash } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -23,6 +24,12 @@ export default async function handler(
     res.status(400).json({ error: "Code/Password can not be empty." });
     return;
   }
+  if (body.password < PASSWORD_MIN_LENGTH) {
+    res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters long." });
+    return;
+  }
   const hashedPassword = createHash("sha256")
     .update(body.password)
     .digest("hex");
@@ -32,12 +39,10 @@ export default async function handler(
   if (!user) {
     return res.status(404).json({ error: "Code is invalid." });
   }
-  await DBRun("UPDATE Users SET Password = ? WHERE Email = ?", [
+  await DBRun("UPDATE Users SET Password = ? WHERE Identifier = ?", [
     hashedPassword,
     user.Email as string,
   ]);
-  await DBRun("DELETE FROM ResetCodes WHERE Code = ?", [
-    req.query.code as string,
-  ]);
+  await DBRun("DELETE FROM ResetCodes WHERE Email = ?", [user.Email as string]);
   res.status(200).json({});
 }

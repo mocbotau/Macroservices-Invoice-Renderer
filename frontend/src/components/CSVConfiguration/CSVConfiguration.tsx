@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { Box, Drawer, useTheme } from "@mui/material";
-import CSVConfigurationPane from "@src/components/csvConfiguration/CSVConfigurationPane";
+import { Box, IconButton, SwipeableDrawer, useTheme } from "@mui/material";
+import CSVConfigurationPane from "@src/components/CSVConfiguration/CSVConfigurationPane";
 import { colFromNumber, checkBoundaries } from "@src/utils";
 import { Row, SelectedData, emptySelection } from "@src/interfaces";
 import { MIN_ROW_COUNT } from "@src/constants";
@@ -10,6 +10,9 @@ import {
   loadInvoiceItemsSelection,
   setInvoiceItemsSelection,
 } from "@src/persistence";
+import useWindowDimensions from "@src/utils/useWindowDimensions";
+import { DragHandle } from "@mui/icons-material";
+import { MOBILE_WIDTH } from "@src/constants";
 
 interface ComponentProps {
   id: number;
@@ -27,13 +30,17 @@ interface ComponentProps {
 export default function CSVConfiguration(props: ComponentProps): JSX.Element {
   const theme = useTheme();
   const drawerWidth = theme.spacing(50);
+  const { width } = useWindowDimensions();
 
   const [rows, setRows] = useState<Row[]>([]);
   const [selection, setRawSelection] = useState<SelectedData>(emptySelection);
   const [multipleSelection, setMultipleSelection] = useState(false);
+  const [showPane, setShowPane] = useState(false);
 
-  const loadSavedSelection = async () => {
-    const loaded = await loadInvoiceItemsSelection(props.id);
+  const drawerBleeding = 40;
+
+  const loadSavedSelection = () => {
+    const loaded = loadInvoiceItemsSelection(props.id);
 
     if (loaded !== null) {
       setRawSelection(loaded);
@@ -45,7 +52,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
     // eslint-disable-next-line
   }, []);
 
-  const setSelection = (selection) => {
+  const setSelection = (selection: SelectedData) => {
     setRawSelection(selection);
     setInvoiceItemsSelection(selection, props.id);
   };
@@ -97,14 +104,21 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
 
   return (
     <>
-      <Box sx={{ display: "block", height: "100vh", width: "100vw" }}>
+      <Box
+        sx={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+        }}
+      >
         <Box
           component="main"
           id={"hot-table-box"}
           sx={{
-            display: "block",
-            height: "100%",
-            width: `calc(100% - ${drawerWidth})`,
+            display: "flex",
+            width: `${
+              width <= MOBILE_WIDTH ? "100%" : `calc(100% - ${drawerWidth})`
+            }`,
           }}
         >
           <HotTable
@@ -132,26 +146,72 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
             }}
           />
         </Box>
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
+        {width <= MOBILE_WIDTH ? (
+          <Box sx={{ justifyContent: "center", alignContent: "center" }}>
+            <IconButton
+              sx={{
+                position: "fixed",
+                zIndex: 999,
+                rotate: "90deg",
+                right: 5,
+                top: "50%",
+              }}
+              onClick={() => setShowPane(true)}
+            >
+              <DragHandle fontSize="large" />
+            </IconButton>
+            <SwipeableDrawer
+              open={showPane}
+              anchor="right"
+              onClose={() => setShowPane(false)}
+              onOpen={() => setShowPane(true)}
+              swipeAreaWidth={drawerBleeding}
+              disableSwipeToOpen={false}
+              sx={{ zIndex: 1000 }}
+            >
+              <IconButton
+                sx={{
+                  position: "fixed",
+                  zIndex: 1000,
+                  rotate: "90deg",
+                  left: -14,
+                  top: "50%",
+                }}
+                onClick={() => setShowPane(false)}
+              >
+                <DragHandle fontSize="large" />
+              </IconButton>
+              <CSVConfigurationPane
+                id={props.id}
+                selection={selection}
+                multipleSelection={multipleSelection}
+                setMultipleSelection={setMultipleSelection}
+                setLoadedXML={props.setLoadedXML}
+              />
+            </SwipeableDrawer>
+          </Box>
+        ) : (
+          <Box
+            sx={{
               width: drawerWidth,
-              boxSizing: "border-box",
-            },
-          }}
-          variant="permanent"
-          anchor="right"
-        >
-          <CSVConfigurationPane
-            id={props.id}
-            selection={selection}
-            multipleSelection={multipleSelection}
-            setMultipleSelection={setMultipleSelection}
-            setLoadedXML={props.setLoadedXML}
-          />
-        </Drawer>
+              overflowY: "scroll",
+              flexShrink: 0,
+              "& .MuiDrawer-paper": {
+                width: drawerWidth,
+                boxSizing: "border-box",
+                alignContent: "right",
+              },
+            }}
+          >
+            <CSVConfigurationPane
+              id={props.id}
+              selection={selection}
+              multipleSelection={multipleSelection}
+              setMultipleSelection={setMultipleSelection}
+              setLoadedXML={props.setLoadedXML}
+            />
+          </Box>
+        )}
       </Box>
     </>
   );
