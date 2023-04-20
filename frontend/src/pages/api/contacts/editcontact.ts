@@ -50,9 +50,10 @@ export default async function edit_contact_handler(
   ]);
 
   if (!prevName) {
-    prevName = await DBGet("SELECT Name From ContactDetails WHERE Name = ?", [
-      body.name,
-    ]);
+    prevName = await DBGet(
+      "SELECT Name From ContactDetails WHERE Name = ? AND Account = ?",
+      [body.name, body.account]
+    );
 
     if (prevName) {
       return res.status(409).json({ error: "This contact already exists." });
