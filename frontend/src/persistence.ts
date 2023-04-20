@@ -252,7 +252,31 @@ export function loadInvoiceState(id: number): number {
   return result.state;
 }
 
+/**
+ * Updates the name of an invoice
+ *
+ * @param {number} id - invoice ID to update
+ * @param {string} name - the new name
+ *
+ */
+export function updateInvoiceName(id: number, name: string): void {
+  const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
+
+  const result = files.find((x) => x.id === id);
+  if (result === undefined || result.file === undefined) {
+    return null;
+  }
+
+  if (result.file) {
+    result.states.fieldStates.invoice_name = name;
+  } else {
+    result.name = name;
+  }
+  localStorage.setItem(SAVE_FILE_KEY, JSON.stringify(files));
+}
+
 interface InvoiceSummary {
+  name: string;
   customer: string;
   amountDue: string;
   issueDate: string;
@@ -270,6 +294,7 @@ export function getInvoices(): InvoiceSummary[] {
   const files = JSON.parse(localStorage.getItem(SAVE_FILE_KEY) || "[]");
   return files.map((file) => {
     const result = {
+      name: file.states?.fieldStates?.invoice_name || file.name || "N/A",
       id: file.id,
       customer: "",
       amountDue: "",
