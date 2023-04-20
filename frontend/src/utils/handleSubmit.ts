@@ -61,13 +61,13 @@ export function handleSubmit(
   hasHeaders: boolean
 ): void {
   const emptyFields = requiredFields.some((field) => {
-    return textFieldsState[field]?.length === 0;
+    return !textFieldsState[field];
   });
 
   const deliveryNameEmpty =
     deliveryDependentFields.some((field) => {
-      return textFieldsState[field]?.length !== 0;
-    }) && textFieldsState["delivery_name"]?.length === 0;
+      return textFieldsState[field];
+    }) && !textFieldsState["delivery_name"];
 
   if (emptyFields || deliveryNameEmpty) {
     setShowRequired(emptyFields);

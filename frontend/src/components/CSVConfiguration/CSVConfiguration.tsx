@@ -39,8 +39,8 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
 
   const drawerBleeding = 40;
 
-  const loadSavedSelection = async () => {
-    const loaded = await loadInvoiceItemsSelection(props.id);
+  const loadSavedSelection = () => {
+    const loaded = loadInvoiceItemsSelection(props.id);
 
     if (loaded !== null) {
       setRawSelection(loaded);
@@ -52,7 +52,7 @@ export default function CSVConfiguration(props: ComponentProps): JSX.Element {
     // eslint-disable-next-line
   }, []);
 
-  const setSelection = (selection) => {
+  const setSelection = (selection: SelectedData) => {
     setRawSelection(selection);
     setInvoiceItemsSelection(selection, props.id);
   };

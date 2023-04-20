@@ -23,7 +23,6 @@ export const authOptions = {
         });
 
         const user = (await res.json()).user;
-        console.log(user);
         return user || null;
       },
     }),

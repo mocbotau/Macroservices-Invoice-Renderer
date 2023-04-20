@@ -79,34 +79,35 @@ export default function ExportOptionsPanel(props: ComponentProps) {
 
   const { emails, phones } = useContext(ContactsContext);
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/jpeg": [],
-      "image/png": [],
-    },
-    maxFiles: 1,
-    maxSize: 5000000,
-    onDropAccepted: (files: Array<File>) => {
-      setFileErrors(null);
-      setIconFile(files[0]);
-    },
-    onError: (err: Error) => {
-      setTextError(err.message);
-    },
-    onDropRejected: (fileRejections: Array<FileRejection>) => {
-      const errors = fileRejections[0].errors.map((obj) => {
-        switch (obj.code) {
-          case "file-invalid-type":
-            return "File must be .jpg, .jpeg or .png";
-          case "file-too-large":
-            return "File must be less than 5MB";
-          default:
-            return obj.message;
-        }
-      });
-      setFileErrors(errors);
-    },
-  });
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({
+      accept: {
+        "image/jpeg": [],
+        "image/png": [],
+      },
+      maxFiles: 1,
+      maxSize: 5000000,
+      onDropAccepted: (files: Array<File>) => {
+        setFileErrors(null);
+        setIconFile(files[0]);
+      },
+      onError: (err: Error) => {
+        setTextError(err.message);
+      },
+      onDropRejected: (fileRejections: Array<FileRejection>) => {
+        const errors = fileRejections[0].errors.map((obj) => {
+          switch (obj.code) {
+            case "file-invalid-type":
+              return "File must be .jpg, .jpeg or .png";
+            case "file-too-large":
+              return "File must be less than 5MB";
+            default:
+              return obj.message;
+          }
+        });
+        setFileErrors(errors);
+      },
+    });
 
   useEffect(() => {
     if (emailList.some((email) => !EmailValidator.validate(email))) {
@@ -494,8 +495,13 @@ export default function ExportOptionsPanel(props: ComponentProps) {
                   display: "flex",
                   gap: 2,
                   alignItems: "center",
+                  borderColor: `${isDragActive ? "#ab47bc" : ""}`,
+                  borderWidth: "2px",
+                  transition: "border-color 0.15s ease-in-out",
                 }}
+                {...getRootProps({ className: "dropzone" })}
               >
+                <input {...getInputProps()} />
                 <Box
                   sx={{
                     display: "flex",
@@ -504,9 +510,7 @@ export default function ExportOptionsPanel(props: ComponentProps) {
                     cursor: "pointer",
                     width: "90%",
                   }}
-                  {...getRootProps({ className: "dropzone" })}
                 >
-                  <input {...getInputProps()} />
                   <UploadFileIcon />
                   <Typography>
                     {acceptedFiles.length > 0
