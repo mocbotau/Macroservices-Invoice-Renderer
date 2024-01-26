@@ -18,8 +18,8 @@ This API renders UBL formatted XML into a human readable format.
 
 # Deployment
 
-This service is already deployed for public use and is accessible from [this link](https://macroservices.masterofcubesau.com/api/v2/healthcheck).
+This service is already deployed for public use. The service is accessible from [this link](https://app-macroservices.masterofcubesau.com/).
 
 # API Documentation
 
-You may find the documentation for our API [here](https://macroservices.masterofcubesau.com/api/docs)
+You may find the documentation for our API [here](https://macroservices.masterofcubesau.com/docs)
