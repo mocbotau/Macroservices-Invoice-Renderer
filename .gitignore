@@ -69,11 +69,8 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
-.env.local
-.env.docker
-.env.docker.local
-.env.test
+.env*
+!.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -108,3 +105,5 @@ dist
 
 # Persistence
 database.db
+
+.local-secrets/

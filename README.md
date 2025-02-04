@@ -23,3 +23,24 @@ This service is already deployed for public use. The service is accessible from 
 # API Documentation
 
 You may find the documentation for our API [here](https://macroservices.masterofcubesau.com/docs)
+
+This repo will deploy into Kubernetes through CI/CD.
+
+## Running Locally
+
+If you would like to run locally:
+
+1. Create a `.local-secrets` directory in the root of the project.
+2. Populate the directory with the following files:
+   | Filename | Description |
+   |--------------------|------------------------------------|
+   | `backend-api-key` | The API key for the backend service |
+   | `github-client-id` | The client ID for the GitHub OAuth app |
+   | `github-client-secret` | The client secret for the GitHub OAuth app |
+   | `google-client-id` | The client ID for the Google OAuth app |
+   | `google-client-secret` | The client secret for the Google OAuth app |
+   | `i18n-nexus-api-key` | The API key for the i18n Nexus service |
+   | `mail-pass` | The password for the email account used to send emails |
+   | `next-public-cookie-key` | The public key for the Next.js cookie. This can be any random string |
+   | `nextauth-secret` | The secret for the NextAuth.js service. This can be any random string |
+3. Run the bot with `docker compose up -d --build`.

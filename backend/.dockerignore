@@ -3,3 +3,13 @@ coverage/
 logs/
 node_modules/
 persistence/
+
+.vscode/
+tests/
+
+.dockerignore
+.eslintrc.json
+.gitignore
+.prettierrc.json
+Dockerfile
+jest.config.js

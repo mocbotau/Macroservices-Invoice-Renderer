@@ -2,8 +2,10 @@ import i18next from "i18next";
 import HttpBackend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
 import { SUPPORTED_LANGUAGES } from "./constants";
+import fs from "fs";
 
-const loadPath = `https://api.i18nexus.com/project_resources/translations/{{lng}}/{{ns}}.json?api_key=${process.env.I18N_NEXUS_API_KEY}`;
+const I18N_KEY = fs.readFileSync(process.env.I18N_NEXUS_API_KEY, "utf8").trim();
+const loadPath = `https://api.i18nexus.com/project_resources/translations/{{lng}}/{{ns}}.json?api_key=${I18N_KEY}`;
 
 i18next
   .use(HttpBackend)

@@ -4,3 +4,13 @@ logs/
 node_modules/
 persistence/
 .next/
+
+tests/
+.eslintrc.json
+.prettierrc.json
+Dockerfile
+.dockerignore
+.gitignore
+jest.config.js
+
+*.md

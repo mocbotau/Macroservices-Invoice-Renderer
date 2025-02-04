@@ -1,8 +1,9 @@
 import { JSONValue } from "./interfaces";
+import fs from "fs";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost";
 const BACKEND_PORT = parseInt(process.env.BACKEND_PORT || "3001", 10);
-const API_VERSION = "v2";
+const API_VERSION = "v3";
 
 export class BackendApi {
   static async healthcheck(): Promise<number> {
