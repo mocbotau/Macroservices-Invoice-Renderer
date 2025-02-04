@@ -6,6 +6,8 @@ import multer from "multer";
 import { Api } from "@src/Api";
 import { InvoiceSendExtOptions, InvoiceSendOptions } from "@src/interfaces";
 
+const MAIL_PASS = fs.readFileSync(process.env.MAIL_PASS, "utf8").trim();
+
 async function sendEmail(
   toEmail: string,
   file: { buffer: Buffer },
@@ -17,7 +19,7 @@ async function sendEmail(
       service: "gmail",
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        pass: MAIL_PASS,
       },
     });
 

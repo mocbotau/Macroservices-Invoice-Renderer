@@ -4,6 +4,8 @@ import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
 
+const MAIL_PASS = fs.readFileSync(process.env.MAIL_PASS, "utf8").trim();
+
 /**
  *  This function sends the password reset email to the given email
  * @param {string} toEmail - the email to send the password request email to
@@ -16,7 +18,7 @@ async function sendResetEmail(toEmail: string, url: string) {
       service: "gmail",
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        pass: MAIL_PASS,
       },
     });
 

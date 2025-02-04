@@ -3,6 +3,20 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { DBGet, DBRun } from "@src/utils/DBHandler";
+import fs from "fs";
+
+const GOOGLE_CLIENT_ID = fs
+  .readFileSync(process.env.GOOGLE_CLIENT_ID, "utf8")
+  .trim();
+const GOOGLE_CLIENT_SECRET = fs
+  .readFileSync(process.env.GOOGLE_CLIENT_SECRET, "utf8")
+  .trim();
+const GITHUB_CLIENT_ID = fs
+  .readFileSync(process.env.GITHUB_CLIENT_ID, "utf8")
+  .trim();
+const GITHUB_CLIENT_SECRET = fs
+  .readFileSync(process.env.GITHUB_CLIENT_SECRET, "utf8")
+  .trim();
 
 export const authOptions = {
   providers: [
@@ -27,15 +41,15 @@ export const authOptions = {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
       httpOptions: {
         timeout: 5000,
       },
     }),
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
       httpOptions: {
         timeout: 5000,
       },

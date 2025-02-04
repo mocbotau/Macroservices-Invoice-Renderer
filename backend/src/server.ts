@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: ".env.local" });
 
 import app from "./app";
 import logger from "@src/logger";
@@ -21,9 +21,9 @@ const swaggerOptions = {
   customfavIcon: "/public/favicon.ico",
 };
 
-const v1JSON = YAML.load("docs/v1.yml");
-const v2JSON = YAML.load("docs/v2.yml");
-const v3JSON = YAML.load("docs/v3.yml");
+const v1JSON = YAML.load("docs/v1.yaml");
+const v2JSON = YAML.load("docs/v2.yaml");
+const v3JSON = YAML.load("docs/v3.yaml");
 
 const v1HTML = swaggerUi.generateHTML(v1JSON, swaggerOptions);
 const v2HTML = swaggerUi.generateHTML(v2JSON, swaggerOptions);

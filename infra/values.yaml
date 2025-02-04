@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../infra-helm-charts/charts/generic-app/values.schema.json
+environment: "prod"
+version: "${COMMIT_SHA}"
+deployments:
+  - name: "macroservices-backend"
+    image: "${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${REPO_NAME}-backend"
+    environment:
+      HOST: "localhost"
+      PORT: "3000"
+      I18N_NEXUS_API_KEY: "/secrets/i18n-nexus-api-key"
+    secrets:
+      i18n-nexus-api-key: "${I18N_NEXUS_API_KEY}"
+    service:
+      port: 3001
+      targetPort: 3000
+    readinessProbe:
+      httpGet:
+        port: 3000
+        path: "/api/v3/healthcheck"
+    volumes:
+      - name: "backend-data"
+        mountPath: "/app/persistence"
+        size: "1Gi"
+
+  - name: "macroservices-frontend"
+    image: "${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${REPO_NAME}-frontend"
+    environment:
+      BACKEND_URL: "http://service-macroservices-backend"
+      BACKEND_PORT: "3001"
+      BACKEND_API_KEY: "/secrets/backend-api-key"
+      NEXT_PUBLIC_COOKIE_KEY: "/secrets/next-public-cookie-key"
+      MAIL_USER: "${MAIL_USER}"
+      MAIL_PASS: "/secrets/mail-pass"
+      NEXTAUTH_URL: "https://app-macroservices.masterofcubesau.com"
+      NEXTAUTH_SECRET: "${NEXTAUTH_SECRET}"
+      FRONTEND_URL: "https://app-macroservices.masterofcubesau.com"
+      GOOGLE_CLIENT_ID: "/secrets/google-client-id"
+      GOOGLE_CLIENT_SECRET: "/secrets/google-client-secret"
+      GITHUB_CLIENT_ID: "/secrets/github-client-id"
+      GITHUB_CLIENT_SECRET: "/secrets/github-client-secret"
+    secrets:
+      backend-api-key: "${BACKEND_API_KEY}"
+      next-public-cookie-key: "${NEXT_PUBLIC_COOKIE_KEY}"
+      mail-pass: "${MAIL_PASS}"
+      google-client-id: "${GOOGLE_CLIENT_ID}"
+      google-client-secret: "${GOOGLE_CLIENT_SECRET}"
+      github-client-id: "${GITHUB_CLIENT_ID}"
+      github-client-secret: "${GITHUB_CLIENT_SECRET}"
+    service:
+      port: 3000
+    readinessProbe:
+      httpGet:
+        port: 3000
+        path: /
+    volumes:
+      - name: "frontend-data"
+        mountPath: "/app/persistence"
+        size: "1Gi"
+
+  - name: "macroservices-nginx"
+    image: "nginx:latest"
+    service:
+      port: 80
+      targetPort: 6969
+    config:
+      fileVariable: "nginxConfig"

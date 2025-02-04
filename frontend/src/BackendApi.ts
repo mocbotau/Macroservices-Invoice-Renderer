@@ -1,8 +1,12 @@
 import { JSONValue } from "./interfaces";
+import fs from "fs";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost";
 const BACKEND_PORT = parseInt(process.env.BACKEND_PORT || "3001", 10);
-const API_VERSION = "v2";
+const API_VERSION = "v3";
+const BACKEND_API_KEY = fs
+  .readFileSync(process.env.BACKEND_API_KEY, "utf8")
+  .trim();
 
 export class BackendApi {
   static async healthcheck(): Promise<number> {
@@ -18,7 +22,7 @@ export class BackendApi {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-key": process.env.BACKEND_API_KEY,
+        "api-key": BACKEND_API_KEY,
       },
       body: JSON.stringify(body),
     });
@@ -29,7 +33,7 @@ export class BackendApi {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-key": process.env.BACKEND_API_KEY,
+        "api-key": BACKEND_API_KEY,
       },
       body: JSON.stringify(body),
     });
@@ -40,7 +44,7 @@ export class BackendApi {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-key": process.env.BACKEND_API_KEY,
+        "api-key": BACKEND_API_KEY,
       },
       body: JSON.stringify(body),
     });
