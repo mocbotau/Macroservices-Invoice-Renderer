@@ -1,5 +1,4 @@
 import { JSONValue } from "./interfaces";
-import fs from "fs";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost";
 const BACKEND_PORT = parseInt(process.env.BACKEND_PORT || "3001", 10);
