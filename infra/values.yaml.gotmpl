@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=../../infra-helm-charts/charts/generic-app/values.schema.json
+environment: "prod"
+version: {{ requiredEnv "COMMIT_SHA" | quote }}
+
+deployments:
+  - name: "macroservices-backend"
+    image: "mocbotau/cloud:macroservices-backend-prod"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "8000"
+      I18N_NEXUS_API_KEY: "/secrets/i18n-nexus-api-key"
+    secretProviderClass:
+      projectId: "1523620a-e2b9-4772-a5b3-99db47e19172"
+      secrets:
+        - fileName: "i18n-nexus-api-key"
+          secretKey: "I18N_NEXUS_API_KEY"
+    service:
+      port: 8000
+    ingress:
+      subdomain: "macroservices"
+      domain: "masterofcubesau.com"
+    readinessProbe:
+      httpGet:
+        port: 8000
+        path: "/api/v3/healthcheck"
+    volumes:
+      - name: "backend-data"
+        mountPath: "/app/persistence"
+        size: "1Gi"
+
+  - name: "macroservices-frontend"
+    image: "mocbotau/cloud:macroservices-frontend-prod"
+    environment:
+      BACKEND_URL: "http://service-macroservices-backend"
+      BACKEND_PORT: "8000"
+      SENDING_API: "dummy"
+      NEXTAUTH_URL: "https://app-macroservices.masterofcubesau.com"
+      FRONTEND_URL: "https://app-macroservices.masterofcubesau.com"
+    service:
+      port: 3000
+    ingress:
+      subdomain: "app-macroservices"
+      domain: "masterofcubesau.com"
+    secretProviderClass:
+      projectId: "1523620a-e2b9-4772-a5b3-99db47e19172"
+      syncAsKubernetesSecret: true
+      secrets:
+        - fileName: "backend-api-key"
+          secretKey: "BACKEND_API_KEY"
+          envName: "BACKEND_API_KEY"
+        - fileName: "cookie-key"
+          secretKey: "NEXT_PUBLIC_COOKIE_KEY"
+          envName: "NEXT_PUBLIC_COOKIE_KEY"
+        - fileName: "mail-user"
+          secretKey: "MAIL_USER"
+          envName: "MAIL_USER"
+        - fileName: "mail-pass"
+          secretKey: "MAIL_PASS"
+          envName: "MAIL_PASS"
+        - fileName: "nextauth-secret"
+          secretKey: "NEXTAUTH_SECRET"
+          envName: "NEXTAUTH_SECRET"
+        - fileName: "google-client-id"
+          secretKey: "GOOGLE_CLIENT_ID"
+          envName: "GOOGLE_CLIENT_ID"
+        - fileName: "google-client-secret"
+          secretKey: "GOOGLE_CLIENT_SECRET"
+          envName: "GOOGLE_CLIENT_SECRET"
+        - fileName: "github-client-id"
+          secretKey: "GITHUB_CLIENT_ID"
+          envName: "GITHUB_CLIENT_ID"
+        - fileName: "github-client-secret"
+          secretKey: "GITHUB_CLIENT_SECRET"
+          envName: "GITHUB_CLIENT_SECRET"
+    readinessProbe:
+      httpGet:
+        port: 3000
+        path: /
+    volumes:
+      - name: "frontend-data"
+        mountPath: "/app/persistence"
+        size: "1Gi"
