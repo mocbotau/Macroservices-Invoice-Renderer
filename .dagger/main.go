@@ -13,9 +13,6 @@ const (
 )
 
 type MacroservicesInvoiceRenderer struct {
-	// Repository name
-	// +private
-	RepoName string
 	// Source code directory
 	// +private
 	Source *dagger.Directory
@@ -24,7 +21,6 @@ type MacroservicesInvoiceRenderer struct {
 }
 
 func New(
-	repoName string,
 	// Source code directory
 	// +defaultPath="."
 	source *dagger.Directory,
@@ -32,7 +28,6 @@ func New(
 	infisicalClientSecret *dagger.Secret,
 ) *MacroservicesInvoiceRenderer {
 	return &MacroservicesInvoiceRenderer{
-		RepoName:              repoName,
 		Source:                source,
 		InfisicalClientSecret: infisicalClientSecret,
 	}
@@ -81,11 +76,12 @@ func (m *MacroservicesInvoiceRenderer) BuildAndPush(
 	ctx context.Context,
 	// +default="prod"
 	env string,
+	repoName string,
 ) error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		_, err := dag.Docker(m.Source.Directory("backend"), m.InfisicalClientSecret, m.RepoName+"-backend", dagger.DockerOpts{
+		_, err := dag.Docker(m.Source.Directory("backend"), m.InfisicalClientSecret, repoName+"-backend", dagger.DockerOpts{
 			Environment: env,
 		}).Build().Publish(ctx)
 
@@ -93,7 +89,7 @@ func (m *MacroservicesInvoiceRenderer) BuildAndPush(
 	})
 
 	g.Go(func() error {
-		_, err := dag.Docker(m.Source.Directory("frontend"), m.InfisicalClientSecret, m.RepoName+"-frontend", dagger.DockerOpts{
+		_, err := dag.Docker(m.Source.Directory("frontend"), m.InfisicalClientSecret, repoName+"-frontend", dagger.DockerOpts{
 			Environment: env,
 		}).Build().Publish(ctx)
 
