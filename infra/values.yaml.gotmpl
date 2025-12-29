@@ -24,7 +24,8 @@ deployments:
         port: 8000
         path: "/api/v3/healthcheck"
     volumes:
-      - name: "backend-data"
+      - name: "macroservices-backend-data-longhorn"
+        storageClass: "longhorn"
         mountPath: "/app/persistence"
         size: "1Gi"
 
@@ -45,38 +46,21 @@ deployments:
       projectId: "1523620a-e2b9-4772-a5b3-99db47e19172"
       syncAsKubernetesSecret: true
       secrets:
-        - fileName: "backend-api-key"
-          secretKey: "BACKEND_API_KEY"
-          envName: "BACKEND_API_KEY"
-        - fileName: "cookie-key"
-          secretKey: "NEXT_PUBLIC_COOKIE_KEY"
-          envName: "NEXT_PUBLIC_COOKIE_KEY"
-        - fileName: "mail-user"
-          secretKey: "MAIL_USER"
-          envName: "MAIL_USER"
-        - fileName: "mail-pass"
-          secretKey: "MAIL_PASS"
-          envName: "MAIL_PASS"
-        - fileName: "nextauth-secret"
-          secretKey: "NEXTAUTH_SECRET"
-          envName: "NEXTAUTH_SECRET"
-        - fileName: "google-client-id"
-          secretKey: "GOOGLE_CLIENT_ID"
-          envName: "GOOGLE_CLIENT_ID"
-        - fileName: "google-client-secret"
-          secretKey: "GOOGLE_CLIENT_SECRET"
-          envName: "GOOGLE_CLIENT_SECRET"
-        - fileName: "github-client-id"
-          secretKey: "GITHUB_CLIENT_ID"
-          envName: "GITHUB_CLIENT_ID"
-        - fileName: "github-client-secret"
-          secretKey: "GITHUB_CLIENT_SECRET"
-          envName: "GITHUB_CLIENT_SECRET"
+        - secretKey: "BACKEND_API_KEY"
+        - secretKey: "NEXT_PUBLIC_COOKIE_KEY"
+        - secretKey: "MAIL_USER"
+        - secretKey: "MAIL_PASS"
+        - secretKey: "NEXTAUTH_SECRET"
+        - secretKey: "GOOGLE_CLIENT_ID"
+        - secretKey: "GOOGLE_CLIENT_SECRET"
+        - secretKey: "GITHUB_CLIENT_ID"
+        - secretKey: "GITHUB_CLIENT_SECRET"
     readinessProbe:
       httpGet:
         port: 3000
         path: /
     volumes:
-      - name: "frontend-data"
+      - name: "macroservices-frontend-data-longhorn"
+        storageClass: "longhorn"
         mountPath: "/app/persistence"
         size: "1Gi"
