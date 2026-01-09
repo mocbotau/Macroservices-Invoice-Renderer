@@ -26,6 +26,7 @@ deployments:
     volumes:
       - name: "macroservices-backend-data-longhorn"
         storageClass: "longhorn"
+        accessMode: "ReadWriteOnce"
         mountPath: "/app/persistence"
         size: "1Gi"
 
@@ -62,5 +63,6 @@ deployments:
     volumes:
       - name: "macroservices-frontend-data-longhorn"
         storageClass: "longhorn"
+        accessMode: "ReadWriteOnce"
         mountPath: "/app/persistence"
         size: "1Gi"
